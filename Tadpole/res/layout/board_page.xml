@@ -1,0 +1,21 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    <org.tadpole.widget.DragGridView
+        android:id="@+id/grid_view_board_page"
+        android:layout_width="236dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="6dp"
+        android:background="#cccccccc"
+        android:gravity="center"
+        android:horizontalSpacing="12dp"
+        android:listSelector="@anim/grid_light"
+        android:numColumns="2"
+        android:scrollbars="none"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="12dp" 
+    />
+</RelativeLayout>

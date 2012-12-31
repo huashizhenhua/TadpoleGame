@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+        <ImageView
+            android:id="@+id/move_background"
+            android:layout_width="1028dp"
+            android:layout_height="fill_parent"
+            android:scaleType="matrix"
+            android:src="@drawable/default_homebg" />
+    </LinearLayout>
+
+    <org.tadpole.widget.PagedView
+        android:id="@+id/page_view_board"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#00000000" />
+
+</RelativeLayout>

@@ -1,0 +1,9 @@
+<resources>
+
+    <!-- PopupWindow窗口淡入淡出动画 -->
+    <style name="AnimationFade">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
+</resources>

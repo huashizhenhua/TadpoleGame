@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** Copyright (C) 2010 Cyril Mottier (http://www.cyrilmottier.com)
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+
+<resources>
+    <!--	   -->
+	<!-- attrs -->
+	<!--	   -->
+	<!-- PageIndicator related attributes -->
+	<attr name="tdPageIndicatorStyle" format="reference" />
+
+
+	<!--			-->
+	<!-- Styleables -->
+	<!--			-->
+
+	<declare-styleable name="PageIndicator">
+		<attr name="dotCount" format="integer" />
+		<attr name="activeDot" format="integer" />
+		<attr name="dotDrawable" format="reference" />
+		<attr name="dotSpacing" format="dimension" />
+		<attr name="gravity">
+			<flag name="top" value="0x30" />
+			<flag name="bottom" value="0x50" />
+			<flag name="left" value="0x03" />
+			<flag name="right" value="0x05" />
+			<flag name="center_vertical" value="0x10" />
+			<flag name="center_horizontal" value="0x01" />
+			<flag name="center" value="0x11" />
+		</attr>
+		<attr name="dotType">
+			<enum name="single" value="0" />
+			<enum name="multiple" value="1" />
+		</attr>
+    </declare-styleable>
+    
+	<declare-styleable name="FlingGalleryView">
+		<attr name="defaultScreen" format="integer" />
+    </declare-styleable>
+    
+</resources>
