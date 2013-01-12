@@ -94,22 +94,28 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int blue=0x7f020000;
         public static final int bluebg=0x7f020001;
         public static final int default_homebg=0x7f020002;
-        public static final int greenlight=0x7f020003;
-        public static final int ic_action_search=0x7f020004;
-        public static final int ic_launcher=0x7f020005;
-        public static final int red=0x7f020006;
+        public static final int del=0x7f020003;
+        public static final int del_check=0x7f020004;
+        public static final int greenlight=0x7f020005;
+        public static final int ic_action_search=0x7f020006;
+        public static final int ic_launcher=0x7f020007;
+        public static final int icon_download=0x7f020008;
+        public static final int icon_fav=0x7f020009;
+        public static final int icon_home=0x7f02000a;
+        public static final int icon_t_chuangyi=0x7f02000b;
+        public static final int icon_t_meinv=0x7f02000c;
+        public static final int pageid=0x7f02000d;
+        public static final int red=0x7f02000e;
     }
     public static final class id {
-        public static final int ItemImage=0x7f07000e;
         public static final int bottom=0x7f070001;
         public static final int center=0x7f070006;
         public static final int center_horizontal=0x7f070005;
         public static final int center_vertical=0x7f070004;
-        public static final int gridItemImage=0x7f07000d;
-        public static final int gridItemText=0x7f07000f;
+        public static final int gridItemText=0x7f07000d;
         public static final int grid_view_board_page=0x7f07000c;
         public static final int left=0x7f070002;
-        public static final int menu_settings=0x7f070010;
+        public static final int menu_settings=0x7f07000f;
         public static final int move_background=0x7f07000a;
         public static final int multiple=0x7f070008;
         public static final int notifyCaller=0x7f070009;
@@ -117,12 +123,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int right=0x7f070003;
         public static final int single=0x7f070007;
         public static final int top=0x7f070000;
+        public static final int txt_userAge=0x7f07000e;
     }
     public static final class layout {
         public static final int activity_plugin=0x7f030000;
         public static final int board=0x7f030001;
         public static final int board_page=0x7f030002;
         public static final int board_page_griditem=0x7f030003;
+        public static final int item=0x7f030004;
     }
     public static final class menu {
         public static final int activity_plugin=0x7f080000;

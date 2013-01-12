@@ -1,137 +1,41 @@
-/*
- * Copyright (C) 2011 Cyril Mottier (http://www.cyrilmottier.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.tadpole.widget;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
-import org.tadpole.common.Config;
+import org.tadpole.adapter.BoardPagedAdapter;
 
 import android.content.Context;
-import android.database.DataSetObserver;
-import android.os.Handler;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 /**
- * <p>
- * A View that shows items in a "paged" manner. Pages can be scrolled
- * horizontally by swiping the View. The PagedView uses a reuse mechanism
- * similar to the one used by the ListView widget. Pages come from a {@link PagedAdapter}.
- * </p>
- * <p>
- * Clients may listen to PagedView changes (scrolling, page change, etc.) using
- * an {@link OnPagedViewChangeListener} .
- * </p>
- * <p>
- * It is usually a good idea to show the user which page is currently on screen.
- * This can be easily done with a {@link PageIndicator}.
- * </p>
+ * 仿Launcher中的WorkSapce，可以左右滑动切换屏幕的类
  * 
- * @author Cyril Mottier
+ * @author Yao.GUET blog: http://blog.csdn.net/Yao_GUET date: 2011-05-04
  */
 public class PagedView extends ViewGroup {
-
-    private static final String LOG_TAG = PagedView.class.getSimpleName();
-
-    /**
-     * Clients may listen to changes occurring on a PagedView via this
-     * interface.
-     * 
-     * @author Cyril Mottier
-     */
-    public interface OnPagedViewChangeListener {
-
-        /**
-         * Notify the client the current page has changed.
-         * 
-         * @param pagedView
-         *            The PagedView that changed its current page
-         * @param previousPage
-         *            The previously selected page
-         * @param newPage
-         *            The newly selected page
-         */
-        void onPageChanged(PagedView pagedView, int previousPage, int newPage);
-
-        /**
-         * Notify the client the user started tracking.
-         * 
-         * @param pagedView
-         *            The PagedView the user started to track.
-         */
-        void onStartTracking(PagedView pagedView);
-
-        /**
-         * Notify the client the user ended tracking.
-         * 
-         * @param pagedView
-         *            The PagedView the user ended to track.
-         */
-        void onStopTracking(PagedView pagedView);
-    }
-
-    private static final int INVALID_PAGE = -1;
-    private static final int MINIMUM_PAGE_CHANGE_VELOCITY = 500;
-    private static final int VELOCITY_UNITS = 1000;
-    private static final int FRAME_RATE = 1000 / 60;
-
-    private final Handler mHandler = new Handler();
-
-    private int mPageCount;
-    private int mCurrentPage;
-    private int mTargetPage = INVALID_PAGE;
-
-    private int mPagingTouchSlop;
-    private int mMinimumVelocity;
-    private int mMaximumVelocity;
-    private int mPageSlop;
-
-    private boolean mIsBeingDragged;
-
-    private int mOffsetX;
-    private int mStartMotionX;
-    private int mStartOffsetX;
 
     private Scroller mScroller;
     private VelocityTracker mVelocityTracker;
 
-    private OnPagedViewChangeListener mOnPageChangeListener;
+    private int mCurScreen;
+    private int mDefaultScreen = 0;
 
-    private PagedAdapter mAdapter;
+    private static final int TOUCH_STATE_REST = 0;
+    private static final int TOUCH_STATE_SCROLLING = 1;
 
-    private SparseArray<View> mActiveViews = new SparseArray<View>();
-    private Queue<View> mRecycler = new LinkedList<View>();
+    private static final int SNAP_VELOCITY = 600;
 
-    private boolean mTouchable = true;
+    private int mTouchState = TOUCH_STATE_REST;
+    private int mTouchSlop;
+    private float mLastMotionX;
+    //	private float mLastMotionY;
 
-    public PagedView(Context context) {
-        this(context, null);
-    }
+    private PageListener pageListener;
 
     public PagedView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -139,561 +43,208 @@ public class PagedView extends ViewGroup {
 
     public PagedView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initPagedView();
-    }
+        mScroller = new Scroller(context);
 
-    public void setTouchable(boolean touchable) {
-        mTouchable = touchable;
-    }
-
-    private void initPagedView() {
-
-        final Context context = getContext();
-
-        mScroller = new Scroller(context, new DecelerateInterpolator());
-
-        final ViewConfiguration conf = ViewConfiguration.get(context);
-        // getScaledPagingTouchSlop() only available in API Level 8
-        mPagingTouchSlop = conf.getScaledTouchSlop() * 2;
-        mMaximumVelocity = conf.getScaledMaximumFlingVelocity();
-
-        final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        mMinimumVelocity = (int) (metrics.density * MINIMUM_PAGE_CHANGE_VELOCITY + 0.5f);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        int childWidth = 0;
-        int childHeight = 0;
-
-        int itemCount = mAdapter == null ? 0 : mAdapter.getCount();
-        if (itemCount > 0) {
-
-            if (widthMode == MeasureSpec.UNSPECIFIED || heightMode == MeasureSpec.UNSPECIFIED) {
-
-                final View child = obtainView(mCurrentPage);
-
-                measureChild(child, widthMeasureSpec, heightMeasureSpec);
-                childWidth = child.getMeasuredWidth();
-                childHeight = child.getMeasuredHeight();
-            }
-
-            if (widthMode == MeasureSpec.UNSPECIFIED) {
-                widthSize = childWidth;
-            }
-
-            if (heightMode == MeasureSpec.UNSPECIFIED) {
-                heightSize = childHeight;
-            }
-        }
-
-        setMeasuredDimension(widthSize, heightSize);
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        mPageSlop = (int) (w * 0.5);
-        // Make sure the offset adapts itself to mCurrentPage
-        mOffsetX = getOffsetForPage(mCurrentPage);
+        mCurScreen = mDefaultScreen;
+        mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        int childLeft = 0;
+        final int childCount = getChildCount();
 
-        if (mPageCount <= 0) {
-            return;
-        }
-
-        int startPage = getPageForOffset(mOffsetX);
-        int endPage = getPageForOffset(mOffsetX - getWidth() + 1);
-
-        if (endPage >= mAdapter.getCount()) {
-            startPage -= 1;
-            endPage -= 1;
-        }
-
-        recycleViews(startPage, endPage);
-
-        for (int i = startPage; i <= endPage; i++) {
-            View child = mActiveViews.get(i);
-            if (child == null) {
-                child = obtainView(i);
+        for (int i = 0; i < childCount; i++) {
+            final View childView = getChildAt(i);
+            if (childView.getVisibility() != View.GONE) {
+                final int childWidth = childView.getMeasuredWidth();
+                childView.layout(childLeft, 0, childLeft + childWidth, childView.getMeasuredHeight());
+                childLeft += childWidth;
             }
-            setupView(child, i);
         }
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.d(LOG_TAG, "onInterceptTouchEvent");
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        if (mTouchable) {
-            return false;
+        final int width = MeasureSpec.getSize(widthMeasureSpec);
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        if (widthMode != MeasureSpec.EXACTLY) {
+            throw new IllegalStateException("ScrollLayout only canmCurScreen run at EXACTLY mode!");
         }
 
-        /*
-         * Shortcut the most recurring case: the user is in the dragging state
-         * and he is moving his finger. We want to intercept this motion.
+        /**
+         * wrap_content 传进去的是AT_MOST 固定数值或fill_parent 传入的模式是EXACTLY
          */
-        final int action = ev.getAction();
-        if (action == MotionEvent.ACTION_MOVE && mIsBeingDragged) {
-            return true;
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        if (heightMode != MeasureSpec.EXACTLY) {
+            throw new IllegalStateException("ScrollLayout only can run at EXACTLY mode!");
         }
 
-        final int x = (int) ev.getX();
-
-        switch (action) {
-        case MotionEvent.ACTION_DOWN:
-            mStartMotionX = x;
-            /*
-             * If currently scrolling and user touches the screen, initiate
-             * drag; otherwise don't. mScroller.isFinished should be false
-             * when being flinged.
-             */
-            mIsBeingDragged = !mScroller.isFinished();
-            if (mIsBeingDragged) {
-                mScroller.forceFinished(true);
-                mHandler.removeCallbacks(mScrollerRunnable);
-            }
-            break;
-
-        case MotionEvent.ACTION_MOVE:
-            /*
-             * mIsBeingDragged == false, otherwise the shortcut would have
-             * caught it. Check whether the user has moved far enough from
-             * his original down touch.
-             */
-
-            final int xDiff = (int) Math.abs(x - mStartMotionX);
-            if (xDiff > mPagingTouchSlop) {
-                mIsBeingDragged = true;
-                performStartTracking(x);
-            }
-            break;
-
-        case MotionEvent.ACTION_CANCEL:
-        case MotionEvent.ACTION_UP:
-            /*
-             * Release the drag
-             */
-            mIsBeingDragged = false;
-            break;
+        // The children are given the same width and height as the scrollLayout
+        final int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            getChildAt(i).measure(widthMeasureSpec, heightMeasureSpec);
         }
+        scrollTo(mCurScreen * width, 0);
+    }
 
-        /*
-         * Motion events are only intercepted during dragging mode.
-         */
-        return mIsBeingDragged;
+    /**
+     * According to the position of current layout scroll to the destination
+     * page.
+     */
+    public void snapToDestination() {
+        final int screenWidth = getWidth();
+        final int destScreen = (getScrollX() + screenWidth / 2) / screenWidth;
+        snapToScreen(destScreen);
+    }
+
+    public void snapToScreen(int whichScreen) {
+        // get the valid layout page
+        whichScreen = Math.max(0, Math.min(whichScreen, getChildCount() - 1));
+        if (getScrollX() != (whichScreen * getWidth())) {
+
+            final int delta = whichScreen * getWidth() - getScrollX();
+            mScroller.startScroll(getScrollX(), 0, delta, 0, Math.abs(delta) * 2);
+            mCurScreen = whichScreen;
+            if (mCurScreen > Configure.currentPage) {
+                Configure.currentPage = whichScreen;
+                pageListener.page(Configure.currentPage);
+            } else if (mCurScreen < Configure.currentPage) {
+                Configure.currentPage = whichScreen;
+                pageListener.page(Configure.currentPage);
+            }
+            
+            final int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                getChildAt(i).offsetLeftAndRight(100);
+            }
+            invalidate(); // Redraw the layout
+        }
+    }
+
+    public void setToScreen(int whichScreen) {
+        whichScreen = Math.max(0, Math.min(whichScreen, getChildCount() - 1));
+        mCurScreen = whichScreen;
+        scrollTo(whichScreen * getWidth(), 0);
+    }
+
+    /**
+     * 获得当前页码
+     */
+    public int getCurScreen() {
+        return mCurScreen;
+    }
+
+    /**
+     * 当滑动后的当前页码
+     */
+    public int getPage() {
+        return Configure.currentPage;
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-
-        if (mTouchable) {
-            return false;
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) {
+            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+            postInvalidate();
         }
+    }
 
-        final int action = ev.getAction();
-        final int x = (int) ev.getX();
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.d("ScrollLayout", "onTouchEvent action=" + event.getAction());
 
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         }
-        mVelocityTracker.addMovement(ev);
+        mVelocityTracker.addMovement(event);
+
+        final int action = event.getAction();
+        final float x = event.getX();
+        //	final float y = event.getY();
 
         switch (action) {
         case MotionEvent.ACTION_DOWN:
             if (!mScroller.isFinished()) {
-                mScroller.forceFinished(true);
-                mHandler.removeCallbacks(mScrollerRunnable);
+                mScroller.abortAnimation();
             }
-            performStartTracking(x);
+            mLastMotionX = x;
             break;
-
         case MotionEvent.ACTION_MOVE:
-            // Scroll to follow the motion event
-            final int newOffset = mStartOffsetX - (mStartMotionX - x);
-
-
-
-            if (newOffset > (0 + getWidth() / 3) || newOffset < (getOffsetForPage(mPageCount - 1) - getWidth() / 3)) {
-                Log.d(LOG_TAG, "onTouchEvent newOffset = " + newOffset + ", getOffsetForPage(mPageCount - 1)=" + getOffsetForPage(mPageCount - 1));
-                mStartOffsetX = mOffsetX;
-                mStartMotionX = x;
-            } else {
-                Log.d(LOG_TAG, "onTouchEvent setOffsetX newOffset = " + newOffset + ", getOffsetForPage(mPageCount - 1)=" + getOffsetForPage(mPageCount - 1));
-                setOffsetX(newOffset);
-            }
-
+            int deltaX = (int) (mLastMotionX - x);
+            mLastMotionX = x;
+            scrollBy(deltaX, 0);
             break;
-
         case MotionEvent.ACTION_UP:
-        case MotionEvent.ACTION_CANCEL:
+            final VelocityTracker velocityTracker = mVelocityTracker;
+            velocityTracker.computeCurrentVelocity(1000);
+            int velocityX = (int) velocityTracker.getXVelocity();
 
-            setOffsetX(mStartOffsetX - (mStartMotionX - x));
+            if (velocityX > SNAP_VELOCITY && mCurScreen > 0) {
+                // Fling enough to move left
+                snapToScreen(mCurScreen - 1);
 
-            int direction = 0;
-
-            final int slop = mStartMotionX - x;
-            if (Math.abs(slop) > mPageSlop) {
-                direction = (slop > 0) ? 1 : -1;
+            } else if (velocityX < -SNAP_VELOCITY && mCurScreen < getChildCount() - 1) {
+                // Fling enough to move right
+                snapToScreen(mCurScreen + 1);
             } else {
-                mVelocityTracker.computeCurrentVelocity(VELOCITY_UNITS, mMaximumVelocity);
-                final int initialVelocity = (int) mVelocityTracker.getXVelocity();
-                if (Math.abs(initialVelocity) > mMinimumVelocity) {
-                    direction = (initialVelocity > 0) ? -1 : 1;
-                }
+                snapToDestination();
             }
-
-            if (mOnPageChangeListener != null) {
-                mOnPageChangeListener.onStopTracking(this);
-            }
-
-            smoothScrollToPage(getActualCurrentPage() + direction);
-
             if (mVelocityTracker != null) {
                 mVelocityTracker.recycle();
                 mVelocityTracker = null;
             }
-
+            mTouchState = TOUCH_STATE_REST;
+            break;
+        case MotionEvent.ACTION_CANCEL:
+            mTouchState = TOUCH_STATE_REST;
             break;
         }
-
         return true;
     }
 
-    /**
-     * Set a listener to be notified of changes that may occur in this {@link PagedView}.
-     * 
-     * @param listener
-     *            The listener to callback.
-     */
-    public void setOnPageChangeListener(OnPagedViewChangeListener listener) {
-        mOnPageChangeListener = listener;
-    }
-
-    /**
-     * Sets the {@link PagedAdapter} used to fill this {@link PagedView} with
-     * some basic information : the number of displayed pages, the pages, etc.
-     * 
-     * @param adapter
-     *            The {@link PagedAdapter} to set to this {@link PagedView}
-     */
-    public void setAdapter(PagedAdapter adapter) {
-
-        if (null != mAdapter) {
-            mAdapter.unregisterDataSetObserver(mDataSetObserver);
-        }
-
-        // Reset
-        mRecycler.clear();
-        mActiveViews.clear();
-        removeAllViews();
-
-        mAdapter = adapter;
-
-        mTargetPage = INVALID_PAGE;
-        mCurrentPage = 0;
-        mOffsetX = 0;
-
-        if (null != mAdapter) {
-            mAdapter.registerDataSetObserver(mDataSetObserver);
-            mPageCount = mAdapter.getCount();
-        }
-
-        requestLayout();
-        invalidate();
-    }
-
-    /**
-     * Returns the current page.
-     * 
-     * @return The current page
-     */
-    public int getCurrentPage() {
-        return mCurrentPage;
-    }
-
-    private int getActualCurrentPage() {
-        return mTargetPage != INVALID_PAGE ? mTargetPage : mCurrentPage;
-    }
-
-    /**
-     * Initiate an animated scrolling from the current position to the given
-     * page
-     * 
-     * @param page
-     *            The page to scroll to.
-     */
-    public void smoothScrollToPage(int page) {
-        scrollToPage(page, true);
-    }
-
-    /**
-     * Initiate an animated scrolling to the next page
-     */
-    public void smoothScrollToNext() {
-        smoothScrollToPage(getActualCurrentPage() + 1);
-    }
-
-    /**
-     * Initiate an animated scrolling to the previous page
-     */
-    public void smoothScrollToPrevious() {
-        smoothScrollToPage(getActualCurrentPage() - 1);
-    }
-
-    /**
-     * Instantly moves the PagedView from the current position to the given
-     * page.
-     * 
-     * @param page
-     *            The page to scroll to.
-     */
-    public void scrollToPage(int page) {
-        scrollToPage(page, false);
-    }
-
-    /**
-     * Instantly moves to the next page
-     */
-    public void scrollToNext() {
-        scrollToPage(getActualCurrentPage() + 1);
-    }
-
-    /**
-     * Instantly moves to the previous page
-     */
-    public void scrollToPrevious() {
-        scrollToPage(getActualCurrentPage() - 1);
-    }
-
-    private void scrollToPage(int page, boolean animated) {
-
-        // Make sure page is bound to correct values
-        page = Math.max(0, Math.min(page, mPageCount - 1));
-
-        final int targetOffset = getOffsetForPage(page);
-
-        final int dx = targetOffset - mOffsetX;
-        if (dx == 0) {
-            performPageChange(page);
-            return;
-        }
-
-        if (animated) {
-            mTargetPage = page;
-            mScroller.startScroll(mOffsetX, 0, dx, 0);
-            mHandler.post(mScrollerRunnable);
-        } else {
-            setOffsetX(targetOffset);
-            performPageChange(page);
-        }
-    }
-
-    private void setOffsetX(int offsetX) {
-
-        if (offsetX == mOffsetX) {
-            return;
-        }
-
-        int startPage = getPageForOffset(offsetX);
-        int endPage = getPageForOffset(offsetX - getWidth() + 1);
-
-        if (endPage >= mAdapter.getCount()) {
-            startPage -= 1;
-            endPage -= 1;
-        }
-
-        Log.d(LOG_TAG, "endPage = " + endPage + ", startPage = " + startPage + ", VIEW COUNT = " + mActiveViews.size());
-
-        recycleViews(startPage, endPage);
-
-        final int leftAndRightOffset = offsetX - mOffsetX;
-        for (int i = startPage; i <= endPage; i++) {
-
-            View child = mActiveViews.get(i);
-            if (child == null) {
-                child = obtainView(i);
-                setupView(child, i);
-            }
-
-            child.offsetLeftAndRight(leftAndRightOffset);
-        }
-
-        mOffsetX = offsetX;
-        invalidate();
-    }
-
-    private int getOffsetForPage(int page) {
-        return -(page * getWidth());
-    }
-
-    private int getPageForOffset(int offset) {
-        return -offset / getWidth();
-    }
-
-    private void recycleViews(int start, int end) {
-        // [start, end] <=> range of pages that needs to be displayed
-        final SparseArray<View> activeViews = mActiveViews;
-
-        final int count = activeViews.size();
-        for (int i = 0; i < count; i++) {
-            final int key = activeViews.keyAt(i);
-            if (key < start || key > end) {
-                final View recycled = activeViews.valueAt(i);
-                removeView(recycled);
-                mRecycler.add(recycled);
-
-                activeViews.delete(key);
-            }
-        }
-    }
-
-    private View obtainView(int position) {
-        // Get a view from the recycler
-        final View recycled = mRecycler.poll();
-
-        View child = mAdapter.getView(position, recycled, this);
-
-        if (child == null) {
-            throw new NullPointerException("PagedAdapter.getView must return a non-null View");
-        }
-        if (recycled != null && child != recycled) {
-            if (Config.TD_WARNING_LOGS_ENABLED) {
-                Log.w(LOG_TAG, "Not reusing the convertView may impact PagedView performance.");
-            }
-        }
-
-        addView(child);
-        mActiveViews.put(position, child);
-
-        return child;
-    }
-
-    private void setupView(View child, int position) {
-
-        if (child == null) {
-            return;
-        }
-
-        LayoutParams lp = child.getLayoutParams();
-        if (lp == null) {
-            lp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-        }
-
-        // Measure the view
-        final int childWidthSpec = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY), 0, lp.width);
-        final int childHeightSpec = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY), 0, lp.height);
-        child.measure(childWidthSpec, childHeightSpec);
-
-        // Layout the view
-        final int childLeft = mOffsetX - getOffsetForPage(position);
-        child.layout(childLeft, 0, childLeft + child.getMeasuredWidth(), child.getMeasuredHeight());
-    }
-
-    private void performStartTracking(int startMotionX) {
-        if (mOnPageChangeListener != null) {
-            mOnPageChangeListener.onStartTracking(this);
-        }
-        mStartMotionX = startMotionX;
-        mStartOffsetX = mOffsetX;
-    }
-
-    private void performPageChange(int newPage) {
-        if (mCurrentPage != newPage) {
-            if (mOnPageChangeListener != null) {
-                mOnPageChangeListener.onPageChanged(this, mCurrentPage, newPage);
-            }
-            mCurrentPage = newPage;
-        }
-    }
-
-    static class SavedState extends BaseSavedState {
-
-        int currentPage;
-
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        private SavedState(Parcel in) {
-            super(in);
-            currentPage = in.readInt();
-        }
-
-        @Override
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeInt(currentPage);
-        }
-
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-    }
-
     @Override
-    public Parcelable onSaveInstanceState() {
-        Parcelable superState = super.onSaveInstanceState();
-        SavedState ss = new SavedState(superState);
-
-        ss.currentPage = mCurrentPage;
-
-        return ss;
-    }
-
-    @Override
-    public void onRestoreInstanceState(Parcelable state) {
-        SavedState ss = (SavedState) state;
-        super.onRestoreInstanceState(ss.getSuperState());
-
-        mCurrentPage = ss.currentPage;
-    }
-
-    private DataSetObserver mDataSetObserver = new DataSetObserver() {
-
-        public void onInvalidated() {
-            // Not handled
-        };
-
-        public void onChanged() {
-            // TODO Cyril : When data has changed we should normally
-            // look for the position that as the same id is case
-            // Adapter.hasStableIds() returns true.
-            final int currentPage = mCurrentPage;
-            setAdapter(mAdapter);
-            mCurrentPage = currentPage;
-            setOffsetX(getOffsetForPage(currentPage));
-        };
-
-    };
-
-    private Runnable mScrollerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            final Scroller scroller = mScroller;
-            if (!scroller.isFinished()) {
-                scroller.computeScrollOffset();
-                setOffsetX(scroller.getCurrX());
-                mHandler.postDelayed(this, FRAME_RATE);
-            } else {
-                performPageChange(mTargetPage);
-            }
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d("ScrollLayout", "onInterceptTouchEvent action=" + ev.getAction());
+        if (Configure.isDragging)
+            return false;//拦截分发给子控件
+        final int action = ev.getAction();
+        if ((action == MotionEvent.ACTION_MOVE) && (mTouchState != TOUCH_STATE_REST)) {
+            return true;
         }
-    };
 
+        final float x = ev.getX();
+        //	final float y = ev.getY();
+
+        switch (action) {
+        case MotionEvent.ACTION_MOVE:
+            final int xDiff = (int) Math.abs(mLastMotionX - x);
+            if (xDiff > mTouchSlop) {
+                mTouchState = TOUCH_STATE_SCROLLING;
+            }
+            break;
+        case MotionEvent.ACTION_DOWN:
+            mLastMotionX = x;
+            //	mLastMotionY = y;
+            mTouchState = mScroller.isFinished() ? TOUCH_STATE_REST : TOUCH_STATE_SCROLLING;
+            break;
+
+        case MotionEvent.ACTION_CANCEL:
+        case MotionEvent.ACTION_UP:
+            mTouchState = TOUCH_STATE_REST;
+            break;
+        }
+        return mTouchState != TOUCH_STATE_REST;
+    }
+
+    public void setPageListener(PageListener pageListener) {
+        this.pageListener = pageListener;
+    }
+
+
+    public interface PageListener {
+        void page(int page);
+    }
 }

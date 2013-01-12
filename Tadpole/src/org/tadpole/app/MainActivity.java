@@ -5,36 +5,32 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.tadpole.adapter.BoardPagedAdapter;
+import org.tadpole.adapter.DragGridAdapter;
 import org.tadpole.aidl.IPluginCallback;
 import org.tadpole.aidl.PluginServiceConnect;
+import org.tadpole.common.TLog;
 import org.tadpole.widget.Configure;
 import org.tadpole.widget.DragGridView;
 import org.tadpole.widget.PagedView;
 import org.tadpole.zenip.BoardPageData;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.SimpleAdapter;
 
 public class MainActivity extends BaseActvity {
     private static final String TAG = "MainActivity";
@@ -171,43 +167,64 @@ public class MainActivity extends BaseActvity {
     private void initPage() {
         ArrayList<BoardPageData> dataList = loadBoardPageData();
         Iterator<BoardPageData> dataIter = dataList.iterator();
+        Configure.countPages = dataList.size();
         while (dataIter.hasNext()) {
             BoardPageData data = dataIter.next();
-            mPageViews.add(buildPageView(data));
+            View v = buildPageView(data);
+            mPageViews.add(v);
+            mBoardPagedView.addView(v);
         }
-        mBoardPagedView.setAdapter(new BoardPagedAdapter(mPageViews));
     }
 
     private View buildPageView(BoardPageData data) {
-        LinearLayout.LayoutParams viewParams = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-
+        LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         View rl = LayoutInflater.from(this).inflate(R.layout.board_page, null);
+        rl.setLayoutParams(LP);
 
         // disable gridview content scroll
-        DragGridView dragGridView = (DragGridView) rl.findViewById(R.id.grid_view_board_page);
+        final DragGridView dragGridView = (DragGridView) rl.findViewById(R.id.grid_view_board_page);
+
         dragGridView.setPageListener(new DragGridView.G_PageListener() {
             @Override
             public void page(int cases, int page) {
+                TLog.debug(TAG, "G_PageListener cases = %d, page = %d", cases, page);
+                switch (cases) {
+                case DragGridView.EVENT_START_DRAG:
+                    break;
+                case DragGridView.EVENT_END_DRAG:
+                    break;
+                case DragGridView.EVENT_SLIDING_PAGE:
+                    MainActivity.this.mBoardPagedView.snapToScreen(page);
+                    dragGridView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Configure.isChangingPage = false;
+                        }
+                    }, 600);
+                    break;
+                default:
+                    break;
+                }
             }
         });
-        
+
         //生成动态数组，并且转入数据  
         ArrayList<HashMap<String, Object>> lstImageItem = new ArrayList<HashMap<String, Object>>();
         for (int i = 0; i < 8; i++) {
             HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("ItemImage", R.drawable.ic_action_search);//添加图像资源的ID  
             map.put("ItemText", "NO." + String.valueOf(i));//按序号做ItemText  
             lstImageItem.add(map);
         }
         //生成适配器的ImageItem <====> 动态数组的元素，两者一一对应  
-        SimpleAdapter saImageItems = new SimpleAdapter(this, //没什么解释  
+        DragGridAdapter dgaAdapter = new DragGridAdapter(this, //没什么解释  
                 lstImageItem,//数据来源   
-                R.layout.board_page_griditem,//night_item的XML实现  
+                R.layout.board_page_griditem,//night_iatem的XML实现  
                 //动态数组与ImageItem对应的子项          
-                new String[] { "ItemImage", "ItemText" },
+                new String[] { "ItemText" },
                 //ImageItem的XML文件里面的一个ImageView,两个TextView ID  
-                new int[] { R.id.ItemImage, R.id.gridItemText });
-        dragGridView.setAdapter(saImageItems);
+                new int[] { R.id.gridItemText });
+
+        dragGridView.setDragGridAdapter(dgaAdapter);
         dragGridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -223,22 +240,6 @@ public class MainActivity extends BaseActvity {
                 }
             }
         });
-
-        dragGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> itemView, View arg1, int arg2, long arg3) {
-                itemView.setDrawingCacheEnabled(true);
-                
-                int location[] = new int[2];
-                
-                Bitmap bitmap = itemView.getDrawingCache();
-                itemView.setDrawingCacheEnabled(false);
-                ImageView itemViewCopy = new ImageView(MainActivity.this);
-                return false;
-            }
-        });
-
-        rl.setLayoutParams(viewParams);
         return rl;
     }
 }

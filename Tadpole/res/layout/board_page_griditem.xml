@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="112dp"
-    android:layout_height="112dp"
-    android:background="@drawable/blue" >
-    <ImageView
-        android:id="@+id/gridItemImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" >
-    </ImageView>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
 
     <TextView
-        android:layout_below="@+id/ItemImage"
-        android:layout_centerInParent="true"
         android:id="@+id/gridItemText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textSize="17sp"
+        android:layout_width="405dp"
+        android:layout_height="105dp"
+        android:layout_margin="10dip"
+        android:background="@drawable/blue"
         android:gravity="center"
-        android:text="TextView01" >
+        android:textColor="#ffffff"
+        android:textSize="18sp" >
     </TextView>
+
 </RelativeLayout>
