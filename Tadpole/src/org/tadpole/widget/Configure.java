@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.DisplayMetrics;
 
 public class Configure {
+    
     public static boolean isDragging = false;
     public static boolean isChangingPage = false;
     public static boolean isDelDark = false;

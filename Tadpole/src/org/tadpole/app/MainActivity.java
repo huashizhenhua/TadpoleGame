@@ -2,33 +2,32 @@ package org.tadpole.app;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import org.tadpole.adapter.BoardPagedAdapter;
 import org.tadpole.adapter.DragGridAdapter;
 import org.tadpole.aidl.IPluginCallback;
 import org.tadpole.aidl.PluginServiceConnect;
 import org.tadpole.common.TLog;
+import org.tadpole.util.ListUtil;
 import org.tadpole.widget.Configure;
 import org.tadpole.widget.DragGridView;
+import org.tadpole.widget.DragGridView.G_ItemChangeListener;
 import org.tadpole.widget.PagedView;
-import org.tadpole.zenip.BoardPageData;
+import org.tadpole.zenip.BoardPageItem;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -38,7 +37,6 @@ public class MainActivity extends BaseActvity {
     private static final String MUSIC_SERVICE_NAME = "org.tadpolemusic.pluginservice";
 
     private PagedView mBoardPagedView;
-    private ArrayList<View> mPageViews;
 
     private ServiceConnection mServiceConnection;
     private PluginServiceConnect mPluginServiceConnect;
@@ -57,7 +55,6 @@ public class MainActivity extends BaseActvity {
 
         Configure.init(this);
 
-        mPageViews = new ArrayList<View>();
         mContext = this;
         initPage();
         initServices();
@@ -152,37 +149,51 @@ public class MainActivity extends BaseActvity {
     }
 
     //----------------ui logic-----------------
+    private ArrayList<ArrayList> mPageDataList = new ArrayList<ArrayList>();
+    private ArrayList<DragGridView> mPageViewsList = new ArrayList<DragGridView>();
 
-    private ArrayList<BoardPageData> loadBoardPageData() {
-        String[] titles = { "weico", "tecent_weibo", "qq", "dear qin" };
-        ArrayList<BoardPageData> dataList = new ArrayList<BoardPageData>();
+    public static final int PAGE_SIZE = 8;
+
+    public ArrayList<BoardPageItem> loadBoardDataItems() {
+        String[] titles = { "weico", "tecent_weibo", "qq", "dear qin", "tecent_weibo", "qq", "dear qin", "tecent_weibo", "qq", "dear qin", "tecent_weibo", "qq", "dear qin", "tecent_weibo", "qq",
+                "dear qin", "tecent_weibo", "qq", "dear qin" };
+        TLog.debug(TAG, "loadBoardDataItems itemCount=%d", titles.length);
+        ArrayList<BoardPageItem> itemList = new ArrayList<BoardPageItem>();
         for (int i = 0, len = titles.length; i < len; i++) {
-            BoardPageData data = new BoardPageData();
-            data.title = titles[i];
-            dataList.add(data);
+            BoardPageItem item = new BoardPageItem();
+            item.title = titles[i];
+            itemList.add(item);
         }
-        return dataList;
+        return itemList;
     }
 
+
     private void initPage() {
-        ArrayList<BoardPageData> dataList = loadBoardPageData();
-        Iterator<BoardPageData> dataIter = dataList.iterator();
-        Configure.countPages = dataList.size();
-        while (dataIter.hasNext()) {
-            BoardPageData data = dataIter.next();
-            View v = buildPageView(data);
-            mPageViews.add(v);
+        ArrayList<BoardPageItem> itemList = loadBoardDataItems();
+        int itemCount = itemList.size();
+        Configure.countPages = itemCount % PAGE_SIZE;
+        int lastPageItemCount = itemCount / PAGE_SIZE;
+        for (int pageIndex = 0; pageIndex < Configure.countPages; pageIndex++) {
+            View v = null;
+            if (pageIndex != Configure.countPages - 1) {
+                v = buildPageView(itemList, pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE);
+            } else {
+                v = buildPageView(itemList, pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + lastPageItemCount);
+            }
             mBoardPagedView.addView(v);
         }
     }
 
-    private View buildPageView(BoardPageData data) {
+    private View buildPageView(ArrayList<BoardPageItem> itemList, int startIndex, int endIndex) {
+        TLog.debug(TAG, "buildPageView startIndex=%d endIndex=%d", startIndex, endIndex);
         LinearLayout.LayoutParams LP = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         View rl = LayoutInflater.from(this).inflate(R.layout.board_page, null);
         rl.setLayoutParams(LP);
 
         // disable gridview content scroll
         final DragGridView dragGridView = (DragGridView) rl.findViewById(R.id.grid_view_board_page);
+        mPageViewsList.add(dragGridView);
+
 
         dragGridView.setPageListener(new DragGridView.G_PageListener() {
             @Override
@@ -209,15 +220,18 @@ public class MainActivity extends BaseActvity {
         });
 
         //生成动态数组，并且转入数据  
-        ArrayList<HashMap<String, Object>> lstImageItem = new ArrayList<HashMap<String, Object>>();
-        for (int i = 0; i < 8; i++) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("ItemText", "NO." + String.valueOf(i));//按序号做ItemText  
-            lstImageItem.add(map);
+        ArrayList<HashMap<String, Object>> pageItems = new ArrayList<HashMap<String, Object>>();
+        for (int i = startIndex; i < endIndex; i++) {
+            HashMap<String, Object> map = null;
+            map = new HashMap<String, Object>();
+            map.put("ItemText", itemList.get(i).title);//按序号做ItemText 
+            pageItems.add(map);
         }
+        mPageDataList.add(pageItems);
+
         //生成适配器的ImageItem <====> 动态数组的元素，两者一一对应  
         DragGridAdapter dgaAdapter = new DragGridAdapter(this, //没什么解释  
-                lstImageItem,//数据来源   
+                pageItems,//数据来源   
                 R.layout.board_page_griditem,//night_iatem的XML实现  
                 //动态数组与ImageItem对应的子项          
                 new String[] { "ItemText" },
@@ -230,7 +244,6 @@ public class MainActivity extends BaseActvity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 Log.i(TAG, "onItemClick");
                 if (mPluginServiceConnect != null) {
-
                     try {
                         mPluginServiceConnect.registerCallback(clientCallback);
                         mPluginServiceConnect.test(222);
@@ -240,6 +253,29 @@ public class MainActivity extends BaseActvity {
                 }
             }
         });
+        dragGridView.setOnItemChangeListener(new G_ItemChangeListener() {
+            @Override
+            public void change(int from, int to, int count) {
+                ArrayList<Object> fromList = (ArrayList<Object>) mPageDataList.get(Configure.currentPage - count);
+                ArrayList<Object> toList = (ArrayList<Object>) mPageDataList.get(Configure.currentPage);
+
+                ListUtil.swapListItem(fromList, toList, from, to);
+
+                mPageViewsList.get(Configure.currentPage).notifyDataSetChanged();
+                mPageViewsList.get(Configure.currentPage - count).notifyDataSetChanged();
+            }
+        });
         return rl;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("刷新");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 }

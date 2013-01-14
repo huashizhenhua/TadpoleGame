@@ -1,5 +1,10 @@
 package org.tadpole.adapter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +29,8 @@ public class DragGridAdapter extends SimpleAdapter implements IDragGridAdapter {
     private String[] mFrom;
     private int[] mTo;
     private LayoutInflater mInflater;
+
+
 
     public DragGridAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
         super(context, data, resource, from, to);
@@ -52,7 +59,27 @@ public class DragGridAdapter extends SimpleAdapter implements IDragGridAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return createViewFromResource(position, convertView, parent, mResource);
+        View view = createViewFromResource(position, convertView, parent, mResource);
+        view.findViewWithTag("dragGridItem" + position);
+        return view;
+    }
+
+    public void sortByIntArray(final int arr[]) {
+        for (int i = 0, len = this.mData.size(); i < len; i++) {
+            this.mData.get(i).put("bbbbb", arr[i]);
+        }
+
+        Collections.sort(this.mData, new Comparator<Map>() {
+            @Override
+            public int compare(Map lhs, Map rhs) {
+                return ((Integer) lhs.get("bbbbb")) > ((Integer) rhs.get("bbbbb")) ? 1 : -1;
+            }
+        });
+
+        for (int i = 0, len = this.mData.size(); i < len; i++) {
+            System.out.print(this.mData.get(i));
+        }
+        System.out.println();
     }
 
     private View createViewFromResource(int position, View convertView, ViewGroup parent, int resource) {

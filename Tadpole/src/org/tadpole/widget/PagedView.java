@@ -1,6 +1,5 @@
 package org.tadpole.widget;
 
-import org.tadpole.adapter.BoardPagedAdapter;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -110,15 +109,10 @@ public class PagedView extends ViewGroup {
             mCurScreen = whichScreen;
             if (mCurScreen > Configure.currentPage) {
                 Configure.currentPage = whichScreen;
-                pageListener.page(Configure.currentPage);
+                PagedView.this.onPage(Configure.currentPage);
             } else if (mCurScreen < Configure.currentPage) {
                 Configure.currentPage = whichScreen;
-                pageListener.page(Configure.currentPage);
-            }
-            
-            final int count = getChildCount();
-            for (int i = 0; i < count; i++) {
-                getChildAt(i).offsetLeftAndRight(100);
+                PagedView.this.onPage(Configure.currentPage);
             }
             invalidate(); // Redraw the layout
         }
@@ -208,8 +202,11 @@ public class PagedView extends ViewGroup {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.d("ScrollLayout", "onInterceptTouchEvent action=" + ev.getAction());
+        
         if (Configure.isDragging)
             return false;//拦截分发给子控件
+        
+        
         final int action = ev.getAction();
         if ((action == MotionEvent.ACTION_MOVE) && (mTouchState != TOUCH_STATE_REST)) {
             return true;
@@ -237,6 +234,10 @@ public class PagedView extends ViewGroup {
             break;
         }
         return mTouchState != TOUCH_STATE_REST;
+    }
+
+    public void onPage(int page) {
+
     }
 
     public void setPageListener(PageListener pageListener) {

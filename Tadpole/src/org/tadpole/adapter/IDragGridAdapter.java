@@ -28,4 +28,6 @@ public interface IDragGridAdapter extends ListAdapter {
      * instruction。
      */
     public void notifyDataSetChanged();
+
+    public void sortByIntArray(int[] viewTag);
 }
