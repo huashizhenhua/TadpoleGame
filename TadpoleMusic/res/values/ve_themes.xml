@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--  -->
+    <style name="Theme.Styled" parent="Theme.Sherlock.Light">
+        <item name="actionBarStyle">@style/VE.ActionBar</item>
+        <item name="android:actionBarStyle">@style/VE.ActionBar</item>
+        <item name="android:listViewStyle">@style/VE.Holo.ListView</item>
+        <item name="actionBarTabStyle">@style/VE.ActionBar.TabView</item>
+        <item name="android:actionBarTabStyle">@style/VE.ActionBar.TabView</item>
+        <item name="actionBarTabBarStyle">@style/VE.ActionBar.TabBar</item>
+        <item name="android:actionBarTabBarStyle">@style/VE.ActionBar.TabBar</item>
+        <item name="actionBarTabTextStyle">@style/VE.ActionBar.TabText</item>
+        <item name="android:actionBarTabTextStyle">@style/VE.ActionBar.TabText</item>
+        <item name="actionBarTabTextStyle">@style/VE.ActionBar.TabText</item>
+        <item name="android:actionBarTabTextStyle">@style/VE.ActionBar.TabText</item>
+        <item name="homeAsUpIndicator">@drawable/abs__ic_ab_back_holo_dark</item>
+        <item name="android:homeAsUpIndicator">@drawable/abs__ic_ab_back_holo_dark</item>
+        <item name="android:progressBarStyle">@style/VE.Widget.ProgressBar</item>
+        <item name="android:progressBarStyleHorizontal">@style/VE.Widget.ProgressBar.Horizontal</item>
+    </style>
+
+    <style name="VE.Holo.ListView" parent="android:Widget.Holo.ListView">
+        <item name="backgroundSplit">@drawable/bg_hotword_indexer_spliter</item>
+        <item name="android:backgroundSplit">@drawable/bg_hotword_indexer_spliter</item>
+    </style>
+
+    <style name="VE.ActionBar" parent="Widget.Sherlock.ActionBar">
+        <item name="background">@drawable/bg_striped</item>
+        <item name="android:background">@drawable/bg_striped</item>
+        <item name="titleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
+        <item name="android:titleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
+        <item name="subtitleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
+        <item name="android:subtitleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
+    </style>
+
+    <style name="VE.ActionBar.TabView" parent="Widget.Sherlock.ActionBar.TabView">
+        <!--
+        <item name="android:paddingLeft">16dip</item>
+        <item name="android:paddingRight">16dip</item>
+        <item name="background">@drawable/ve__tab_indicator_ab_holo</item>
+        <item name="android:background">@drawable/ve__tab_indicator_ab_holo</item>
+        -->
+    </style>
+
+    <style name="VE.ActionBar.TabBar" parent="Widget.Sherlock.ActionBar.TabBar"></style>
+
+    <style name="VE.ActionBar.TabText" parent="Widget.Sherlock.ActionBar.TabText"></style>
+
+    <style name="VE.Widget.ProgressBar" parent="@android:style/Widget.ProgressBar">
+        <!-- <item name="android:progressDrawable">@drawable/ve_progress_horizonal</item> -->
+    </style>
+
+    <style name="VE.Widget.ProgressBar.Horizontal" parent="@android:style/Widget.ProgressBar.Horizontal"></style>
+
+    <style name="VE.ActionBar.TabText" parent="Widget.Sherlock.ActionBar.TabText">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="VE.TextAppearance.ActionBar.Title" parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/abs__action_bar_title_text_size</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+</resources>

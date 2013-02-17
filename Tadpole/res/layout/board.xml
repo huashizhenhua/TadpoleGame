@@ -6,6 +6,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
+
         <ImageView
             android:id="@+id/move_background"
             android:layout_width="1028dp"
@@ -19,5 +20,60 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#00000000" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dip" >
+
+        <TextView
+            android:id="@+id/tv_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/pageid"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="#ffffff" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dip"
+                android:background="@drawable/icon_download" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dip"
+                android:background="@drawable/icon_fav" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dip"
+                android:background="@drawable/icon_home" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dip"
+                android:background="@drawable/icon_t_chuangyi" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dip"
+                android:background="@drawable/icon_t_meinv" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

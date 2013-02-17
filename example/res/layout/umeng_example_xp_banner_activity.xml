@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/darker_gray" >
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!-- 入口布局 -->
+    <RelativeLayout
+        android:id="@+id/rlayout1"
+        android:layout_width="45dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" >
+
+        <!-- 入口点击图标 -->
+        <ImageView
+            android:id="@+id/imageview"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY" />
+
+        <!-- 新广告提示布局 -->
+       <RelativeLayout
+            android:id="@+id/newtip_area"
+            android:layout_width="28dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:gravity="right" >
+
+            <ImageView
+                android:id="@+id/newtip_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentRight="true"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/newtip_tv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:paddingBottom="4dp"
+                android:textColor="#ffffff"
+                android:textSize="8sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlayout2"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" >
+
+        <ImageView
+            android:id="@+id/imageview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true" />
+
+        <TextView
+            android:id="@+id/newtip"
+            android:layout_width="20dp"
+            android:layout_height="12dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageview"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
+
+    <ImageView
+        android:id="@+id/imageview2"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+
+</RelativeLayout>

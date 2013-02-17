@@ -1,0 +1,82 @@
+#
+# An unexpected error has been detected by Java Runtime Environment:
+#
+#  Internal Error (classFileParser.cpp:2923), pid=4536, tid=6120
+#  Error: ShouldNotReachHere()
+#
+# Java VM: Java HotSpot(TM) Client VM (11.0-b15 mixed mode windows-x86)
+# If you would like to submit a bug report, please visit:
+#   http://java.sun.com/webapps/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x002d9000):  JavaThread "Unknown thread" [_thread_in_vm, id=6120, stack(0x00270000,0x002c0000)]
+
+Stack: [0x00270000,0x002c0000]
+[error occurred during error reporting (printing stack bounds), id 0xc0000005]
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+
+Other Threads:
+
+=>0x002d9000 (exited) JavaThread "Unknown thread" [_thread_in_vm, id=6120, stack(0x00270000,0x002c0000)]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Dynamic libraries:
+0x00400000 - 0x00424000 	C:\Program Files\Java\jdk1.6.0_10\jre\bin\javaw.exe
+0x77c20000 - 0x77d5c000 	G:\Windows\SYSTEM32\ntdll.dll
+0x77b40000 - 0x77c14000 	G:\Windows\system32\kernel32.dll
+0x76020000 - 0x7606a000 	G:\Windows\system32\KERNELBASE.dll
+0x77620000 - 0x776c0000 	G:\Windows\system32\ADVAPI32.dll
+0x76300000 - 0x763ac000 	G:\Windows\system32\msvcrt.dll
+0x77ac0000 - 0x77ad9000 	G:\Windows\SYSTEM32\sechost.dll
+0x77570000 - 0x77611000 	G:\Windows\system32\RPCRT4.dll
+0x778b0000 - 0x77979000 	G:\Windows\system32\USER32.dll
+0x772d0000 - 0x7731e000 	G:\Windows\system32\GDI32.dll
+0x77d60000 - 0x77d6a000 	G:\Windows\system32\LPK.dll
+0x774d0000 - 0x7756d000 	G:\Windows\system32\USP10.dll
+0x773b0000 - 0x773cf000 	G:\Windows\system32\IMM32.DLL
+0x77060000 - 0x7712c000 	G:\Windows\system32\MSCTF.dll
+0x7c340000 - 0x7c396000 	C:\Program Files\Java\jdk1.6.0_10\jre\bin\msvcr71.dll
+0x6d8b0000 - 0x6db06000 	C:\Program Files\Java\jdk1.6.0_10\jre\bin\client\jvm.dll
+0x741c0000 - 0x741f2000 	G:\Windows\system32\WINMM.dll
+0x75ca0000 - 0x75ceb000 	G:\Windows\system32\apphelp.dll
+0x6d330000 - 0x6d338000 	C:\Program Files\Java\jdk1.6.0_10\jre\bin\hpi.dll
+0x77d80000 - 0x77d85000 	G:\Windows\system32\PSAPI.DLL
+0x6d860000 - 0x6d86c000 	C:\Program Files\Java\jdk1.6.0_10\jre\bin\verify.dll
+0x6d3d0000 - 0x6d3ef000 	C:\Program Files\Java\jdk1.6.0_10\jre\bin\java.dll
+0x6d8a0000 - 0x6d8af000 	C:\Program Files\Java\jdk1.6.0_10\jre\bin\zip.dll
+
+VM Arguments:
+jvm_args: -Dfile.encoding=UTF-8 -Xbootclasspath:E:\Android\eclipse-SDK-3.7.2-win32\android-sdk-windows\platforms\android-14\android.jar 
+java_command: org.tadpole.widget.BoardDataConfig
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+PATH=G:/Program Files/Java/jdk1.6.0_10111/bin/../jre/bin/client;G:/Program Files/Java/jdk1.6.0_10111/bin/../jre/bin;G:/Program Files/Java/jdk1.6.0_10111/bin/../jre/lib/i386;G:\Program Files\Java\jdk1.6.0_10111\bin;G:\Program Files\AMD APP\bin\x86;F:\environment\hg\;G:\Program Files\Intel\iCLS Client\;G:\Windows\system32;G:\Windows;G:\Windows\System32\Wbem;G:\Windows\System32\WindowsPowerShell\v1.0\;G:\Program Files\Intel\Intel(R) Management Engine Components\DAL;G:\Program Files\Intel\Intel(R) Management Engine Components\IPT;G:\Program Files\ATI Technologies\ATI.ACE\Core-Static;F:\environment\hg;E:\VersionMgrTools\;E:\Android\eclipse-SDK-3.7.2-win32\android-sdk-windows\platform-tools\;E:\Android\eclipse-jee-juno-win32\eclipse;
+USERNAME=Administrator
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=x86 Family 6 Model 42 Stepping 7, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows NT 6.1 Build 7600 
+
+CPU:total 4 (8 cores per cpu, 2 threads per core) family 6 model 10 stepping 7, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, ht
+
+Memory: 4k page, physical 2097151k(948668k free), swap 4194303k(3051268k free)
+
+vm_info: Java HotSpot(TM) Client VM (11.0-b15) for windows-x86 JRE (1.6.0_10-rc2-b32), built on Sep 12 2008 00:52:11 by "java_re" with MS VC++ 7.1
+
+time: Fri Jan 18 22:17:08 2013
+elapsed time: 0 seconds
+

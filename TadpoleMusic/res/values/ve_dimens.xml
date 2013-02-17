@@ -1,0 +1,10 @@
+<resources>
+
+    <!-- MainActivity -->
+    <dimen name="section_title_text_size">22dp</dimen>
+    
+    <!-- About Us (AboutActivy) -->
+    <dimen name="about_us_item_height">60dp</dimen>
+	<dimen name="about_us_text_size">20dp</dimen>
+
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootId"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#eff3f7"
+    android:orientation="vertical" >
+    <ImageView
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="-10dp"
+        android:paddingRight="-10dp"
+        android:src="@drawable/umeng_example_xp_banner" >
+    </ImageView>
+
+    <RelativeLayout
+        android:id="@+id/ad"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/footer"
+        android:layout_below="@+id/header"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp" >
+
+        <RelativeLayout
+            android:id="@+id/adccc"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#00000000"
+            android:cacheColorHint="#00000000"
+            android:divider="#dedfde"
+            android:dividerHeight="1px"
+            android:listSelector="#00000000" >
+        </ListView>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/umeng_logo_big" >
+        </ImageView>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/umeng_logo_big_subtitle" >
+        </ImageView>
+    </LinearLayout>
+
+</RelativeLayout>

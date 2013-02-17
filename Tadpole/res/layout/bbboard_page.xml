@@ -1,0 +1,18 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <org.tadpole.widget.DragGridView
+        android:id="@+id/grid_view_board_page"
+        android:layout_width="300dp"
+        android:layout_height="500dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:listSelector="@anim/grid_light"
+        android:numColumns="2"
+        android:verticalSpacing="0dp" />
+
+</RelativeLayout>

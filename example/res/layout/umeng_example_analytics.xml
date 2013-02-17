@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	 android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
+	<Button android:id="@+id/umeng_example_analytics_online_config"
+		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:text="OnlineConfig"
+		android:onClick="onButtonClick"></Button>
+
+	<Button android:id="@+id/umeng_example_analytics_event"
+		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:text="Event"
+		android:onClick="onButtonClick"></Button>
+	<Button android:id="@+id/umeng_example_analytics_ekv"
+			android:layout_width="fill_parent" android:layout_height="50dp"
+			android:text="K-V Event"
+			android:onClick="onButtonClick"></Button>
+
+	<Button android:id="@+id/umeng_example_analytics_duration"
+		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:text="Duration"
+		android:onClick="onButtonClick"></Button>
+	<Button android:id="@+id/umeng_example_analytics_event_begin"
+		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:text="Event Begin"
+		android:onClick="onButtonClick"></Button>
+    <Button android:id="@+id/umeng_example_analytics_event_end"
+		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:text="Event End"
+		android:onClick="onButtonClick"></Button>
+     <Button android:id="@+id/umeng_example_analytics_make_crash"
+		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:text="Make me crash!!"
+		android:onClick="onButtonClick"></Button>
+      <Button android:id="@+id/umeng_example_analytics_flush"
+		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:text="send cache message ,right now !"
+		android:onClick="onButtonClick"></Button>
+     
+     <Button android:id="@+id/umeng_example_analytics_js_analytic"
+		android:layout_width="fill_parent" android:layout_height="50dp"
+		android:text="Js call java Example in Webivew"
+		android:onClick="onButtonClick"></Button>
+     
+     
+</LinearLayout>
+
+</ScrollView>
+

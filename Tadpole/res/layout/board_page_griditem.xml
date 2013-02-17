@@ -3,15 +3,44 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/gridItemText"
-        android:layout_width="405dp"
-        android:layout_height="105dp"
-        android:layout_margin="10dip"
+    <RelativeLayout
+        android:id="@+id/pageItemBg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="0dip"
+        android:layout_marginLeft="0dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="10dip"
         android:background="@drawable/blue"
-        android:gravity="center"
-        android:textColor="#ffffff"
-        android:textSize="18sp" >
-    </TextView>
+        android:gravity="center" >
+
+        <TextView
+            android:id="@+id/pageItemText"
+            android:layout_width="115dp"
+            android:layout_height="110dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="18sp" >
+        </TextView>
+
+        <LinearLayout
+            android:id="@+id/pageItemDeleteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true" >
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginBottom="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/rootblock_btn_remove" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

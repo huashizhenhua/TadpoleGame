@@ -1,35 +1,34 @@
 package org.tadpole.widget;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.tadpole.adapter.IDragGridAdapter;
+import org.tadpole.app.BoardPageItem;
 import org.tadpole.app.R;
 import org.tadpole.common.TLog;
+import org.w3c.dom.ls.LSException;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 /**
  * 
@@ -45,46 +44,32 @@ import android.widget.ListAdapter;
 public class DragGridView extends GridView {
     public static final int EVENT_START_DRAG = -1;
     public static final int EVENT_END_DRAG = -2;
-
     public static final int EVENT_SLIDING_PAGE = 0;
-    public static final int EVENT_DEL_UP = 1;
-    public static final int EVENT_DEL_COLOR_DEEP = 2;  // 删除按钮颜色变深
-    public static final int EVENT_DEL_COLOR_LIGHT = 3;
-    public static final int EVENT_DEL_CANCEL = 4;
-    public static final int EVENT_DEL_DONE = 5;
     public static final int PAGE_UNKNOWN = 5;
 
     private static final String TAG = "DragGridView";
-
-    private int dragPosition;
-    private int dropPosition;
-
-    ViewGroup fromView;
+    private int dragPosition = AdapterView.INVALID_POSITION;
+    private int dropPosition = AdapterView.INVALID_POSITION;
+    private boolean mIsDragViewFromMe;
+    private ArrayList<Runnable> runnableList = new ArrayList<Runnable>();
     Animation AtoB, BtoA, DelDone;
     int stopCount = 0;
     private G_PageListener pageListener;
-    int movePageNum;
     private G_ItemChangeListener itemListener;
-
-    private int mLastX, xtox;
-    boolean isCountXY = false;
-    private int mLastY, ytoy;
-
-    private WindowManager windowManager;
-    private WindowManager.LayoutParams windowParams;
-
-    //  private int itemHeight, itemWidth;
-    private ImageView iv_drag;
-
     private IDragGridAdapter mDragGridAdapter;
+    private boolean isSwapAniRunning = false;
 
-    public void setCurrentPage(int currentPage) {
-        Configure.currentPage = currentPage;
-    }
+    private int moveAnimationCount = 0;
 
+    private int mNumColumns;
+    private int lastHitPostion = AdapterView.INVALID_POSITION;
+    private int viewTag[] = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+    private OnItemClickListener mItemClickListener;
 
     public DragGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
     }
 
     public DragGridView(Context context) {
@@ -102,162 +87,152 @@ public class DragGridView extends GridView {
         super.setAdapter(adapter);
     }
 
-    public boolean setOnItemLongClickListener(final MotionEvent ev) {
+
+    protected void performLongClick(int x, int y) {
+        int postion = pointToPosition((int) x, (int) y);
+        if (postion != AdapterView.INVALID_POSITION) {
+            TLog.debug(TAG, "onItemLongClick", "");
+            PagedView pagedView = getParentPagedView();
+            if (pagedView != null) {
+                mIsDragViewFromMe = true;
+                Configure.draggingPostion = postion;
+                Configure.draggingPage = Configure.currentPage;
+
+                dragPosition = dropPosition = postion;
+                if (dragPosition == AdapterView.INVALID_POSITION) {
+                }
+                pagedView.startDrag(x, y, postion);
+
+                IDragGridAdapter adapter = getDragGridAdapterByPage(Configure.currentPage);
+                Configure.draggingItem = (BoardPageItem) adapter.getItem(dragPosition);
+                Configure.draggingItem.hide = true;
+            }
+        }
+    }
+
+    public IDragGridAdapter getDragGridAdapter() {
+        return mDragGridAdapter;
+    }
+
+    public DragGridView getDragGridView(int page) {
+        View parentView = (View) DragGridView.this.getParent();
+        System.out.println("DragGridView.this.getParent() = " + DragGridView.this.getParent());
+        if (parentView != null) {
+            PagedView pagedView = (PagedView) getParentPagedView();
+            View pageV = pagedView.getChildAt(page);
+            DragGridView gridview = (DragGridView) pageV.findViewById(org.tadpole.app.R.id.grid_view_board_page);
+            return gridview;
+        }
+        return null;
+    }
+
+    public IDragGridAdapter getDragGridAdapterByPage(int page) {
+        DragGridView gridview = getDragGridView(page);
+        return gridview.getDragGridAdapter();
+    }
+
+    public PagedView getParentPagedView() {
+        PagedView pagedView = null;
+        View parentView = (View) DragGridView.this.getParent();
+        System.out.println("DragGridView.this.getParent() = " + DragGridView.this.getParent());
+        if (parentView != null) {
+            pagedView = (PagedView) parentView.getParent().getParent();
+        }
+        return pagedView;
+    }
+
+
+    /**
+     * @description if gridview is editting, disable on item click listener
+     */
+    @Override
+    public void setOnItemClickListener(android.widget.AdapterView.OnItemClickListener listener) {
+        mItemClickListener = listener;
+        super.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (Configure.isEditMode == false) {
+                    mItemClickListener.onItemClick(parent, view, position, id);
+                }
+            }
+        });
+    }
+
+    /**
+     * tranform @PagedView's motionEvent to @DragGridView motionEvent
+     * and dispatch it in order to making click event available
+     * 
+     * @param event
+     * @return
+     */
+    public boolean onParentTouchEvent(final MotionEvent event) {
+        MotionEvent gridEvent = MotionEvent.obtain(event);
+        TLog.debug(TAG, "onParentTouchEvent gridEvent = %s", gridEvent.toString());
+        gridEvent.setLocation(event.getX() - getDragGridOffsetLeft(), event.getY() - getYDragGridOffsetTop());
+        setupLongClickListener(gridEvent);
+        this.dispatchTouchEvent(gridEvent);
+        return true;
+    }
+
+    /**
+     * 自定义长按事件
+     * 
+     * @param ev
+     * @return
+     */
+    public boolean onParentInterceptTouchEvent(final MotionEvent event) {
+        Log.d(TAG, "onParentInterceptTouchEvent ev.getAction() = " + event.getAction() + ", isDragging = " + Configure.isDragging);
+        return true;
+    }
+
+    public boolean setupLongClickListener(final MotionEvent event) {
         this.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                Configure.isDragging = true;
-                DragGridView.this.onPage(EVENT_START_DRAG, PAGE_UNKNOWN);
-                int x = (int) ev.getX();
-                int y = (int) ev.getY();
-                mLastX = x;
-                mLastY = y;
-                dragPosition = dropPosition = arg2;
-
-                if (dragPosition == AdapterView.INVALID_POSITION) {
-                    return false;
-                }
-                fromView = (ViewGroup) getChildAt(dragPosition - getFirstVisiblePosition());
-                fromView.destroyDrawingCache();
-                fromView.setDrawingCacheEnabled(true);
-                fromView.setDrawingCacheBackgroundColor(0xff6DB7ED);
-                Bitmap bm = Bitmap.createBitmap(fromView.getDrawingCache());
-
-                Bitmap bitmap = Bitmap.createBitmap(bm, 8, 8, bm.getWidth() - 16, bm.getHeight() - 8);
-                startDrag(bitmap, x, y);
+                performLongClick((int) event.getX(), (int) event.getY());
                 return false;
             };
         });
-        return super.onInterceptTouchEvent(ev);
+        return true;
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "onInterceptTouchEvent ev.getAction() = " + ev.getAction() + ", isDragging = " + Configure.isDragging);
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            return setOnItemLongClickListener(ev);
-        }
-        return super.onInterceptTouchEvent(ev);
+    public int getYDragGridOffsetTop() {
+        return this.getTop() + ((View) this.getParent()).getTop();
     }
 
-    private void startDrag(final Bitmap bm, final int x, final int y) {
-
-        windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);// "window"
-        Animation disappear = AnimationUtils.loadAnimation(getContext(), R.anim.out);
-        disappear.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                // TODO Auto-generated method stub
-                fromView.setVisibility(8);
-                stopDrag();
-                windowParams = new WindowManager.LayoutParams();
-                windowParams.gravity = Gravity.TOP | Gravity.LEFT;
-                windowParams.x = fromView.getLeft() + 28;
-                windowParams.y = fromView.getTop() + (int) (40 * Configure.screenDensity) + 8;
-                windowParams.alpha = 0.8f;
-                windowParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                windowParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-
-                iv_drag = new ImageView(getContext());
-                iv_drag.setImageBitmap(bm);
-                windowManager.addView(iv_drag, windowParams);
-                iv_drag.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.del_done));
-                //dragImageView = iv_drag;
-            }
-        });
-        fromView.startAnimation(disappear);
-        DragGridView.this.onPage(EVENT_DEL_UP, -100);
+    public int getDragGridOffsetLeft() {
+        return this.getLeft() + ((View) this.getParent()).getLeft();
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        TLog.debug(TAG, "ididididid ===== %d movePageNum ===== %d onTouchEvent iv_drag =  " + iv_drag + ",eventAction=%d, x=%d,y=%d", getId(), movePageNum, ev.getAction(), (int) ev.getX(),
-                (int) ev.getY());
-        if (iv_drag != null && dragPosition != AdapterView.INVALID_POSITION) {
-            int x = (int) ev.getX();
-            int y = (int) ev.getY();
-            switch (ev.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-                if (!isCountXY) {
-                    xtox = x - mLastX;
-                    ytoy = y - mLastY;
-                    isCountXY = true;
-                }
-                onDrag(x, y);
-                break;
-            case MotionEvent.ACTION_UP:
-                stopDrag();
-                onDrop(x, y);
-                break;
-            }
-        }
-        return super.onTouchEvent(ev);
+    public boolean isMoveToNext(View iv_drag, int pageX) {
+        return (pageX >= Configure.screenWidth - (iv_drag.getWidth() / 2)) && (pageX <= Configure.screenWidth) && !Configure.isChangingPage;
     }
 
-    private void onDrag(int x, int y) {
-        if (iv_drag != null) {
-            windowParams.alpha = 0.8f;
-            windowParams.x = (x - mLastX - xtox) + fromView.getLeft() + 28 - movePageNum * Configure.screenWidth;
-            windowParams.y = (y - mLastY - ytoy) + fromView.getTop() + (int) (40 * Configure.screenDensity) + 8;
-            TLog.debug(TAG, "onDrag(x=%d, y=%d)", windowParams.x, windowParams.y);
-            windowManager.updateViewLayout(iv_drag, windowParams);
-        }
+    public boolean isMoveToPrev(View iv_drag, int pageX) {
+        return (pageX >= 0) && (pageX <= 0 + iv_drag.getWidth() / 2) && !Configure.isChangingPage;
+    }
 
 
-        if ((x > (Configure.screenWidth / 2 - 100) && x < (Configure.screenWidth / 2 + 100)) && (y > Configure.screenHeight - 200)) {
-            DragGridView.this.onPage(EVENT_DEL_COLOR_DEEP, -100);
-            return;
-        }
-        if (Configure.isDelDark) {
-            DragGridView.this.onPage(EVENT_DEL_COLOR_LIGHT, -200);
-        }
-
-        if (movePageNum > 0) {
-
-            if ((x >= (movePageNum + 1) * Configure.screenWidth - iv_drag.getWidth() || x <= movePageNum * Configure.screenWidth) && !Configure.isChangingPage)
-                stopCount++;
-            else
-                stopCount = 0;
-            if (stopCount > 10) {
-                stopCount = 0;
-                if (x >= (movePageNum + 1) * Configure.screenWidth - iv_drag.getWidth() && Configure.currentPage < Configure.countPages - 1) {
-                    Configure.isChangingPage = true;
-                    DragGridView.this.onPage(EVENT_SLIDING_PAGE, ++Configure.currentPage);
-                    movePageNum++;
-                } else if (x <= movePageNum * Configure.screenWidth && Configure.currentPage > 0) {
-                    Configure.isChangingPage = true;
-                    DragGridView.this.onPage(EVENT_SLIDING_PAGE, --Configure.currentPage);
-                    movePageNum--;
-                }
+    public void onDrag(View iv_drag, int pageX, int pageY, int gridX, int gridY) {
+        if (isMoveToNext(iv_drag, pageX) || isMoveToPrev(iv_drag, pageX))
+            stopCount++;
+        else
+            stopCount = 0;
+        if (stopCount > 10) {
+            stopCount = 0;
+            if (isMoveToNext(iv_drag, pageX)) {
+                Configure.isChangingPage = true;
+                DragGridView.this.onPage(EVENT_SLIDING_PAGE, ++Configure.currentPage);
+                Configure.movePageNum++;
             }
-        } else {
-            TLog.debug(TAG, "x = %d , xxx = %d  isChangingPage = %b", x, (movePageNum + 1) * Configure.screenWidth - iv_drag.getWidth(), Configure.isChangingPage);
-            if ((x >= (movePageNum + 1) * Configure.screenWidth - iv_drag.getWidth() || x <= movePageNum * Configure.screenWidth) && !Configure.isChangingPage)
-                stopCount++;
-            else
-                stopCount = 0;
-            if (stopCount > 10) {
-                stopCount = 0;
-                if (x >= (movePageNum + 1) * Configure.screenWidth - iv_drag.getWidth() / 2 && Configure.currentPage < Configure.countPages - 1) {
-                    Configure.isChangingPage = true;
-                    DragGridView.this.onPage(EVENT_SLIDING_PAGE, ++Configure.currentPage);
-                    movePageNum++;
-                } else if (x <= movePageNum * Configure.screenWidth && Configure.currentPage > 0) {
-                    Configure.isChangingPage = true;
-                    DragGridView.this.onPage(EVENT_SLIDING_PAGE, --Configure.currentPage);
-                    movePageNum--;
-                }
+
+            if (isMoveToPrev(iv_drag, pageX)) {
+                Configure.isChangingPage = true;
+                DragGridView.this.onPage(EVENT_SLIDING_PAGE, --Configure.currentPage);
+                Configure.movePageNum--;
             }
         }
-        onDragDoAnimation(x, y);
+        onDragDoAnimation(gridX, gridY);
     }
 
     public void setPageListener(G_PageListener pageListener) {
@@ -296,12 +271,6 @@ public class DragGridView extends GridView {
         }
     }
 
-    private int lastHitPostion = AdapterView.INVALID_POSITION;
-
-
-    private int viewTag[] = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
-
-
     public HashMap<Integer, Integer> getRealArrayHashMap() {
         HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
         for (int i = 0; i < viewTag.length; i++) {
@@ -310,42 +279,90 @@ public class DragGridView extends GridView {
         return hashMap;
     }
 
-    private void onDragDoAnimationAcrossPage(int x, int y) {
-        TLog.debug(TAG, "onDragDoAnimationAcrossPage=%d, dragPosition=%d", x, y);
+    private void onDragDoAnimation(int x, int y) {
+        if (Configure.isChangingPage) {
+            return;
+        }
+
         // 获取目标绝对位置
         int hitViewPosition = getAbsolutePostion(x, y);
+
+        TLog.debug(TAG, "onDragDoAnimation lastHitPostion=%d hitViewPosition=%d, dragPosition=%d", lastHitPostion, hitViewPosition, dragPosition);
+
         if (isSwapAniRunning) {
             TLog.debug(TAG, "isSwapAniRunning");
             return;
         }
 
         if (hitViewPosition == AdapterView.INVALID_POSITION) {
-            TLog.debug(TAG, "INVALID_POSITION");
+            TLog.debug(TAG, "hitViewPosition == AdapterView.INVALID_POSITION");
             return;
         }
 
         if (lastHitPostion == hitViewPosition) {
-            TLog.debug(TAG, "INVALID_POSITION");
+            TLog.debug(TAG, "lastHitPostion == hitViewPosition");
             return;
         }
 
+        /**
+         * 如果是跨页面拖动
+         */
+        if (dragPosition == AdapterView.INVALID_POSITION) {
+            int movePostion = 0;
+            int xSelfOffset = -4;
+            int ySelfOffset = 4;
 
-        TLog.debug(TAG, "onDragDoAnimationAcrossPage viewTag[dragPosition]=%d, hitViewPosition=%d", viewTag[dragPosition], hitViewPosition);
+            if (Configure.currentPage < Configure.draggingPage) {
+                movePostion = Configure.PAGE_SIZE - 1;
+                xSelfOffset = 4;
+                ySelfOffset = -4;
+            }
 
+            final View view = this.getChildAt(movePostion - getFirstVisiblePosition());
+            final View finalView = getParentPagedView().copyViewInAniLayer(view, view.getHeight(), view.getWidth());
+            Animation ani = getTransRelaAnimation(0, 0, xSelfOffset, ySelfOffset);
+            ani.setAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    view.setVisibility(View.INVISIBLE);
+                }
 
-        if (lastHitPostion == AdapterView.INVALID_POSITION) {
-            dragPosition = 0;
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    ((ViewGroup) finalView.getParent()).removeView(finalView);
+                }
+            });
+            finalView.startAnimation(ani);
+            dragPosition = movePostion;
         }
+
+        if (viewTag[dragPosition] == hitViewPosition) {
+            TLog.debug(TAG, "viewTag[dragPosition] == hitViewPosition");
+            // 当恰恰好偏移的是第一个
+            dropPosition = hitViewPosition;
+            return;
+        }
+
+        TLog.debug(TAG, "onDragDoAnimation=%d, dragPosition=%d", hitViewPosition, viewTag[dragPosition]);
+
+        lastHitPostion = hitViewPosition;
+
+        HashMap<Integer, Integer> posToViewPos = getRealArrayHashMap();
+
+        TLog.debug(TAG, "viewTag[dragPosition]=%d, hitViewPosition=%d", viewTag[dragPosition], hitViewPosition);
 
         final int realDragPostion = viewTag[dragPosition];
 
-        HashMap<Integer, Integer> posToViewPos = getRealArrayHashMap();
+        dropPosition = hitViewPosition;
 
         // 往后移
         if (realDragPostion > hitViewPosition) {
             // viewTag[Pos] 表示控件显示在界面上的位置。
             // posToViewPos.get(pos) 表示控件在内部逻辑上实际的位置。
-
 
             for (int i = hitViewPosition; i < realDragPostion; i++) {
                 int pos = i - getFirstVisiblePosition();
@@ -381,112 +398,51 @@ public class DragGridView extends GridView {
             }
         }
 
-        lastHitPostion = hitViewPosition;
+        viewTag[dragPosition] = lastHitPostion;
+        TLog.debug(TAG, "arr = %s", Arrays.toString(viewTag));
 
     }
 
-    private void onDragDoAnimation(int x, int y) {
-        if (movePageNum != 0) {
-            onDragDoAnimationAcrossPage(x, y);
-        }
-
-        TLog.debug(TAG, "ididididid ===== %d  onDragDoAnimation=%d, dragPosition=%d", this.getId(), x, y);
-        // 获取目标绝对位置
-        int hitViewPosition = getAbsolutePostion(x, y);
-        if (isSwapAniRunning) {
-            TLog.debug(TAG, "isSwapAniRunning");
-            return;
-        }
-        if (hitViewPosition == AdapterView.INVALID_POSITION) {
-            TLog.debug(TAG, "INVALID_POSITION");
-            return;
-        }
-
-        if (lastHitPostion == hitViewPosition) {
-            TLog.debug(TAG, "INVALID_POSITION");
-            return;
-        }
-
-        if (viewTag[dragPosition] == hitViewPosition) {
-            TLog.debug(TAG, "hitViewPosition");
-            return;
-        }
-
-        TLog.debug(TAG, "onDragDoAnimation=%d, dragPosition=%d", hitViewPosition, viewTag[dragPosition]);
-
-        lastHitPostion = hitViewPosition;
-
-        HashMap<Integer, Integer> posToViewPos = getRealArrayHashMap();
-
-        if (movePageNum == 0) {
-            TLog.debug(TAG, "viewTag[dragPosition]=%d, hitViewPosition=%d", viewTag[dragPosition], hitViewPosition);
-
-            final int realDragPostion = viewTag[dragPosition];
-
-            // 往后移
-            if (realDragPostion > hitViewPosition) {
-                // viewTag[Pos] 表示控件显示在界面上的位置。
-                // posToViewPos.get(pos) 表示控件在内部逻辑上实际的位置。
-
-                for (int i = hitViewPosition; i < realDragPostion; i++) {
-                    int pos = i - getFirstVisiblePosition();
-                    System.out.println("pos ===== " + pos);
-                    final View iView = getChildAt(posToViewPos.get(pos));
-                    if (iView != null)
-                        iView.startAnimation(getMoveAnimation(true, pos, (ViewGroup) iView));
-                }
-
-                TLog.debug("", "hitViewPosition = %d, = %d", hitViewPosition, viewTag[dragPosition]);
-                for (int j = hitViewPosition; j < realDragPostion; j++) {
-                    int pos = j - getFirstVisiblePosition();
-                    System.out.println("pospospospos = " + pos);
-                    System.out.println("bbbbbbbbbbbbbbbbb = " + pos);
-                    viewTag[posToViewPos.get(pos)] = viewTag[posToViewPos.get(pos)] + 1;
-                }
-            }
-
-            // 往前移
-            else {
-                for (int i = hitViewPosition; i > realDragPostion; i--) {
-                    int pos = i - getFirstVisiblePosition();
-                    final View iView = getChildAt(posToViewPos.get(pos));
-                    if (iView != null)
-                        iView.startAnimation(getMoveAnimation(false, pos, (ViewGroup) iView));
-                }
-
-                for (int i = hitViewPosition; i > realDragPostion; i--) {
-                    int pos = i - getFirstVisiblePosition();
-                    System.out.println("viewTag[" + pos + "] = " + viewTag[pos]);
-                    viewTag[posToViewPos.get(pos)] = viewTag[posToViewPos.get(pos)] - 1;
-                    System.out.println("viewTag[" + pos + "] = " + viewTag[pos]);
-                }
-            }
-
-            viewTag[dragPosition] = lastHitPostion;
-            TLog.debug(TAG, "arr = %s", Arrays.toString(viewTag));
-        }
-
+    public int getDropPostion() {
+        return dropPosition;
     }
 
-    private int width = 0;
-    private int height = 0;
-    private int left = 0;
-    private int top = 0;
+    public Rect getDropPostionRectInindow() {
+        int xPer = dropPosition % mNumColumns;
+        int yPer = dropPosition / mNumColumns;
+
+        int windowX = this.getLeft() + xPer * cellWidth;
+        int windowY = this.getRight() + yPer * cellHeight;
+
+        Rect rect = new Rect();
+        rect.left = windowX;
+        rect.top = windowY;
+
+        rect.bottom = windowY + cellHeight;
+        rect.right = windowY + cellWidth;
+
+        return rect;
+    }
+
+    private int cellWidth = 0;
+    private int cellHeight = 0;
+    private int firstChildLeft = 0;
+    private int firstChildRight = 0;
 
     /**
      * 碰撞检测
      */
     public int getAbsolutePostion(int x, int y) {
-        if (width == 0) {
+        if (cellWidth == 0) {
             View child = this.getChildAt(this.getFirstVisiblePosition());
-            width = child.getWidth();
-            height = child.getHeight();
-            left = child.getLeft();
-            top = child.getTop();
+            cellWidth = child.getWidth();
+            cellHeight = child.getHeight();
+            firstChildLeft = child.getLeft();
+            firstChildRight = child.getTop();
         }
 
-        int xPos = (x - left) / width;
-        int yPos = (y - top) / height;
+        int xPos = (x - firstChildLeft) / cellWidth;
+        int yPos = (y - firstChildRight) / cellHeight;
 
         int pos = yPos * mNumColumns + xPos;
         if (getChildAt(pos - getFirstVisiblePosition()) == null) {
@@ -495,159 +451,118 @@ public class DragGridView extends GridView {
         return pos;
     }
 
+    public void resetMemberValue() {
+        mIsDragViewFromMe = false;
+        isSwapAniRunning = false;
+        viewTag = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+        lastHitPostion = AdapterView.INVALID_POSITION;
+        lastHitPostion = dragPosition = dropPosition = AdapterView.INVALID_POSITION;
+    }
 
-    /**
-     * 碰撞检测
-     */
-    public int getAbsPostion(int x, int y) {
-        for (int pos = getFirstVisiblePosition(); pos < getChildCount(); pos++) {
-            View childView = this.getChildAt(pos);
+    public void onDrop() {
+        mIsDragViewFromMe = false;
+        final int[] arr = viewTag;
+        Runnable runnable = null;
+        if (Configure.draggingPage == Configure.currentPage) {
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (Configure.draggingItem != null) {
+                        Configure.draggingItem.hide = false;
+                        Configure.draggingItem = null;
+                    }
 
-            final int left = childView.getLeft();
-            final int top = childView.getTop();
+                    // 改变表格数
+                    mDragGridAdapter.sortByPositions(arr);
+                    mDragGridAdapter.notifyDataSetChanged();
 
-            final int width = childView.getWidth();
-            final int height = childView.getHeight();
 
-            if ((left < x) && (x < left + width) && (top < y) && y < (top + height)) {
-                TLog.debug(TAG, "checkViewRect position=%d", pos);
-                return pos;
+                    resetMemberValue();
+
+                    Configure.draggingPage = Configure.DRAG_PAGE_INVALID;
+                    Configure.draggingPostion = Configure.DRAG_POSITION_INVALID;
+
+                }
+            };
+        } else {
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (Configure.draggingItem != null) {
+                        Configure.draggingItem.hide = false;
+                        Configure.draggingItem = null;
+                    }
+
+                    final BoardDataConfig boardData = Configure.boardData;
+                    final int draggingPostion = Configure.draggingPostion;
+                    final int currentPage = Configure.currentPage;
+                    final int draggingPage = Configure.draggingPage;
+
+
+                    List<BoardPageItem> curList = boardData.getPageItemList(currentPage);
+                    List<BoardPageItem> dragList = boardData.getPageItemList(draggingPage);
+                    BoardPageItem dragItem = dragList.get(draggingPostion);
+                    BoardPageItem curFirstItem = curList.get(dropPosition);
+
+
+                    List<BoardPageItem> totalList = boardData.getBoardItemList();
+                    int from = totalList.indexOf(dragItem);
+                    int to = totalList.indexOf(curFirstItem);
+                    boardData.moveFromTo(from, to);
+                    getDragGridView(Configure.draggingPage).resetMemberValue();
+                    resetMemberValue();
+                    Configure.draggingPage = Configure.DRAG_PAGE_INVALID;
+                    Configure.draggingPostion = Configure.DRAG_POSITION_INVALID;
+                    getParentPagedView().refreshAllPageDragView();
+                }
+            };
+        }
+
+        TLog.debug(TAG, "DDDD moveAnimationCount=%d", moveAnimationCount);
+
+        if (moveAnimationCount > 0) {
+            runnableList.add(runnable);
+        } else {
+            runnable.run();
+        }
+    }
+
+    protected void dragPosToTailAndSort() {
+        for (int i = 7; i > viewTag[dragPosition]; i--) {
+            viewTag[i] = viewTag[i] - 1;
+        }
+        viewTag[dragPosition] = 7;
+        mDragGridAdapter.sortByPositions(viewTag);
+    }
+
+    public void onLeave() {
+        isSwapAniRunning = false;
+        if (!mIsDragViewFromMe) {
+            resetMemberValue();
+            if (moveAnimationCount > 0) {
+                runnableList.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDragGridAdapter.notifyDataSetChanged();
+                    }
+                });
+            } else {
+                this.notifyDataSetChanged();
             }
         }
-        return AdapterView.INVALID_POSITION;
     }
 
-    private void onDrop(int x, int y) {
-
-        isSwapAniRunning = false;
-
-        final int[] arr = viewTag;
-
-        // 改变表格数据
-        mDragGridAdapter.sortByIntArray(arr);
-        mDragGridAdapter.notifyDataSetChanged();
-        viewTag = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
-
-        lastHitPostion = AdapterView.INVALID_POSITION;
-
-        Configure.isDragging = false;
-
-        DragGridView.this.onPage(EVENT_END_DRAG, PAGE_UNKNOWN);
-
-        fromView.setVisibility(View.VISIBLE);
-
-
-        //        // 执行删除操作t
-        //        if (Configure.isDelDark) {
-        //            DelDone = getDelAnimation(x, y);//AnimationUtils.loadAnimation(getContext(), R.anim.del_done);
-        //            DelDone.setAnimationListener(new Animation.AnimationListener() {
-        //                @Override
-        //                public void onAnimationStart(Animation animation) {
-        //                }
-        //
-        //                @Override
-        //                public void onAnimationRepeat(Animation animation) {
-        //                }
-        //
-        //                @Override
-        //                public void onAnimationEnd(Animation animation) {
-        //                    Configure.removeItem = dragPosition;
-        //                    DragGridView.this.onPage(EVENT_DEL_DONE, -300);
-        //                }
-        //            });
-        //            fromView.setVisibility(View.VISIBLE);
-        //            fromView.startAnimation(DelDone);
-        //            return;
-        //        }
-        //
-        //        DragGridView.this.onPage(EVENT_DEL_CANCEL, -300);
-        //
-        //        /*
-        //         * 找出（x, y）坐标在gridview中的位置
-        //         */
-        //        int tempPosition = pointToPosition(x - movePageNum * Configure.screenWidth, y);
-        //        if (tempPosition != AdapterView.INVALID_POSITION) {
-        //            dropPosition = tempPosition;
-        //        }
-        //
-        //        // 跨页面拖动
-        //        if (movePageNum != 0 && itemListener != null) {
-        //            itemListener.change(dragPosition, dropPosition, movePageNum);
-        //            movePageNum = 0;
-        //            return;
-        //        }
-        //
-        //        movePageNum = 0;
-        //
-        //        ViewGroup toView = (ViewGroup) getChildAt(dropPosition - getFirstVisiblePosition());
-        //        if (dragPosition % 2 == 0) {
-        //            AtoB = getDownAnimation((dropPosition % 2 == dragPosition % 2) ? 0 : 1, (dropPosition / 2 - dragPosition / 2));
-        //            if (dropPosition != dragPosition)
-        //                toView.startAnimation(getMyAnimation((dragPosition % 2 == dropPosition % 2) ? 0 : -1, (dragPosition / 2 - dropPosition / 2)));
-        //        } else {
-        //            AtoB = getDownAnimation((dropPosition % 2 == dragPosition % 2) ? 0 : -1, (dropPosition / 2 - dragPosition / 2));
-        //            if (dropPosition != dragPosition)
-        //                toView.startAnimation(getMyAnimation((dragPosition % 2 == dropPosition % 2) ? 0 : 1, (dragPosition / 2 - dropPosition / 2)));
-        //        }
-        //        fromView.startAnimation(AtoB);
-        //
-        //
-        //        AtoB.setAnimationListener(new Animation.AnimationListener() {
-        //            @Override
-        //            public void onAnimationStart(Animation arg0) {
-        //            }
-        //
-        //            @Override
-        //            public void onAnimationRepeat(Animation arg0) {
-        //            }
-        //
-        //            @Override
-        //            public void onAnimationEnd(Animation arg0) {
-        //                // TODO Auto-generated method stub
-        //                DragGridView.this.exchangeItem();
-        //            }
-        //        });
-    }
-
-    private void stopDrag() {
-        if (iv_drag != null) {
-            windowManager.removeView(iv_drag);
-            iv_drag = null;
-        }
-    }
-
-    public Animation getMyAnimation(float x, float y) {
-        TranslateAnimation go = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, x, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, y);
-        go.setDuration(550);
+    public Animation getTransRelaAnimation(float toX, float toY) {
+        TranslateAnimation go = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, toX, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, toY);
+        go.setDuration(450);
         return go;
     }
 
-    public Animation getDownAnimation(float x, float y) {
-        AnimationSet set = new AnimationSet(true);
-        TranslateAnimation go = new TranslateAnimation(Animation.RELATIVE_TO_SELF, x, Animation.RELATIVE_TO_SELF, x, Animation.RELATIVE_TO_SELF, y, Animation.RELATIVE_TO_SELF, y);
-        go.setFillAfter(true);
-        go.setDuration(1000);
-
-        AlphaAnimation alpha = new AlphaAnimation(0.9f, 1.0f);
-        alpha.setFillAfter(true);
-        alpha.setDuration(1000);
-
-        ScaleAnimation scale = new ScaleAnimation(1.2f, 1.0f, 1.2f, 1.0f);
-        scale.setFillAfter(true);
-        scale.setDuration(550);
-
-        set.addAnimation(go);
-        set.addAnimation(alpha);
-        set.addAnimation(scale);
-
-        set.setFillAfter(true);
-
-        return set;
+    public Animation getTransRelaAnimation(float fromX, float fromY, float toX, float toY) {
+        TranslateAnimation go = new TranslateAnimation(Animation.RELATIVE_TO_SELF, fromX, Animation.RELATIVE_TO_SELF, toX, Animation.RELATIVE_TO_SELF, fromY, Animation.RELATIVE_TO_SELF, toY);
+        go.setDuration(600);
+        return go;
     }
-
-    private boolean isSwapAniRunning = false;
-
-    private int mNumColumns;
 
     @Override
     public void setNumColumns(int numColumns) {
@@ -679,15 +594,15 @@ public class DragGridView extends GridView {
                 ySelfCount = 0;
             }
         }
+        ani = getTransRelaAnimation(xSelfCount, ySelfCount);
 
-
-        ani = getMyAnimation(xSelfCount, ySelfCount);
 
         final int finalXSelfCount = xSelfCount;
         final int finalYSelfCount = ySelfCount;
         ani.setAnimationListener(new AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                moveAnimationCount++;
                 isSwapAniRunning = true;
             }
 
@@ -703,31 +618,121 @@ public class DragGridView extends GridView {
                 view.layout(left, top, left + view.getWidth(), top + view.getHeight());
                 view.setVisibility(View.VISIBLE);
                 isSwapAniRunning = false;
+                moveAnimationCount--;
+
+                TLog.debug(TAG, "moveAnimationCount = %d", moveAnimationCount);
+                for (int i = 0; i < runnableList.size(); i++) {
+                    runnableList.get(i).run();
+                }
+                runnableList.clear();
             }
         });
-
         return ani;
     }
 
+    /**
+     * 
+     * instruction。
+     * 
+     * @param position
+     * @param item
+     * @param view
+     */
+    public void delete(final int position, final BoardPageItem item, View view) {
+        view.setVisibility(View.INVISIBLE);
+        int nextPage = Configure.currentPage + 1;
+        List curPageItemList = Configure.boardData.getPageItemList(Configure.currentPage);
 
-    public Animation getDelAnimation(int x, int y) {
-        AnimationSet set = new AnimationSet(true);
-        //TranslateAnimation go = new TranslateAnimation(Animation.ABSOLUTE, x-itemWidth/2, Animation.ABSOLUTE, x-itemWidth/2, 
-        //      Animation.ABSOLUTE, y-itemHeight/2, Animation.ABSOLUTE, y-itemHeight/2);
-        //go.setFillAfter(true);go.setDuration(1550);
-        RotateAnimation rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotate.setFillAfter(true);
-        rotate.setDuration(550);
-        AlphaAnimation alpha = new AlphaAnimation(1.0f, 0.0f);
-        alpha.setFillAfter(true);
-        alpha.setDuration(550);
+        // do move animation
+        for (int i = curPageItemList.size() - 1; i > position; i--) {
+            int pos = i - getFirstVisiblePosition();
+            final View iView = getChildAt(pos);
+            if (iView != null)
+                iView.startAnimation(getMoveAnimation(false, pos, (ViewGroup) iView));
+        }
 
-        //  ScaleAnimation scale = new ScaleAnimation(1.0f,0.0f,1.0f,0.0f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
-        //  scale.setFillAfter(true);scale.setDuration(550);
+        if ((nextPage < Configure.boardData.getPageCount())) {
+            BoardPageItem nextPageFistItem = Configure.boardData.getPageItemList(nextPage).get(0);
+            final View newGridItemView = createGridItemView(LayoutInflater.from(getContext()), nextPageFistItem);
 
-        //set.addAnimation(rotate);
-        set.addAnimation(alpha);
-        set.addAnimation(rotate);
-        return set;
+            View transTargetView = view;
+            if (curPageItemList.size() == Configure.PAGE_SIZE) {
+                transTargetView = getChildAt(Configure.PAGE_SIZE - 1 - getFirstVisiblePosition());
+            }
+
+            int location[] = new int[2];
+            transTargetView.getLocationInWindow(location);
+
+            TLog.debug(TAG, "transTargetView.getHeight() = %d, transTargetView.getWidth() = %d", transTargetView.getHeight(), transTargetView.getWidth());
+
+            getParentPagedView().addViewToAnimLayout(newGridItemView, location, transTargetView.getHeight(), transTargetView.getWidth());
+            newGridItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TLog.debug(TAG, "newGridItemView.getHeight() = %d, newGridItemView.getWidth() = %d", newGridItemView.getHeight(), newGridItemView.getWidth());
+                }
+            });
+
+            // move the first item of next page to cur page
+            Animation transRelaAni = getTransRelaAnimation(2, -4, 0, 0);
+            transRelaAni.setAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    List curPageItemList = Configure.boardData.getPageItemList(Configure.currentPage);
+                    curPageItemList.remove(position);
+                    getParentPagedView().refreshAllPageDragView();
+                    ((ViewGroup) newGridItemView.getParent()).removeView(newGridItemView);
+                }
+            });
+            newGridItemView.startAnimation(transRelaAni);
+        } else {
+            Runnable runable = new Runnable() {
+                @Override
+                public void run() {
+                    List curPageItemList = Configure.boardData.getPageItemList(Configure.currentPage);
+                    curPageItemList.remove(position);
+                    getParentPagedView().refreshAllPageDragView();
+                }
+            };
+
+            // has animtaion
+            if (curPageItemList.size() - 1 > position) {
+                runnableList.add(runable);
+            }
+            // no animation
+            else {
+                runable.run();
+            }
+        }
     }
+
+    public static View createGridItemView(LayoutInflater inflater, BoardPageItem item) {
+        final View view = inflater.inflate(org.tadpole.app.R.layout.board_page_griditem, null);
+        TextView textView = (TextView) view.findViewById(R.id.pageItemText);
+        View deleteBtnView = view.findViewById(R.id.pageItemDeleteBtn);
+        textView.setText(item.title);
+        if (BoardPageItem.COLOR_BLUE.equals(item.color)) {
+            textView.setBackgroundResource(R.drawable.blue);
+        } else {
+            textView.setBackgroundResource(R.drawable.red);
+        }
+        if (Configure.isEditMode) {
+            textView.getBackground().setAlpha(220);
+            deleteBtnView.setVisibility(View.VISIBLE);
+        } else {
+            textView.getBackground().setAlpha(255);
+            deleteBtnView.setVisibility(View.INVISIBLE);
+        }
+        return view;
+    }
+
 }

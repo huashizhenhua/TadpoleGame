@@ -1,0 +1,127 @@
+[{
+	name: "marker",
+	title: "马克",
+	color: "red",
+	editable : false
+},{
+	name: "note",
+	title: "记事本",
+	color: "red",
+	editable : false
+},{
+	name: "music",
+	title: "音乐1",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐2",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐3",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐4",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐5",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐6",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐7",
+	color: "blue",
+	editable : false
+},{
+	name: "music",
+	title: "音乐8",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐9",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐10",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐11",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐12",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐13",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐14",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐15",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐",
+	color: "blue",
+	editable : true
+},{
+	name: "music",
+	title: "音乐",
+	color: "blue",
+	editable : true
+}]
+

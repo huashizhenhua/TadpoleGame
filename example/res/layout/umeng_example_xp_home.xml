@@ -1,0 +1,86 @@
+<com.umeng.ui.widget.DashboardLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFFFF" >
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_banner"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_banner" />
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_handler"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_handler" />
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_wap"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_wap" />
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_banner_ufp"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_banner_ufp" />
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_handler_ufp"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_handler_ufp" />
+    
+       	<Button
+        android:id="@+id/umeng_example_xp_home_btn_handler_icons"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_handler_icons" />
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_wap_ufp"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_wap_ufp" />
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_textlink"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_textlink" />
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_tab"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_tab" />
+
+    <RelativeLayout
+        style="@style/DashboardButton"
+        android:background="@null" >
+
+        <Button
+            android:id="@+id/umeng_example_xp_home_btn_container"
+            style="@style/DashboardButton"
+            android:text="@string/umeng_example_xp_home_btn_container" />
+
+        <TextView
+            android:id="@+id/umeng_example_xp_container_tips"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:paddingBottom="7dp"
+            android:visibility="gone"
+            android:textColor="#ffffff"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_container_with_header"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_container_header" />
+
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_push_ad"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_push_header" />
+    
+    <Button
+        android:id="@+id/umeng_example_xp_home_btn_custom"
+        style="@style/DashboardButton"
+        android:text="@string/umeng_example_xp_home_btn_custom" />
+    
+</com.umeng.ui.widget.DashboardLayout>

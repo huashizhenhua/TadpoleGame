@@ -1,5 +1,8 @@
 package org.tadpole.adapter;
 
+import java.util.Map;
+
+import org.tadpole.app.BoardPageItem;
 import org.tadpole.widget.DragGridView;
 
 import android.widget.ListAdapter;
@@ -23,11 +26,9 @@ public interface IDragGridAdapter extends ListAdapter {
      */
     public void exchange(int startPosition, int endPosition);
 
-    /**
-     * to update new data
-     * instruction。
-     */
     public void notifyDataSetChanged();
 
-    public void sortByIntArray(int[] viewTag);
+    public void sortByPositions(int[] viewTag);
+
+    public void replace(int position, BoardPageItem data);
 }

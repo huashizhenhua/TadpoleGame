@@ -1,145 +1,145 @@
 package org.tadpole.adapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
-import org.json.JSONObject;
+import org.tadpole.app.BoardPageItem;
+import org.tadpole.app.R;
 import org.tadpole.common.TLog;
+import org.tadpole.widget.BoardDataConfig;
+import org.tadpole.widget.Configure;
+import org.tadpole.widget.DragGridView;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Checkable;
-import android.widget.ImageView;
-import android.widget.SimpleAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class DragGridAdapter extends SimpleAdapter implements IDragGridAdapter {
+public class DragGridAdapter extends BaseAdapter implements IDragGridAdapter {
 
     private static final String TAG = "DragGridAdapter";
     private Context mContext;
-    private List<Map> mData;
-    private int mResource;
-    private String[] mFrom;
-    private int[] mTo;
+    private BoardDataConfig<BoardPageItem> mBoardData;
     private LayoutInflater mInflater;
+    private int mPage;
 
+    public DragGridAdapter(Context context, int page, BoardDataConfig<BoardPageItem> boardData) {
+        super();
+        mContext = context;
+        mBoardData = boardData;
+        mInflater = LayoutInflater.from(mContext);
+        mPage = page;
+    }
 
-
-    public DragGridAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
-        super(context, data, resource, from, to);
-        this.mContext = context;
-        this.mData = (List<Map>) data;
-        this.mFrom = from;
-        this.mTo = to;
-        this.mResource = resource;
-        mInflater = LayoutInflater.from(context);
+    public List<BoardPageItem> getItemList() {
+        List<BoardPageItem> list = mBoardData.getPageItemList(mPage);
+        if (list == null) {
+            list = new ArrayList<BoardPageItem>();
+        }
+        return list;
     }
 
     @Override
     public int getCount() {
-        return mData.size();
+        return getItemList().size();
     }
 
     public void exchange(int startPosition, int endPosition) {
+
+        List<BoardPageItem> pageItemList = getItemList();
+
         TLog.debug(TAG, "exchange startPosition = %d, endPosition = %d", startPosition, endPosition);
-        Map startMap = (Map) getItem(startPosition);
-        Map endMap = (Map) getItem(endPosition);
-        mData.add(startPosition, endMap);
-        mData.remove(startPosition + 1);
-        mData.add(endPosition, startMap);
-        mData.remove(endPosition + 1);
+        BoardPageItem start = (BoardPageItem) getItem(startPosition);
+        BoardPageItem end = (BoardPageItem) getItem(endPosition);
+        pageItemList.add(startPosition, end);
+        pageItemList.remove(startPosition + 1);
+        pageItemList.add(endPosition, start);
+        pageItemList.remove(endPosition + 1);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = createViewFromResource(position, convertView, parent, mResource);
-        view.findViewWithTag("dragGridItem" + position);
-        return view;
-    }
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
-    public void sortByIntArray(final int arr[]) {
-        for (int i = 0, len = this.mData.size(); i < len; i++) {
-            this.mData.get(i).put("bbbbb", arr[i]);
-        }
+        TLog.debug(TAG, "getView = " + parent);
 
-        Collections.sort(this.mData, new Comparator<Map>() {
+        final DragGridView dragGridViewParent = (DragGridView) parent;
+
+        List<BoardPageItem> pageItemList = getItemList();
+
+        final View view = mInflater.inflate(org.tadpole.app.R.layout.board_page_griditem, null);
+        TextView textView = (TextView) view.findViewById(R.id.pageItemText);
+        View deleteBtnView = view.findViewById(R.id.pageItemDeleteBtn);
+        final BoardPageItem item = pageItemList.get(position);
+        textView.setText(item.title);
+
+        final View bg = view.findViewById(R.id.pageItemBg);
+
+        deleteBtnView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public int compare(Map lhs, Map rhs) {
-                return ((Integer) lhs.get("bbbbb")) > ((Integer) rhs.get("bbbbb")) ? 1 : -1;
+            public void onClick(View v) {
+                dragGridViewParent.delete(position, item, view);
             }
         });
 
-        for (int i = 0, len = this.mData.size(); i < len; i++) {
-            System.out.print(this.mData.get(i));
+        if (BoardPageItem.COLOR_BLUE.equals(item.color)) {
+            bg.setBackgroundResource(R.drawable.blue);
+        } else {
+            bg.setBackgroundResource(R.drawable.red);
         }
-        System.out.println();
-    }
 
-    private View createViewFromResource(int position, View convertView, ViewGroup parent, int resource) {
-        View v;
-        v = mInflater.inflate(resource, null);
-        bindView(position, v);
-        return v;
-    }
-
-
-    private void bindView(int position, View view) {
-        final Map dataSet = mData.get(position);
-        if (dataSet == null) {
-            return;
-        }
-        final ViewBinder binder = this.getViewBinder();
-        final String[] from = mFrom;
-        final int[] to = mTo;
-        final int count = to.length;
-
-        for (int i = 0; i < count; i++) {
-            final View v = view.findViewById(to[i]);
-            if (v != null) {
-                final Object data = dataSet.get(from[i]);
-                String text = data == null ? "" : data.toString();
-                if (text == null) {
-                    text = "";
-                }
-
-                boolean bound = false;
-                if (binder != null) {
-                    bound = binder.setViewValue(v, data, text);
-                }
-
-                if (!bound) {
-                    if (v instanceof Checkable) {
-                        if (data instanceof Boolean) {
-                            ((Checkable) v).setChecked((Boolean) data);
-                        } else if (v instanceof TextView) {
-                            // Note: keep the instanceof TextView check at the bottom of these
-                            // ifs since a lot of views are TextViews (e.g. CheckBoxes).
-                            setViewText((TextView) v, text);
-                        } else {
-                            throw new IllegalStateException(v.getClass().getName() + " should be bound to a Boolean, not a " + (data == null ? "<unknown type>" : data.getClass()));
-                        }
-                    } else if (v instanceof TextView) {
-                        // Note: keep the instanceof TextView check at the bottom of these
-                        // ifs since a lot of views are TextViews (e.g. CheckBoxes).
-                        setViewText((TextView) v, text);
-                    } else if (v instanceof ImageView) {
-                        if (data instanceof Integer) {
-                            setViewImage((ImageView) v, (Integer) data);
-                        } else {
-                            setViewImage((ImageView) v, text);
-                        }
-                    } else {
-                        throw new IllegalStateException(v.getClass().getName() + " is not a " + " view that can be bounds by this SimpleAdapter");
-                    }
-                }
+        if (Configure.isEditMode) {
+            bg.getBackground().setAlpha(220);
+            if (item.editable) {
+                deleteBtnView.setVisibility(View.VISIBLE);
+            } else {
+                deleteBtnView.setVisibility(View.INVISIBLE);
             }
+        } else {
+            bg.getBackground().setAlpha(255);
+            deleteBtnView.setVisibility(View.INVISIBLE);
         }
+
+        if (item.hide) {
+            view.setVisibility(View.INVISIBLE);
+        }
+        return view;
+    }
+
+    /**
+     * 根据数据进行排序
+     */
+    public void sortByPositions(final int arr[]) {
+        List<BoardPageItem> pageItemList = getItemList();
+        for (int i = 0, len = pageItemList.size(); i < len; i++) {
+            pageItemList.get(i).sortTag = arr[i];
+        }
+        Collections.sort(pageItemList, new Comparator<BoardPageItem>() {
+            @Override
+            public int compare(BoardPageItem lhs, BoardPageItem rhs) {
+                return lhs.sortTag > rhs.sortTag ? 1 : -1;
+            }
+        });
+    }
+
+    @Override
+    public void replace(int index, BoardPageItem data) {
+        List<BoardPageItem> pageItemList = getItemList();
+        pageItemList.remove(index);
+        pageItemList.add(index, (BoardPageItem) data);
+    }
+
+    @Override
+    public Object getItem(int position) {
+        List<BoardPageItem> pageItemList = getItemList();
+        return pageItemList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 }

@@ -9,5 +9,4 @@ public class BaseActvity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    
 }

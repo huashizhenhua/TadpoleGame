@@ -3,19 +3,22 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <org.tadpole.widget.DragGridView
-        android:id="@+id/grid_view_board_page"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="60dp"
-        android:layout_marginTop="50dp"
-        android:background="#cccccccc"
-        android:horizontalSpacing="0dp"
-        android:listSelector="@anim/grid_light"
-        android:numColumns="2"
-        android:verticalSpacing="0dp" />
+        android:layout_height="480dp"
+        android:layout_centerInParent="true" >
+
+        <org.tadpole.widget.DragGridView
+            android:id="@+id/grid_view_board_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="40dp"
+            android:horizontalSpacing="0dp"
+            android:listSelector="@anim/grid_light"
+            android:numColumns="2"
+            android:verticalSpacing="0dp" />
+    </RelativeLayout>
 
 </RelativeLayout>

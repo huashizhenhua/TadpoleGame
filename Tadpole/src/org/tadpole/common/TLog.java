@@ -12,7 +12,7 @@ import android.util.Log;
  * <br>==========================
  */
 public class TLog {
-    
+
     public static void debug(String tag, String msg, Object... args) {
         Log.d(tag, String.format(msg, args));
     }

@@ -1,8 +1,11 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Borad'S data  -->
 <item name="marker" title="马克" />
 <item name="note" title="记事" />
+<item name="test2" title="测试" />
+<item name="test3" title="测试" />
+<item name="test1" title="测试" />
+<item name="test1" title="测试" />
 <item name="test1" title="测试" />
 <item name="test1" title="测试" />
 <item name="test1" title="测试" />

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootId"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#eff3f7"
+    android:orientation="vertical" >
+
+    <Button 
+        android:id="@+id/specify_handler_grey"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Grey Handler" /> 
+    <Button android:layout_below="@id/specify_handler_grey"
+        android:id="@+id/specify_handler_blue"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Blue Handler" /> 
+    <Button android:layout_below="@id/specify_handler_blue"
+        android:id="@+id/specify_handler_brown"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Brown Handler" /> 
+    <Button android:layout_below="@id/specify_handler_brown"
+        android:id="@+id/specify_handler_default"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Default Handler" /> 
+
+</RelativeLayout>

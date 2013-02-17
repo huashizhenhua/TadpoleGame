@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">VoiceEmoticon_Android</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_voice_emoticon">VoiceEmoticonActivity</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_activity_main">微信语音表情</string>
+    <string name="title_section_hot_voice">热门语音</string>
+    <string name="title_section_my_collection">我的收藏</string>
+    <string name="title_section_search">搜索</string>
+    <string name="menu_settings">设置</string>
+    <string name="menu_about">关于我们</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_item_list">Items</string>
+    <string name="xlistview_header_hint_normal">下拉刷新</string>
+    <string name="xlistview_header_hint_ready">松开刷新数据</string>
+    <string name="xlistview_header_hint_loading">正在加载...</string>
+    <string name="xlistview_header_last_time">上次更新时间：</string>
+    <string name="xlistview_footer_hint_normal">查看更多</string>
+    <string name="xlistview_footer_hint_ready">松开载入更多</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_activity_about">关于</string>
+    <string name="about_user_feedback">用户反馈</string>
+    <string name="about_share_to_friend">推荐给好友</string>
+    <string name="about_for_score">为微信语音表情评分</string>
+	<string name="about_version">版本:V1.0</string>
+
+</resources>
