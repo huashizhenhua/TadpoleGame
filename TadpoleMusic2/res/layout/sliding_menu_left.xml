@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:id="@+id/left_menu_top_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/abs__action_bar_default_height"
+        android:layout_alignParentTop="true"
+        android:background="@color/slide_menu_dark" >
+    </RelativeLayout>
+
+    <!--  -->
+
+    <LinearLayout
+        android:id="@+id/left_menu_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/left_menu_bottom_bar"
+        android:layout_below="@+id/left_menu_top_bar"
+        android:background="@color/slide_menu_dark"
+        android:orientation="vertical" >
+
+        <include
+            android:id="@+id/pane_local_music"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/sliding_menu_left_music_panel" >
+        </include>
+
+        <include
+            android:id="@+id/pane_network_music"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/sliding_menu_left_music_panel" >
+        </include>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/left_menu_bottom_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/bottom_bar_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray" >
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -9,12 +9,10 @@
         android:layout_height="fill_parent"
         android:layout_marginRight="25dp" />
 
-    
-    
     <com.itap.voiceemoticon.widget.SegmentBar
         android:id="@+id/side_bar_my_collect"
         android:layout_width="25dp"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_gravity="right|center_vertical" />
 
 </FrameLayout>

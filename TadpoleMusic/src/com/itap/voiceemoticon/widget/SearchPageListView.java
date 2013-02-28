@@ -1,6 +1,8 @@
 package com.itap.voiceemoticon.widget;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.widget.ListAdapter;
 import android.widget.Toast;
@@ -36,9 +38,9 @@ public class SearchPageListView<Voice> extends PageListView<Voice> {
     public void doSearch(String key) {
         final String lastKey = mSearchKey;
         mSearchKey = key;
-        if(StringUtil.equalsIgnoreCase(key, lastKey)){
+        if (StringUtil.equalsIgnoreCase(key, lastKey)) {
             super.doLoad(false);
-        }else{
+        } else {
             super.doLoad(true);
         }
     }
@@ -63,5 +65,12 @@ public class SearchPageListView<Voice> extends PageListView<Voice> {
             });
         }
         return pageList;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawText("打酱油", 0, 10, new Paint());
+        invalidate();
     }
 }

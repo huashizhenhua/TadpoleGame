@@ -67,7 +67,7 @@ public class HttpCache {
     }
 
     public boolean writeHeaderWithModified(final OutputStream dstOutput, int contentLength, int statusCode, int rangeStart) throws IOException {
-        System.out.println("=====>write cache header");
+        System.out.println("=====>local writing response header by using cache");
         final ByteCache cacheHeader = readCacheResponseHeader(mCachePath);
         String header = cacheHeader.getString();
 
@@ -98,13 +98,15 @@ public class HttpCache {
      * @return
      * @throws IOException
      */
-    public int writeCacheToLocalOut(final OutputStream dstOutput, int rangeStart) throws IOException {
-        System.out.println("=====>write cache body to local start");
+    public int writeBodyCacheToLocalOut(final OutputStream dstOutput, long rangeStart, int byteCount) throws IOException {
         final ByteCache cacheHeader = readCacheResponseHeader(mCachePath);
         final ByteCache cacheBody = readCacheBody(mCachePath);
+        System.out.println("=====>local write cache body range = (" + rangeStart + ", " + cacheBody.getLength() + ")");
         int byteRead = 0;
         final byte[] cacheHeaderBytes = cacheHeader.getBytes();
         int contentLength = HttpParser.getContentLength(new String(cacheHeaderBytes));
+        int byteCountToRead = byteCount;
+        int lastByteRead = 0;
         System.out.println("----->local cache response content-length:" + contentLength + " cacheBody length:" + cacheBody.getLength());
         if (contentLength != -1) {
             byte[] buffer = new byte[5120];
@@ -112,8 +114,14 @@ public class HttpCache {
             ras.seek(rangeStart);
             int tmpByteRead = 0;
             while ((tmpByteRead = ras.read(buffer)) != -1) {
-                dstOutput.write(buffer);
+                lastByteRead = byteRead;
                 byteRead += tmpByteRead;
+                if (byteRead > byteCountToRead) {
+                    int writeByteCount = byteCountToRead - lastByteRead;
+                    dstOutput.write(buffer, 0, writeByteCount);
+                } else {
+                    dstOutput.write(buffer, 0, tmpByteRead);
+                }
             }
             try {
                 ras.close();
@@ -121,7 +129,7 @@ public class HttpCache {
                 e.printStackTrace();
             }
         }
-        System.out.println("=====>write cache body to local finish");
+        System.out.println("=====>write cache body to local finish . Totally byteRead = " + byteRead);
         return byteRead;
     }
 

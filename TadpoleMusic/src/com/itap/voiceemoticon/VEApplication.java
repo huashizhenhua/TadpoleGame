@@ -3,6 +3,7 @@ package com.itap.voiceemoticon;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.app.Notification;
 import android.content.Context;
 
 import com.itap.voiceemoticon.api.Voice;

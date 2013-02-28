@@ -3,6 +3,7 @@ package com.itap.voiceemoticon.widget;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -126,4 +127,5 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
     public void onLoadMore() {
         doLoad();
     }
+    
 }

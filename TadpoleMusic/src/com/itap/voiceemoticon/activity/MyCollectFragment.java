@@ -10,6 +10,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -34,7 +36,7 @@ public class MyCollectFragment {
 
     private ListView mListView;
     private SegmentBar mSegmentBar;
-    private ArrayListAdapter<Voice> mVoiceAdapter;
+    private MyCollectAdapter mVoiceAdapter;
     private Activity mActivity;
 
     public MyCollectFragment(Activity activity) {
@@ -55,20 +57,26 @@ public class MyCollectFragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
-
-                // since we has use header view . just do postion -1
-
                 Log.d(VEApplication.TAG, "HotVoice Fragment onItemClick ");
                 Voice item = (Voice) mVoiceAdapter.getItem(pos);
                 VEApplication.getMusicPlayer(mActivity).playMusic(item.url, item.title);
             }
         });
 
+
         mVoiceAdapter = new MyCollectAdapter(mActivity);
         mVoiceAdapter.setListView(mListView);
 
+        mListView.setOnScrollListener(mVoiceAdapter);
         mListView.setAdapter(mVoiceAdapter);
         mSegmentBar.setListView(mListView);
+
+        mVoiceAdapter.setOnSectionChangeListener(new MyCollectAdapter.OnSectionChangeListener() {
+            @Override
+            public void handle(char letter) {
+                mSegmentBar.setCurrentSection(letter);
+            }
+        });
 
         loadData();
         return view;

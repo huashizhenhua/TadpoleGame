@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="50dp"
+    android:layout_marginRight="50dp"
+    android:background="#66cccccc"
     android:horizontalSpacing="10dp"
-    android:numColumns="4"
-    android:verticalSpacing="10dp"
+    android:numColumns="2"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="10dp"
-     >
+    android:verticalSpacing="10dp" >
 
 </GridView>

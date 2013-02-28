@@ -1,0 +1,22 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/abs__action_bar_default_height" >
+
+    <ImageButton
+        android:id="@+id/action_bar_menu_btn"
+        android:layout_width="@dimen/abs__action_bar_default_height"
+        android:layout_height="@dimen/abs__action_bar_default_height"
+        android:layout_alignParentLeft="true"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/ic_menu_gallery" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/abs__action_bar_default_height"
+        android:layout_alignLeft="@+id/action_bar_menu_btn"
+        android:text="@string/hello_world"
+        android:textAppearance="@style/TextAppearance.Sherlock.Widget.ActionBar.Title" >
+
+    </TextView>
+
+</RelativeLayout>

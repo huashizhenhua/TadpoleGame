@@ -3,13 +3,17 @@ package com.itap.voiceemoticon.adapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Canvas;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.api.Voice;
+import com.umeng.analytics.i;
 
 /**
  * <br>==========================
@@ -18,11 +22,18 @@ import com.itap.voiceemoticon.api.Voice;
  * <br> create：2013-1-31
  * <br>==========================
  */
-public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer {
+public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, OnScrollListener {
+
+    public static interface OnSectionChangeListener {
+        public void handle(char letter);
+    }
+
+    private OnSectionChangeListener mSectionChangeListener;
 
     public MyCollectAdapter(Activity context) {
         super(context);
     }
+
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -130,12 +141,32 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer {
     }
 
     @Override
-    public int getSectionForPosition(int arg0) {
+    public int getSectionForPosition(int position) {
         return 0;
     }
 
     @Override
     public Object[] getSections() {
         return null;
+    }
+
+    public void setOnSectionChangeListener(OnSectionChangeListener listener) {
+        mSectionChangeListener = listener;
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (mList == null || firstVisibleItem == -1) {
+            return;
+        }
+        Voice item = mList.get(firstVisibleItem);
+        String firstLetter = item.getFirstLetter();
+        if (mSectionChangeListener != null) {
+            mSectionChangeListener.handle(firstLetter.charAt(0));
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
     }
 }

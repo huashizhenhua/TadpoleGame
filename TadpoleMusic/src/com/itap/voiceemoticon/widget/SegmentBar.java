@@ -1,10 +1,19 @@
 package com.itap.voiceemoticon.widget;
 
+import com.tencent.mm.sdk.openapi.GetMessageFromWX;
+import com.umeng.common.net.p;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.FontMetrics;
+import android.graphics.Path;
+import android.graphics.Path.Direction;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
@@ -29,10 +38,24 @@ public class SegmentBar extends View {
     private Bitmap mbitmap;
     private int mType = 1;
     private int mColor = 0xff858c94;
+    private int mBgColor = 0xFFDDDDDD;
+    private int mCurrentSelectIndex = -1;
+    private int mLastSelectIndex = -1;
 
     public SegmentBar(Context context) {
         super(context);
         init();
+    }
+    
+    public void setCurrentSection(char setctionLetter){
+        setctionLetter = Character.toUpperCase(setctionLetter);
+        for(int i = 0, len = mCharArr.length; i < len; i++){
+            if(setctionLetter == mCharArr[i]){
+                mCurrentSelectIndex = i;
+                postInvalidate();
+                break;
+            }
+        }
     }
 
     public SegmentBar(Context context, AttributeSet attrs) {
@@ -89,23 +112,31 @@ public class SegmentBar extends View {
         int eventY = (int) event.getY();
 
         int idx = eventY / (getMeasuredHeight() / mCharArr.length);
+
         if (idx >= mCharArr.length) {
             idx = mCharArr.length - 1;
+
         } else if (idx < 0) {
             idx = 0;
         }
-        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
-            setBackgroundResource(android.R.drawable.btn_default);
-            mDialogText.setVisibility(View.VISIBLE);
-            mDialogText.setText(String.valueOf(mCharArr[idx]));
 
+        mLastSelectIndex = mCurrentSelectIndex;
+        mCurrentSelectIndex = idx;
+
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
+            setBackgroundColor(0xFFFFFFFF);
             if (mSectionIndexter == null) {
                 mSectionIndexter = (SectionIndexer) mListView.getAdapter();
             }
 
             int position = mSectionIndexter.getPositionForSection(mCharArr[idx]);
             if (position == -1) {
+
                 return true;
+            } else {
+                mDialogText.setVisibility(View.VISIBLE);
+                mDialogText.setText(String.valueOf(mCharArr[idx]));
             }
             mListView.setSelection(position);
         } else {
@@ -113,25 +144,50 @@ public class SegmentBar extends View {
 
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (mLastSelectIndex != mCurrentSelectIndex) {
+                this.invalidate();
+            }
             setBackgroundDrawable(new ColorDrawable(0x00000000));
         }
         return true;
     }
 
+
+    public float getFontHeight(Paint paint) {
+        Rect bounds = new Rect();
+        paint.getTextBounds("A", 0, 1, bounds);
+        return bounds.height();
+    }
+
     protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(mColor);
-        paint.setTextSize(12 * TypedValue.COMPLEX_UNIT_SP);
-        paint.setStyle(Style.FILL);
-        paint.setTextAlign(Paint.Align.CENTER);
-        float widthCenter = getMeasuredWidth() / 2;
+        paint.setTextAlign(Align.CENTER);
+
+        final int width = getMeasuredWidth();
+        int x = width / 2;
+        int y = 0;
+        int textBaseLine = y;
+
         if (mCharArr.length > 0) {
-            float height = getMeasuredHeight() / (mCharArr.length + 1);
+            float height = getMeasuredHeight() / (mCharArr.length);
+            paint.setTextSize(height - 2);
+            float fontHeight = getFontHeight(paint);
+
             for (int i = 0; i < mCharArr.length; i++) {
-                canvas.drawText(String.valueOf(mCharArr[i]), widthCenter, (i + 1) * height, paint);
+                y = (int) (i * height);
+                textBaseLine = (int) (y + height);
+                if (mCurrentSelectIndex == i) {
+                    Rect rect = new Rect();
+                    rect.set(0, y, 0 + width, y + (int) height);
+                    Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                    bgPaint.setColor(mBgColor);
+                    bgPaint.setStyle(Style.FILL);
+                    canvas.drawRect(rect, bgPaint);
+                }
+                canvas.drawText(String.valueOf(mCharArr[i]), x, textBaseLine - ((height - fontHeight) / 2), paint);
             }
         }
-        this.invalidate();
         super.onDraw(canvas);
     }
 }

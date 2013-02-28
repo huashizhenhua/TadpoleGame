@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:id="@+id/section_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey" >
+
+        <TextView
+            android:id="@+id/text_view_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/sliding_menu_section_text_margin_left"
+            android:gravity="center_vertical"
+            android:textAppearance="@style/TextAppearance.Small"
+            android:textColor="@color/ghostwhite" />
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/grid_view_my_music"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/section_title"
+        android:background="@color/grey"
+        android:horizontalSpacing="1dp"
+        android:listSelector="@drawable/sliding_menu_left_grid_item_icon_select"
+        android:numColumns="2"
+        android:paddingBottom="1dp"
+        android:paddingTop="1dp"
+        android:verticalSpacing="1dp" >
+    </GridView>
+
+</RelativeLayout>

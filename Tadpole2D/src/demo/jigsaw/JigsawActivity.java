@@ -14,6 +14,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -27,6 +29,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 /**
  * 拼图游戏
@@ -137,17 +140,17 @@ public class JigsawActivity extends Activity {
             map.put("item_text", UIConfig.TEXT_TIME_SETTING);//按序号做ItemText
             itemList.add(map);
             
-            // 行列设置
-            map = new HashMap<String, Object>();
-            map.put("id", UIConfig.ID_TIME_SETTING);//添加图像资源的ID  
-            map.put("item_text", UIConfig.TEXT_TIME_SETTING);//按序号做ItemText
-            itemList.add(map);
-
-            // 行列设置
-            map = new HashMap<String, Object>();
-            map.put("id", UIConfig.ID_TIME_SETTING);//添加图像资源的ID  
-            map.put("item_text", UIConfig.TEXT_TIME_SETTING);//按序号做ItemText
-            itemList.add(map);
+//            // 行列设置
+//            map = new HashMap<String, Object>();
+//            map.put("id", UIConfig.ID_TIME_SETTING);//添加图像资源的ID  
+//            map.put("item_text", UIConfig.TEXT_TIME_SETTING);//按序号做ItemText
+//            itemList.add(map);
+//
+//            // 行列设置
+//            map = new HashMap<String, Object>();
+//            map.put("id", UIConfig.ID_TIME_SETTING);//添加图像资源的ID  
+//            map.put("item_text", UIConfig.TEXT_TIME_SETTING);//按序号做ItemText
+//            itemList.add(map);
             
             int[] idArr = { R.id.item_text, R.id.item_text1 };
             String[] nameArr = { "item_text", "item_text1" };
@@ -171,8 +174,8 @@ public class JigsawActivity extends Activity {
         PopupWindow popWin = new PopupWindow(context);
         popWin.setTouchable(true);
         popWin.setFocusable(true);
-        popWin.setWidth(LayoutParams.WRAP_CONTENT);
-        popWin.setHeight(LayoutParams.WRAP_CONTENT);
+        popWin.setWidth(LayoutParams.FILL_PARENT);
+        popWin.setHeight(LayoutParams.FILL_PARENT);
 //        popWin.setBackgroundDrawable(resources.getDrawable(R.drawable.jigsaw_menu_bg));
         // contentView.setBackgroundColor(R.color.page_window_bgcolor);
         // window.setBackgroundDrawable(new
