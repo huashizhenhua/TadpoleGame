@@ -239,7 +239,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
         mViewPager = new ViewPager(this);
         mViewPager.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-        mViewPager.setPageMargin(-100);
 
         container.addView(mViewPager);
         ArrayList<View> viewList = new ArrayList<View>();

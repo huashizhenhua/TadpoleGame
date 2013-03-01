@@ -60,7 +60,12 @@ public class MyPagerAdapter extends PagerAdapter {
 
     @Override
     public float getPageWidth(int position) {
-        // TODO Auto-generated method stub
-        return 100;
+    	if(position == 0){
+    		return 0.5f;
+    	}else if(position == 1){
+    		return 1f;
+    	}else{
+    		return 1f;
+    	}
     }
 }

@@ -25,7 +25,8 @@ public class LeftMenuFragment extends AbsMenuFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.sliding_menu_left, null);
+    	System.out.println("---------mFragmentLeftMenu-----------");
+    	View view = inflater.inflate(R.layout.sliding_menu_left, null);
         initLocalMusic(view);
         initNetworkMusic(view);
         return view;
@@ -83,7 +84,7 @@ public class LeftMenuFragment extends AbsMenuFragment {
                 Toast.makeText(getActivity(), "position" + postion, Toast.LENGTH_LONG).show();
                 MyMusicItem item = myMusicList.get(postion);
                 getActivityInterface().setTitle(item.text);
-                getActivityInterface().toggle();
+                getActivityInterface().scrollToCenter();
             }
         });
     }
@@ -109,7 +110,7 @@ public class LeftMenuFragment extends AbsMenuFragment {
                 Toast.makeText(getActivity(), "position" + postion, Toast.LENGTH_LONG).show();
                 MyMusicItem item = myMusicList.get(postion);
                 getActivityInterface().setTitle(item.text);
-                getActivityInterface().toggle();
+                getActivityInterface().scrollToCenter();
             }
         });
     }

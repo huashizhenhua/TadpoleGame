@@ -1,21 +1,14 @@
 package com.tadpolemusic.activity;
 
-import java.util.ArrayList;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,125 +16,35 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
-import com.slidingmenu.lib.SlidingMenu;
 import com.tadpolemusic.R;
 import com.tadpolemusic.VEApplication;
-import com.tadpolemusic.activity.fragment.IActivityInterface;
+import com.tadpolemusic.activity.fragment.AbsMenuFragment;
 import com.tadpolemusic.activity.fragment.LocalMusicFragment;
-import com.tadpolemusic.activity.fragment.menu.LeftMenuFragment;
-import com.tadpolemusic.activity.fragment.menu.RightMenuFragment;
 import com.tadpolemusic.media.MusicData;
 import com.tadpolemusic.media.MusicPlayer;
 
-public class LeftAndRightActivity extends SherlockFragmentActivity implements
-		IActivityInterface {
+public class CenterFragment extends AbsMenuFragment {
 
-	private static class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+	private ViewGroup mViewGroup;
 
-		private ArrayList<Fragment> mMyFragments;
-
-		public MyFragmentPagerAdapter(FragmentManager fm,
-				ArrayList<Fragment> mFragments) {
-			super(fm);
-			mMyFragments = mFragments;
-		}
-
-		@Override
-		public Fragment getItem(int index) {
-			return mMyFragments.get(index);
-		}
-
-		@Override
-		public int getCount() {
-			return mMyFragments.size();
-		}
-
-		@Override
-		public float getPageWidth(int position) {
-			if (position == 0) {
-				return 0.7f;
-			} else if (position == 1) {
-				return 1f;
-			} else {
-				return 1f;
-			}
-		}
-	}
-
-	// ------------------------------------------
-	// Main UI Structure
-	// ------------------------------------------
-
-	private ActionBar mActionBar;
-	private SlidingMenu mSlidingMenu;
-	private ViewPager mViewPager;
-	private ArrayList<Fragment> mFragments = new ArrayList<Fragment>(3);
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		// init actionBar
-		mActionBar = getSupportActionBar();
-		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setIcon(android.R.drawable.ic_menu_info_details);
-		mActionBar.hide();
-
-		// content view
-		setContentView(R.layout.activity_left_right);
-
-		// view pager
-		mViewPager = (ViewPager) this.findViewById(R.id.container);
-
-		// create fragments
-		mFragments.add(new LeftMenuFragment());
-		mFragments.add(new CenterFragment());
-		mFragments.add(new LeftMenuFragment());
-
-		mViewPager.setAdapter(new MyFragmentPagerAdapter(
-				getSupportFragmentManager(), mFragments));
-	}
-
-	public void scrollToCenter() {
-		mViewPager.setCurrentItem(1);
-	}
-
-	public void setContainer(Fragment fragment) {
-		FragmentTransaction t = this.getSupportFragmentManager()
+	private void setContainer(Fragment fragment) {
+		FragmentTransaction t = getActivity().getSupportFragmentManager()
 				.beginTransaction();
-		t = this.getSupportFragmentManager().beginTransaction();
 		t.replace(R.id.container, fragment);
 		t.commit();
 	}
 
 	@Override
-	protected void onStart() {
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(MusicPlayer.BROCAST_NAME);
-		this.registerReceiver(mMusicPlayerReceiver, intentFilter);
-		super.onStart();
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		mViewGroup = (ViewGroup) inflater.inflate(R.layout.main_center, null);
+		onCreateMusic();
+		return mViewGroup;
 	}
 
-	@Override
-	protected void onStop() {
-		this.unregisterReceiver(mMusicPlayerReceiver);
-		super.onStop();
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			mSlidingMenu.toggle();
-			return true;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
+	private View findViewById(int resId) {
+		return mViewGroup.findViewById(resId);
 	}
 
 	// -------------------------------------------
@@ -159,6 +62,8 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 
 	private BroadcastReceiver mMusicPlayerReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
+			final CenterFragment me = CenterFragment.this;
+
 			// Log.d(VEApplication.TAG, " onReceive intent action " +
 			// intent.getAction());
 			if (intent.getAction().equals(MusicPlayer.BROCAST_NAME)) {
@@ -182,8 +87,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 					mHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							LeftAndRightActivity.this
-									.onMusicPlayStart(musicData);
+							me.onMusicPlayStart(musicData);
 						}
 					});
 					break;
@@ -192,7 +96,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 					mHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							LeftAndRightActivity.this.onMusicPlaying();
+							me.onMusicPlaying();
 							onMusicTimeAndProgressUpdate(musicData);
 						}
 					});
@@ -202,7 +106,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 					mHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							LeftAndRightActivity.this.onMusicPreparing();
+							me.onMusicPreparing();
 						}
 					});
 					break;
@@ -211,7 +115,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 					mHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							LeftAndRightActivity.this.onMusicPlayComplete();
+							me.onMusicPlayComplete();
 							onMusicTimeAndProgressUpdate(musicData);
 						}
 					});
@@ -221,7 +125,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 					mHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							LeftAndRightActivity.this.onMusicPlayComplete();
+							me.onMusicPlayComplete();
 						}
 					});
 					break;
@@ -230,7 +134,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 					mHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							LeftAndRightActivity.this.onMusicPlayComplete();
+							me.onMusicPlayComplete();
 						}
 					});
 					break;
@@ -244,7 +148,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 	};
 
 	private void onCreateMusic() {
-		setContainer(new LocalMusicFragment());
+//		setContainer(new LocalMusicFragment());
 
 		mBtnPlay = (ImageView) this.findViewById(R.id.btn_play);
 		mTextViewTime = (TextView) this.findViewById(R.id.text_view_time);
@@ -259,7 +163,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 			@Override
 			public void onClick(View v) {
 				final MusicPlayer musicPlayer = VEApplication
-						.getMusicPlayer(getApplicationContext());
+						.getMusicPlayer(getActivity().getApplicationContext());
 				if (musicPlayer.isPlaying()) {
 					musicPlayer.stopMusic();
 				} else {
@@ -273,7 +177,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 					@Override
 					public void onStopTrackingTouch(SeekBar seekBar) {
 						final MusicPlayer musicPlayer = VEApplication
-								.getMusicPlayer(getApplicationContext());
+								.getMusicPlayer(getActivity().getApplicationContext());
 						musicPlayer.seek(seekBar.getProgress());
 					}
 
@@ -318,11 +222,4 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements
 		mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_play);
 		mTextViewMusicTitle.stopScroll();
 	}
-
-	@Override
-	public void setTitle(String title) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

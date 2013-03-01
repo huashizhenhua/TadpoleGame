@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: G:\\Users\\Administrator\\Documents\\GitHub\\TadpoleGame\\Tadpole\\src\\org\\tadpole\\aidl\\IPluginCallback.aidl
+ * Original file: /Users/chenzh/Desktop/github/TadpoleGame/Tadpole/src/org/tadpole/aidl/IPluginCallback.aidl
  */
 package org.tadpole.aidl;
 public interface IPluginCallback extends android.os.IInterface
@@ -23,13 +23,13 @@ public static org.tadpole.aidl.IPluginCallback asInterface(android.os.IBinder ob
 if ((obj==null)) {
 return null;
 }
-android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
+android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
 if (((iin!=null)&&(iin instanceof org.tadpole.aidl.IPluginCallback))) {
 return ((org.tadpole.aidl.IPluginCallback)iin);
 }
 return new org.tadpole.aidl.IPluginCallback.Stub.Proxy(obj);
 }
-@Override public android.os.IBinder asBinder()
+public android.os.IBinder asBinder()
 {
 return this;
 }
@@ -91,7 +91,7 @@ Proxy(android.os.IBinder remote)
 {
 mRemote = remote;
 }
-@Override public android.os.IBinder asBinder()
+public android.os.IBinder asBinder()
 {
 return mRemote;
 }
@@ -99,7 +99,7 @@ public java.lang.String getInterfaceDescriptor()
 {
 return DESCRIPTOR;
 }
-@Override public void handle(int testInt) throws android.os.RemoteException
+public void handle(int testInt) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
@@ -114,7 +114,7 @@ _reply.recycle();
 _data.recycle();
 }
 }
-@Override public void startActivity(java.lang.String packageName, java.lang.String activityClassName, int iCallingPid, android.os.Bundle bundle) throws android.os.RemoteException
+public void startActivity(java.lang.String packageName, java.lang.String activityClassName, int iCallingPid, android.os.Bundle bundle) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
@@ -134,7 +134,7 @@ _reply.recycle();
 _data.recycle();
 }
 }
-@Override public boolean isHideLoadingScreen() throws android.os.RemoteException
+public boolean isHideLoadingScreen() throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();

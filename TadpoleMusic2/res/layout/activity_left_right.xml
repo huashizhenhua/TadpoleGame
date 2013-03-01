@@ -5,95 +5,11 @@
     tools:context=".MainActivity"
     tools:ignore="MergeRootFrame" >
 
-    <RelativeLayout
+    <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/footer" >
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/footer"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/bg_music_progress" >
-
-        <SeekBar
-            android:id="@+id/seek_bar_time"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:max="100"
-            android:maxHeight="5dp"
-            android:minHeight="5dp"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
-            android:progress="0"
-            android:progressDrawable="@drawable/ve_progress_horizonal"
-            android:thumb="@drawable/seekbar_thumb"
-            android:thumbOffset="5dp" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/seek_bar_time" >
-
-            <ImageView
-                android:id="@+id/btn_play"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:background="@android:drawable/ic_media_play" />
-
-            <TextView
-                android:id="@+id/text_view_time"
-                android:layout_width="111dp"
-                android:layout_height="32dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="48dp"
-                android:gravity="center"
-                android:text="00:00/00:00"
-                android:textColor="@color/white"
-                android:textSize="20dp" />
-
-            <RelativeLayout
-                android:layout_width="100dp"
-                android:layout_height="32dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="32dp"
-                android:layout_toRightOf="@+id/text_view_time"
-                android:paddingLeft="16dp" >
-
-                <com.itap.voiceemoticon.widget.MarqueeTextView
-                    android:id="@+id/text_view_music_title_slide"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:ellipsize="none"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:gravity="center_vertical"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:textSize="18dp" />
-            </RelativeLayout>
-
-            <ProgressBar
-                android:id="@+id/progress_bar_preparing"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="0dp"
-                android:indeterminate="false"
-                android:visibility="gone" />
-        </RelativeLayout>
-    </RelativeLayout>
+    </android.support.v4.view.ViewPager>
 
 </RelativeLayout>
