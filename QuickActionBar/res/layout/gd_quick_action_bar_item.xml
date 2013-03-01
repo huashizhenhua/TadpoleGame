@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/GreenDroid.Widget.QuickAction.Bar.Item"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:singleLine="true" />
