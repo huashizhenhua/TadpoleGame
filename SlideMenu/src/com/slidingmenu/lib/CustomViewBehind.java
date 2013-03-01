@@ -261,14 +261,14 @@ public class CustomViewBehind extends ViewGroup {
             case 0:
                 return content.getLeft();
             case 2:
-                return content.getLeft() + getBehindWidth();
+                return content.getLeft() + getBehindSecondaryWidth();
             }
         } else if (mMode == SlidingMenu.LEFT_RIGHT) {
             switch (page) {
             case 0:
                 return content.getLeft() - getBehindWidth();
             case 2:
-                return content.getLeft() + getBehindWidth();
+                return content.getLeft() + getBehindSecondaryWidth();
             }
         }
         return content.getLeft();
@@ -382,13 +382,13 @@ public class CustomViewBehind extends ViewGroup {
             right = content.getLeft();
         } else if (mMode == SlidingMenu.RIGHT) {
             left = content.getRight();
-            right = content.getRight() + getBehindWidth();
+            right = content.getRight() + getBehindSecondaryWidth();
         } else if (mMode == SlidingMenu.LEFT_RIGHT) {
             left = content.getLeft() - getBehindWidth();
             right = content.getLeft();
             canvas.drawRect(left, 0, right, getHeight(), mFadePaint);
             left = content.getRight();
-            right = content.getRight() + getBehindWidth();
+            right = content.getRight() + getBehindSecondaryWidth();
         }
         canvas.drawRect(left, 0, right, getHeight(), mFadePaint);
     }

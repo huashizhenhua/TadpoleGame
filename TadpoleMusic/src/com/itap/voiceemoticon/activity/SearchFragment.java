@@ -3,26 +3,18 @@ package com.itap.voiceemoticon.activity;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.adapter.ArrayListAdapter;
 import com.itap.voiceemoticon.adapter.VoiceAdapter;
-import com.itap.voiceemoticon.api.PageList;
 import com.itap.voiceemoticon.api.Voice;
-import com.itap.voiceemoticon.widget.PageListView;
 import com.itap.voiceemoticon.widget.SearchPageListView;
 
 public class SearchFragment {

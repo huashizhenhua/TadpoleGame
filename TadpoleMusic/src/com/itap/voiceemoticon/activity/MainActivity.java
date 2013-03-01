@@ -2,28 +2,23 @@ package com.itap.voiceemoticon.activity;
 
 import java.util.ArrayList;
 
+import org.tadpole.view.ViewPager;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ClipDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -37,7 +32,6 @@ import com.itap.voiceemoticon.adapter.MyPagerAdapter;
 import com.itap.voiceemoticon.media.MusicData;
 import com.itap.voiceemoticon.media.MusicPlayer;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
-import com.itap.voiceemoticon.widget.ScrollLayout;
 import com.itap.voiceemoticon.wxapi.WXEntryActivity;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
@@ -245,6 +239,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
         mViewPager = new ViewPager(this);
         mViewPager.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+        mViewPager.setPageMargin(-100);
 
         container.addView(mViewPager);
         ArrayList<View> viewList = new ArrayList<View>();
@@ -365,7 +360,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         super.onDestroy();
         Log.d(VEApplication.TAG, "---->onDestroy call");
     }
-
 
 
 }
