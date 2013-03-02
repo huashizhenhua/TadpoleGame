@@ -37,7 +37,7 @@ public class RightMenuFragment extends Fragment {
         for (int i = 0, len = 10; i < len; i++) {
             MyMusicItem item = new MyMusicItem();
             item.text = "text" + i;
-            item.iconDrawableId = R.drawable.ic_launcher;
+            item.iconDefaultResId = R.drawable.ic_launcher;
             myMusicList.add(item);
         }
         adapter.setList(myMusicList);

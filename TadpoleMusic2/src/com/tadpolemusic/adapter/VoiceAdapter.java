@@ -20,7 +20,7 @@ import com.tadpolemusic.VEApplication;
  * <br> create：2013-1-31上午9:33:58
  * <br>==========================
  */
-public class VoiceAdapter extends ListViewAdapter<Voice> {
+public class VoiceAdapter extends PullToRefreshListViewAdapter<Voice> {
 
     public VoiceAdapter(Activity context) {
         super(context);

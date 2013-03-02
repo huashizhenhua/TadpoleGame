@@ -20,9 +20,6 @@ public class SearchPageListView<Voice> extends PageListView<Voice> {
         super(context);
     }
 
-    public SearchPageListView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
 
     public SearchPageListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -30,8 +27,8 @@ public class SearchPageListView<Voice> extends PageListView<Voice> {
 
     @Override
     public void setAdapter(ListAdapter adapter) {
-        this.setPullRefreshEnable(false);
-        this.setPullLoadEnable(false);
+        //        this.setPullRefreshEnable(false);
+        //        this.setPullLoadEnable(false);
         super.setAdapter(adapter);
     }
 
@@ -53,7 +50,7 @@ public class SearchPageListView<Voice> extends PageListView<Voice> {
             this.post(new Runnable() {
                 @Override
                 public void run() {
-                    me.setPullLoadEnable(true);
+                    //                    me.setPullLoadEnable(true);
                 }
             });
         } else {

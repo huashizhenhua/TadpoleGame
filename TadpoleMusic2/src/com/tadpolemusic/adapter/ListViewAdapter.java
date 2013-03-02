@@ -2,6 +2,8 @@ package com.tadpolemusic.adapter;
 
 import java.util.ArrayList;
 
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;

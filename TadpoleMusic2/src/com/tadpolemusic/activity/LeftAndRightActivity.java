@@ -15,9 +15,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -30,299 +32,125 @@ import com.itap.voiceemoticon.widget.MarqueeTextView;
 import com.slidingmenu.lib.SlidingMenu;
 import com.tadpolemusic.R;
 import com.tadpolemusic.VEApplication;
-import com.tadpolemusic.activity.fragment.IActivityInterface;
-import com.tadpolemusic.activity.fragment.LocalMusicFragment;
+import com.tadpolemusic.activity.fragment.AbsCenterContent;
+import com.tadpolemusic.activity.fragment.CenterFragment;
+import com.tadpolemusic.activity.fragment.LeftMenuConfig;
+import com.tadpolemusic.activity.fragment.center.LocalMusicFragment;
+import com.tadpolemusic.activity.fragment.menu.ILeftMenuControl;
 import com.tadpolemusic.activity.fragment.menu.LeftMenuFragment;
 import com.tadpolemusic.activity.fragment.menu.RightMenuFragment;
+import com.tadpolemusic.adapter.MyMusicItem;
 import com.tadpolemusic.media.MusicData;
 import com.tadpolemusic.media.MusicPlayer;
 
-public class LeftAndRightActivity extends SherlockFragmentActivity implements
-		IActivityInterface {
+public class LeftAndRightActivity extends SherlockFragmentActivity implements ILeftMenuControl {
 
-	private static class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+    private static class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
-		private ArrayList<Fragment> mMyFragments;
+        private static final int FIRST_PAGE_MARGIN_RIGHT_DP = 50; // 50dp
 
-		public MyFragmentPagerAdapter(FragmentManager fm,
-				ArrayList<Fragment> mFragments) {
-			super(fm);
-			mMyFragments = mFragments;
-		}
+        private ArrayList<Fragment> mMyFragments;
+        private float mfirstPageScale;
 
-		@Override
-		public Fragment getItem(int index) {
-			return mMyFragments.get(index);
-		}
+        public MyFragmentPagerAdapter(Context ctx, FragmentManager fm, ArrayList<Fragment> mFragments) {
+            super(fm);
+            mMyFragments = mFragments;
+            WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
+            DisplayMetrics metrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(metrics);
+            float density = metrics.density;
+            float screenWidth = metrics.widthPixels;
+            float screenWidthDIP = screenWidth / density;
+            mfirstPageScale = 1 - (FIRST_PAGE_MARGIN_RIGHT_DP / screenWidthDIP);
+        }
 
-		@Override
-		public int getCount() {
-			return mMyFragments.size();
-		}
+        @Override
+        public Fragment getItem(int index) {
+            return mMyFragments.get(index);
+        }
 
-		@Override
-		public float getPageWidth(int position) {
-			if (position == 0) {
-				return 0.7f;
-			} else if (position == 1) {
-				return 1f;
-			} else {
-				return 1f;
-			}
-		}
-	}
+        @Override
+        public int getCount() {
+            return mMyFragments.size();
+        }
 
-	// ------------------------------------------
-	// Main UI Structure
-	// ------------------------------------------
+        @Override
+        public float getPageWidth(int position) {
+            if (position == 0) {
+                return mfirstPageScale;
+            } else if (position == 1) {
+                return 1f;
+            } else {
+                return 1f;
+            }
+        }
+    }
 
-	private ActionBar mActionBar;
-	private SlidingMenu mSlidingMenu;
-	private ViewPager mViewPager;
-	private ArrayList<Fragment> mFragments = new ArrayList<Fragment>(3);
+    // ------------------------------------------
+    // Main UI Structure
+    // ------------------------------------------
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    private ActionBar mActionBar;
+    private SlidingMenu mSlidingMenu;
+    private ViewPager mViewPager;
+    private ArrayList<Fragment> mFragments = new ArrayList<Fragment>(3);
 
-		// init actionBar
-		mActionBar = getSupportActionBar();
-		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setIcon(android.R.drawable.ic_menu_info_details);
-		mActionBar.hide();
 
-		// content view
-		setContentView(R.layout.activity_left_right);
+    private LeftMenuFragment mLeft;
+    private CenterFragment mCenter;
+    private LeftMenuFragment mRight;
 
-		// view pager
-		mViewPager = (ViewPager) this.findViewById(R.id.container);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // init actionBar
+        mActionBar = getSupportActionBar();
+        mActionBar.hide();
 
-		// create fragments
-		mFragments.add(new LeftMenuFragment());
-		mFragments.add(new CenterFragment());
-		mFragments.add(new LeftMenuFragment());
+        // content view
+        setContentView(R.layout.activity_left_right);
 
-		mViewPager.setAdapter(new MyFragmentPagerAdapter(
-				getSupportFragmentManager(), mFragments));
-	}
+        // view pager
+        mViewPager = (ViewPager) this.findViewById(R.id.container);
 
-	public void scrollToCenter() {
-		mViewPager.setCurrentItem(1);
-	}
+        // create fragments
+        mLeft = new LeftMenuFragment(LeftMenuConfig.myMusicItems);
+        mCenter = new CenterFragment();
+        mRight = new LeftMenuFragment(LeftMenuConfig.myMusicItems);
 
-	public void setContainer(Fragment fragment) {
-		FragmentTransaction t = this.getSupportFragmentManager()
-				.beginTransaction();
-		t = this.getSupportFragmentManager().beginTransaction();
-		t.replace(R.id.container, fragment);
-		t.commit();
-	}
+        // add fragment to view pager
+        mFragments.add(mLeft);
+        mFragments.add(mCenter);
+        mFragments.add(mRight);
+        mViewPager.setAdapter(new MyFragmentPagerAdapter(this, getSupportFragmentManager(), mFragments));
 
-	@Override
-	protected void onStart() {
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(MusicPlayer.BROCAST_NAME);
-		this.registerReceiver(mMusicPlayerReceiver, intentFilter);
-		super.onStart();
-	}
+        // set default content;
+        setCenterContent(LeftMenuConfig.localMusicItem);
+    }
 
-	@Override
-	protected void onStop() {
-		this.unregisterReceiver(mMusicPlayerReceiver);
-		super.onStop();
-	}
+    public void scrollToCenter() {
+        mViewPager.setCurrentItem(1);
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			mSlidingMenu.toggle();
-			return true;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public void setCenterContent(MyMusicItem item) {
+        mCenter.setContent(item);
+    }
 
-	// -------------------------------------------
-	// Music Player Bar
-	// -------------------------------------------
 
-	private ImageView mBtnPlay;
-	private TextView mTextViewTime;
-	private MarqueeTextView mTextViewMusicTitle;
-	private SeekBar mSeekBarTime;
-	private ProgressBar mProgressBarPrepare;
-	private View mViewFooter;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            mSlidingMenu.toggle();
+            return true;
+        default:
+            break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	private Handler mHandler = new Handler();
 
-	private BroadcastReceiver mMusicPlayerReceiver = new BroadcastReceiver() {
-		public void onReceive(Context context, Intent intent) {
-			// Log.d(VEApplication.TAG, " onReceive intent action " +
-			// intent.getAction());
-			if (intent.getAction().equals(MusicPlayer.BROCAST_NAME)) {
-				final Bundle data = intent.getExtras();
-				int state = data.getInt(MusicPlayer.KEY_STATE);
-
-				int brocastType = data.getInt(MusicPlayer.KEY_BROCAST_TYPE);
-
-				if (brocastType == MusicPlayer.BROCAST_TYPE_BUFFER_UPDATE) {
-					int percent = data.getInt(MusicPlayer.KEY_PERCENT);
-					mSeekBarTime.setSecondaryProgress(percent);
-					return;
-				}
-
-				final MusicData musicData = data
-						.getParcelable(MusicPlayer.KEY_STATE_DATA);
-				// Log.d(VEApplication.TAG, "musicData = " + musicData);
-				switch (state) {
-				case MusicPlayer.STATE_PLAY_START:
-					Log.d(VEApplication.TAG, " STATE_PLAY_START");
-					mHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							LeftAndRightActivity.this
-									.onMusicPlayStart(musicData);
-						}
-					});
-					break;
-				case MusicPlayer.STATE_PLAY_PLAYING:
-					Log.d(VEApplication.TAG, " STATE_PLAY_PLAYING");
-					mHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							LeftAndRightActivity.this.onMusicPlaying();
-							onMusicTimeAndProgressUpdate(musicData);
-						}
-					});
-					break;
-				case MusicPlayer.STATE_PLAY_PREPARING:
-					Log.d(VEApplication.TAG, " STATE_PLAY_PREPARING");
-					mHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							LeftAndRightActivity.this.onMusicPreparing();
-						}
-					});
-					break;
-				case MusicPlayer.STATE_PLAY_COMPLETE:
-					Log.d(VEApplication.TAG, " STATE_PLAY_COMPLETE");
-					mHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							LeftAndRightActivity.this.onMusicPlayComplete();
-							onMusicTimeAndProgressUpdate(musicData);
-						}
-					});
-					break;
-				case MusicPlayer.STATE_INVALID:
-					Log.d(VEApplication.TAG, "STATE_INVALID");
-					mHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							LeftAndRightActivity.this.onMusicPlayComplete();
-						}
-					});
-					break;
-				case MusicPlayer.STATE_PLAY_STOP:
-					Log.d(VEApplication.TAG, "STATE_PLAY_STOP");
-					mHandler.post(new Runnable() {
-						@Override
-						public void run() {
-							LeftAndRightActivity.this.onMusicPlayComplete();
-						}
-					});
-					break;
-				default:
-					Log.d(VEApplication.TAG, " state = " + state);
-					break;
-				}
-
-			}
-		}
-	};
-
-	private void onCreateMusic() {
-		setContainer(new LocalMusicFragment());
-
-		mBtnPlay = (ImageView) this.findViewById(R.id.btn_play);
-		mTextViewTime = (TextView) this.findViewById(R.id.text_view_time);
-		mSeekBarTime = (SeekBar) this.findViewById(R.id.seek_bar_time);
-		mProgressBarPrepare = (ProgressBar) this
-				.findViewById(R.id.progress_bar_preparing);
-		mTextViewMusicTitle = (MarqueeTextView) this
-				.findViewById(R.id.text_view_music_title_slide);
-
-		mViewFooter = (View) this.findViewById(R.id.footer);
-		mViewFooter.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				final MusicPlayer musicPlayer = VEApplication
-						.getMusicPlayer(getApplicationContext());
-				if (musicPlayer.isPlaying()) {
-					musicPlayer.stopMusic();
-				} else {
-					musicPlayer.resume();
-				}
-			}
-		});
-
-		mSeekBarTime
-				.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-					@Override
-					public void onStopTrackingTouch(SeekBar seekBar) {
-						final MusicPlayer musicPlayer = VEApplication
-								.getMusicPlayer(getApplicationContext());
-						musicPlayer.seek(seekBar.getProgress());
-					}
-
-					@Override
-					public void onStartTrackingTouch(SeekBar seekBar) {
-
-					}
-
-					@Override
-					public void onProgressChanged(SeekBar seekBar,
-							int progress, boolean fromUser) {
-
-					}
-				});
-	}
-
-	private void onMusicPlayStart(MusicData musicData) {
-		mTextViewMusicTitle.setText(musicData.musicName);
-		mTextViewMusicTitle.startFor0();
-		mProgressBarPrepare.setVisibility(View.GONE);
-
-	}
-
-	private void onMusicPreparing() {
-		mProgressBarPrepare.setVisibility(View.VISIBLE);
-	}
-
-	private void onMusicPlaying() {
-		mProgressBarPrepare.setVisibility(View.INVISIBLE);
-		mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_pause);
-	}
-
-	private void onMusicTimeAndProgressUpdate(final MusicData musicData) {
-		mTextViewTime.setText(musicData.getTimerText());
-		mSeekBarTime.setProgress(musicData.getProgress());
-	}
-
-	private void onMusicPlayComplete() {
-		Log.d(VEApplication.TAG, "onMusicPlayComplete");
-		mTextViewMusicTitle.clearAnimation();
-		mProgressBarPrepare.setVisibility(View.GONE);
-		mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_play);
-		mTextViewMusicTitle.stopScroll();
-	}
-
-	@Override
-	public void setTitle(String title) {
-		// TODO Auto-generated method stub
-
-	}
+    // -------------------------------------------
 
 }

@@ -10,12 +10,25 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public abstract class BaseListAdapter<T, V extends View> extends BaseAdapter {
+    public static final int INVALID_POSITION = -1;
     protected ArrayList<T> mList;
     protected Activity mContext;
     protected V mListView;
+    protected int mSelectedPosition = INVALID_POSITION;
 
     public BaseListAdapter(Activity context) {
         this.mContext = context;
+    }
+
+    public void setSelectedPostion(int i) {
+        if (mSelectedPosition != i) {
+            mSelectedPosition = i;
+            this.notifyDataSetChanged();
+        }
+    }
+
+    public int getSelectedPostion() {
+        return mSelectedPosition;
     }
 
     @Override

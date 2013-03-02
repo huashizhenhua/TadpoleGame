@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/chenzh/Desktop/github/TadpoleGame/Tadpole/src/org/tadpole/aidl/PluginServiceConnect.aidl
+ * Original file: G:\\Users\\Administrator\\Documents\\GitHub\\TadpoleGame\\Tadpole\\src\\org\\tadpole\\aidl\\PluginServiceConnect.aidl
  */
 package org.tadpole.aidl;
 public interface PluginServiceConnect extends android.os.IInterface
@@ -23,13 +23,13 @@ public static org.tadpole.aidl.PluginServiceConnect asInterface(android.os.IBind
 if ((obj==null)) {
 return null;
 }
-android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
+android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
 if (((iin!=null)&&(iin instanceof org.tadpole.aidl.PluginServiceConnect))) {
 return ((org.tadpole.aidl.PluginServiceConnect)iin);
 }
 return new org.tadpole.aidl.PluginServiceConnect.Stub.Proxy(obj);
 }
-public android.os.IBinder asBinder()
+@Override public android.os.IBinder asBinder()
 {
 return this;
 }
@@ -79,7 +79,7 @@ Proxy(android.os.IBinder remote)
 {
 mRemote = remote;
 }
-public android.os.IBinder asBinder()
+@Override public android.os.IBinder asBinder()
 {
 return mRemote;
 }
@@ -87,7 +87,7 @@ public java.lang.String getInterfaceDescriptor()
 {
 return DESCRIPTOR;
 }
-public void test(int testInt) throws android.os.RemoteException
+@Override public void test(int testInt) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
@@ -102,7 +102,7 @@ _reply.recycle();
 _data.recycle();
 }
 }
-public void registerCallback(org.tadpole.aidl.IPluginCallback callback) throws android.os.RemoteException
+@Override public void registerCallback(org.tadpole.aidl.IPluginCallback callback) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
@@ -117,7 +117,7 @@ _reply.recycle();
 _data.recycle();
 }
 }
-public void unRegisterCallback(org.tadpole.aidl.IPluginCallback callback) throws android.os.RemoteException
+@Override public void unRegisterCallback(org.tadpole.aidl.IPluginCallback callback) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();

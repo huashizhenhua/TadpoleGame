@@ -3,38 +3,34 @@ package com.itap.voiceemoticon.widget;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.Adapter;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.itap.voiceemoticon.api.PageList;
-import com.itap.voiceemoticon.api.Voice;
 import com.tadpolemusic.VEApplication;
-import com.tadpolemusic.adapter.ListViewAdapter;
+import com.tadpolemusic.adapter.PullToRefreshListViewAdapter;
 
-public abstract class PageListView<T> extends XListView implements OnScrollListener, XListView.IXListViewListener {
-    private LinearLayout mLoadLayout;
-    private ListViewAdapter<T> mAdapter;
+public abstract class PageListView<T> extends PullToRefreshListView implements OnScrollListener {
+    private PullToRefreshListViewAdapter<T> mAdapter;
     private int mTotalCount;
-    private int mLastItem;
     private int mStartIndex;
     public int maxResult = 20;
 
     public PageListView(Context context) {
-
         super(context);
+
+        // default layout is fill_parent
+        ViewGroup.LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+        this.setLayoutParams(lp);
     }
 
-    public PageListView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
 
     public PageListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,14 +38,26 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
 
     @Override
     public void setAdapter(ListAdapter adapter) {
-        mAdapter = (ListViewAdapter<T>) adapter;
-        this.setFooterDividersEnabled(false);
-        this.setXListViewListener(this);
+        mAdapter = (PullToRefreshListViewAdapter<T>) adapter;
         super.setAdapter(adapter);
+        final PageListView<T> me = this;
+        me.setMode(Mode.BOTH);
+        // 下拉刷新
+        this.setOnRefreshListener(new OnRefreshListener2<ListView>() {
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+                me.doRefresh();
+
+            }
+
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+                me.doLoad(false);
+            }
+        });
     }
 
     public void doLoad(String... args) {
-        super.showFooterLoading();
         this.loadData(false);
     }
 
@@ -71,7 +79,7 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
 
     private void loadData(final boolean isRefresh) {
         Log.d(VEApplication.TAG, "loadData startIndex = " + mStartIndex + ", mTotalCount = " + mTotalCount);
-        final PageListView me = this;
+        final PageListView<T> me = this;
 
         if (isRefresh) {
             mStartIndex = 0;
@@ -87,14 +95,14 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
                     me.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(me.getContext(), "服务器木有数据", Toast.LENGTH_LONG);
-                            me.stopRefreshOrLoad();
+                            Toast.makeText(me.getContext(), "服务器木有数据", Toast.LENGTH_LONG).show();
+                            me.onRefreshComplete();
                         }
                     });
                     return;
                 }
                 mStartIndex += maxResult;
-                final ListViewAdapter adapter = mAdapter;
+                final PullToRefreshListViewAdapter adapter = mAdapter;
                 final ArrayList list = adapter.getList();
                 mTotalCount = pageList.totalCount;
                 me.post(new Runnable() {
@@ -104,14 +112,13 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
                             list.clear();
                             adapter.notifyDataSetChanged();
                         }
-
                         if (list == null) {
                             adapter.setList(pageList.records);
                         } else {
                             list.addAll(pageList.records);
                         }
                         adapter.notifyDataSetChanged();
-                        me.stopRefreshOrLoad();
+                        me.onRefreshComplete();
                     }
                 });
             }
@@ -120,12 +127,4 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
 
     public abstract PageList<T> onLoadPageList(int startIndex, int maxResult);
 
-    public void onRefresh() {
-        doRefresh();
-    }
-
-    public void onLoadMore() {
-        doLoad();
-    }
-    
 }

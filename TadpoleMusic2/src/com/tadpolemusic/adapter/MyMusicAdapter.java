@@ -1,12 +1,14 @@
 package com.tadpolemusic.adapter;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tadpolemusic.R;
+import com.tadpolemusic.R.color;
 
 public class MyMusicAdapter extends GridViewAdapter<MyMusicItem> {
 
@@ -30,7 +32,14 @@ public class MyMusicAdapter extends GridViewAdapter<MyMusicItem> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.textViewText.setText(item.text);
-        viewHolder.imageViewIcon.setBackgroundResource(item.iconDrawableId);
+
+        if (getSelectedPostion() == position) {
+            viewHolder.textViewText.setTextColor(getContext().getResources().getColor(R.color.orange));
+            viewHolder.imageViewIcon.setImageResource(item.iconDefaultResId);
+        } else {
+            viewHolder.textViewText.setTextColor(getContext().getResources().getColor(R.color.ghostwhite));
+            viewHolder.imageViewIcon.setImageResource(item.iconSelectedResId);
+        }
         return view;
     }
 
