@@ -2,22 +2,21 @@ package com.tadpolemusic.activity.fragment.menu;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tadpolemusic.R;
 import com.tadpolemusic.activity.fragment.AbsMenuFragment;
 import com.tadpolemusic.adapter.BaseListAdapter;
 import com.tadpolemusic.adapter.MyMusicAdapter;
 import com.tadpolemusic.adapter.MyMusicItem;
+import com.umeng.common.net.m;
 
 
 public class LeftMenuFragment extends AbsMenuFragment {
@@ -41,6 +40,35 @@ public class LeftMenuFragment extends AbsMenuFragment {
 
     public ArrayList<MyMusicItem> loadLocalItems() {
         return localItems;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (mDefaultItem != null) {
+            int postion = mAdapterLocal.getList().indexOf(mDefaultItem);
+            if (postion != BaseListAdapter.INVALID_POSITION) {
+                mAdapterLocal.setSelectedPostion(postion);
+                mAdapterLocal.notifyDataSetChanged();
+            }
+
+            postion = mAdapterNetwork.getList().indexOf(mDefaultItem);
+            if (postion != BaseListAdapter.INVALID_POSITION) {
+                mAdapterNetwork.setSelectedPostion(postion);
+                mAdapterNetwork.notifyDataSetChanged();
+            }
+
+            getLeftMenuControll().setCenterContent(mDefaultItem);
+
+            mDefaultItem = null;
+        }
+    }
+
+    private MyMusicItem mDefaultItem;
+
+    public void setDefaultSelectItem(MyMusicItem musicItem) {
+        mDefaultItem = musicItem;
     }
 
     public ArrayList<MyMusicItem> loadNetworkItems() {
@@ -82,18 +110,26 @@ public class LeftMenuFragment extends AbsMenuFragment {
         final ArrayList<MyMusicItem> myMusicList = loadLocalItems();
         mAdapterLocal.setList(myMusicList);
         gridViewMusic.setAdapter(mAdapterLocal);
+
+        final LeftMenuFragment me = this;
         gridViewMusic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int postion, long arg3) {
-                // update ui
-                mAdapterLocal.setSelectedPostion(postion);
-                mAdapterNetwork.setSelectedPostion(mAdapterNetwork.INVALID_POSITION);
 
                 // item action
                 MyMusicItem item = myMusicList.get(postion);
-                if (MyMusicItem.Action.REPLEACE_CENTER.equals(item.action)) {
+                if (MyMusicItem.Action.REPLEACE_CENTER.equals(item.action) && (item.centerContentClass != null)) {
                     getLeftMenuControll().setCenterContent(item);
                     getLeftMenuControll().scrollToCenter();
+                    
+                    // update ui
+                    mAdapterLocal.setSelectedPostion(postion);
+                    mAdapterNetwork.setSelectedPostion(mAdapterNetwork.INVALID_POSITION);
+                }
+
+                if (MyMusicItem.Action.NEW_ACTIVITY.equals(item.action) && (item.activityClass != null)) {
+                    Intent intent = new Intent(getActivity(), item.activityClass);
+                    me.startActivity(intent);
                 }
             }
         });
@@ -127,4 +163,6 @@ public class LeftMenuFragment extends AbsMenuFragment {
             }
         });
     }
+
+
 }

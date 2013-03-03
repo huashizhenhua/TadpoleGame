@@ -44,7 +44,7 @@ public class SearchFragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
                 Log.d(VEApplication.TAG, "HotVoice Fragment onItemClick ");
                 Voice item = (Voice) mVoiceAdapter.getItem(pos);
-                VEApplication.getMusicPlayer(mActivity).playMusic(item.url, item.title);
+                VEApplication.getMusicPlayer(mActivity).play(pos);
             }
         });
 

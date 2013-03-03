@@ -53,12 +53,18 @@
                 android:value=".ItemListActivity" />
         </activity>
 
+        <service android:name="com.tadpolemusic.media.service.MusicService" >
+            <intent-filter>
+                <action android:name="com.tadpolemusic.media.service.musicservice" />
+            </intent-filter>
+        </service>
+
         <!-- Umeng Config -->
         <!-- Fb Activitys Start -->
         <!--
              <activity
             android:label="@string/umeng_example_home_btn_fb"
-            android:name=".fb.SimpleExample" />
+            android:name=".fb.SimpleExample" />
         -->
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"
@@ -85,6 +91,8 @@
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
+        
+        
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

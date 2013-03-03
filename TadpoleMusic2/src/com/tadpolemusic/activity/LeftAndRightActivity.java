@@ -2,46 +2,25 @@ package com.tadpolemusic.activity;
 
 import java.util.ArrayList;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.itap.voiceemoticon.widget.MarqueeTextView;
 import com.slidingmenu.lib.SlidingMenu;
 import com.tadpolemusic.R;
-import com.tadpolemusic.VEApplication;
-import com.tadpolemusic.activity.fragment.AbsCenterContent;
 import com.tadpolemusic.activity.fragment.CenterFragment;
 import com.tadpolemusic.activity.fragment.LeftMenuConfig;
-import com.tadpolemusic.activity.fragment.center.LocalMusicFragment;
 import com.tadpolemusic.activity.fragment.menu.ILeftMenuControl;
 import com.tadpolemusic.activity.fragment.menu.LeftMenuFragment;
-import com.tadpolemusic.activity.fragment.menu.RightMenuFragment;
 import com.tadpolemusic.adapter.MyMusicItem;
-import com.tadpolemusic.media.MusicData;
-import com.tadpolemusic.media.MusicPlayer;
 
 public class LeftAndRightActivity extends SherlockFragmentActivity implements ILeftMenuControl {
 
@@ -125,7 +104,8 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IL
         mViewPager.setAdapter(new MyFragmentPagerAdapter(this, getSupportFragmentManager(), mFragments));
 
         // set default content;
-        setCenterContent(LeftMenuConfig.localMusicItem);
+//        setCenterContent(LeftMenuConfig.localMusicItem);
+        mLeft.setDefaultSelectItem(LeftMenuConfig.localMusicItem);
     }
 
     public void scrollToCenter() {
@@ -136,7 +116,12 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IL
     public void setCenterContent(MyMusicItem item) {
         mCenter.setContent(item);
     }
-
+    
+    @Override
+    public void scrollToLeft() {
+        mViewPager.setCurrentItem(0);
+    }
+    
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -149,6 +134,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IL
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
     // -------------------------------------------

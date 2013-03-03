@@ -2,6 +2,7 @@ package com.tadpolemusic.activity.fragment;
 
 import java.util.ArrayList;
 
+import com.tadpolemusic.activity.AboutActivity;
 import com.tadpolemusic.activity.fragment.center.HotVoiceFragment;
 import com.tadpolemusic.activity.fragment.center.LocalMusicFragment;
 import com.tadpolemusic.adapter.MyMusicItem;
@@ -38,6 +39,21 @@ public class LeftMenuConfig {
         item.contentKey = "hot_voice";
         item.centerContentClass = HotVoiceFragment.class;
         item.action = MyMusicItem.Action.REPLEACE_CENTER;
+        myMusicItems.add(item);
+
+        // hot voice
+        item = new MyMusicItem();
+        item.text = "关于我们(Activity)";
+        item.contentKey = "hot_voice";
+        item.activityClass = AboutActivity.class;
+        item.action = MyMusicItem.Action.NEW_ACTIVITY;
+        myMusicItems.add(item);
+        
+        item = new MyMusicItem();
+        item.text = "关于我们(Activity)";
+        item.contentKey = "hot_voice";
+        item.activityClass = AboutActivity.class;
+        item.action = MyMusicItem.Action.NEW_ACTIVITY;
         myMusicItems.add(item);
     }
 }

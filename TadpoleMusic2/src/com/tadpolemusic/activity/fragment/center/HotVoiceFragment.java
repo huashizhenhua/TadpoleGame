@@ -38,7 +38,7 @@ public class HotVoiceFragment extends AbsCenterContent {
             public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
                 Log.d(VEApplication.TAG, "HotVoice Fragment onItemClick ");
                 Voice item = (Voice) mVoiceAdapter.getItem(pos);
-                VEApplication.getMusicPlayer(getActivity()).playMusic(item.url, item.title);
+                VEApplication.getMusicPlayer(getActivity()).play(pos);
             }
         });
 
@@ -60,5 +60,9 @@ public class HotVoiceFragment extends AbsCenterContent {
     @Override
     public String getUniqueId() {
         return getClass().getName();
+    }
+
+    @Override
+    public void onMusicPlayingIndexChange(int index) {
     }
 }

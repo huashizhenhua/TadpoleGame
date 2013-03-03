@@ -60,14 +60,6 @@ public class LocalMusicItem {
      */
     private String mFilePath = "";
 
-    /**
-     * getmFileName()
-     * 
-     * @return
-     */
-    public String getFileName() {
-        return mFileName;
-    }
 
     /**
      * setFileName()
@@ -119,7 +111,7 @@ public class LocalMusicItem {
      * 
      * @return
      */
-    public String getmSinger() {
+    public String getSinger() {
         return mSinger;
     }
 

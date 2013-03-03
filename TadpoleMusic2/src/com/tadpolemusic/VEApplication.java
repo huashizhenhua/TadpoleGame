@@ -1,7 +1,6 @@
 package com.tadpolemusic;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.content.Context;
 
@@ -10,27 +9,26 @@ import com.itap.voiceemoticon.api.VoiceEmoticonApi;
 import com.itap.voiceemoticon.api.impl.VoiceEmoticonApiImpl;
 import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.db.VoiceDao;
-import com.tadpolemusic.media.MusicPlayer;
+import com.tadpolemusic.media.service.MusicPlayerProxy;
 
 public class VEApplication {
     public static final String TAG = "VEApplication";
+    
+    private static MusicPlayerProxy mMusicPlayerProxy;
 
     public static VoiceEmoticonApi getVoiceEmoticonApi() {
         return new VoiceEmoticonApiImpl();
     }
 
-    private static MusicPlayer mMusicPlayer;
-
-    public static synchronized MusicPlayer getMusicPlayer(Context context) {
-        if (mMusicPlayer == null) {
-            mMusicPlayer = new MusicPlayer(context.getApplicationContext());
+    public static synchronized MusicPlayerProxy getMusicPlayer(Context context) {
+        if (mMusicPlayerProxy == null) {
+            mMusicPlayerProxy = new MusicPlayerProxy(context.getApplicationContext());
         }
-        return mMusicPlayer;
+        return mMusicPlayerProxy;
     }
 
     public static void runOnThread(Runnable runnable) {
         new Thread(runnable).start();
-
     }
 
 

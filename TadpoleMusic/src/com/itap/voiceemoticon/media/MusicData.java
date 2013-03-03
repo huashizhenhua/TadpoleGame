@@ -1,5 +1,8 @@
 package com.itap.voiceemoticon.media;
 
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -24,6 +27,18 @@ public class MusicData implements Parcelable {
         musicCurTime = 0;
         musicDuration = 0;
         musicPath = "";
+    }
+
+    public String getFirstLetterInUpcase() {
+        HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
+        format.setCaseType(HanyuPinyinCaseType.UPPERCASE);
+        String str = PinyinHelper.toHanyuPinyinString(musicName, format, "");
+        if (str != null && str.length() > 0) {
+            if (Character.isLetter(str.toCharArray()[0])) {
+                return ((String) str.subSequence(0, 1)).toUpperCase();
+            }
+        }
+        return "?";
     }
 
     @Override

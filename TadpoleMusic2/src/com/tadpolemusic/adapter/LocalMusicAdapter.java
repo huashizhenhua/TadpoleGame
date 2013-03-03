@@ -22,6 +22,7 @@ import com.quickactionbar.QuickActionBar;
 import com.quickactionbar.QuickActionGrid;
 import com.tadpolemusic.R;
 import com.tadpolemusic.media.LocalMusicItem;
+import com.tadpolemusic.media.MusicData;
 
 /**
  * <br>==========================
@@ -30,9 +31,7 @@ import com.tadpolemusic.media.LocalMusicItem;
  * <br> create：2013-1-31
  * <br>==========================
  */
-public class LocalMusicAdapter extends ListViewAdapter<LocalMusicItem> implements SectionIndexer, OnScrollListener {
-
-    private int mSelectedPostion = -1;
+public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements SectionIndexer, OnScrollListener {
 
     public static interface OnSectionChangeListener {
         public void handle(char letter);
@@ -44,17 +43,10 @@ public class LocalMusicAdapter extends ListViewAdapter<LocalMusicItem> implement
         super(context);
     }
 
-    public void setSelectPostion(int position) {
-        if (mSelectedPostion != position) {
-            mSelectedPostion = position;
-            this.notifyDataSetChanged();
-        }
-    }
-
     @SuppressLint("NewApi")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        LocalMusicItem item = (LocalMusicItem) getItem(position);
+        MusicData item = (MusicData) getItem(position);
         View view = convertView;
         ViewHolder viewHolder = null;
         if (view == null) {
@@ -88,13 +80,13 @@ public class LocalMusicAdapter extends ListViewAdapter<LocalMusicItem> implement
             }
         }
 
-        if (position == mSelectedPostion) {
+        if (position == super.getSelectedPostion()) {
             viewHolder.imageViewSelect.setVisibility(View.VISIBLE);
         } else {
             viewHolder.imageViewSelect.setVisibility(View.INVISIBLE);
         }
 
-        viewHolder.textViewMusicTitle.setText(item.getFileName());
+        viewHolder.textViewMusicTitle.setText(item.musicName);
         viewHolder.textViewSectionTitle.setText(item.getFirstLetterInUpcase());
         viewHolder.imageButtonOperation.setOnClickListener(new View.OnClickListener() {
 
@@ -150,10 +142,10 @@ public class LocalMusicAdapter extends ListViewAdapter<LocalMusicItem> implement
 
     @Override
     public int getPositionForSection(int section) {
-        LocalMusicItem item;
+        MusicData item;
         String letter;
         for (int i = 0; i < getCount(); i++) {
-            item = (LocalMusicItem) mList.get(i);
+            item = (MusicData) mList.get(i);
             letter = item.getFirstLetterInUpcase();
             char firstChar = letter.toUpperCase().charAt(0);
             if (letter.length() > 0 && firstChar == section) {
@@ -182,7 +174,7 @@ public class LocalMusicAdapter extends ListViewAdapter<LocalMusicItem> implement
         if (mList == null || firstVisibleItem == -1 || firstVisibleItem == 0) {
             return;
         }
-        LocalMusicItem item = mList.get(firstVisibleItem);
+        MusicData item = mList.get(firstVisibleItem);
         String firstLetter = item.getFirstLetterInUpcase();
         if (mSectionChangeListener != null) {
             mSectionChangeListener.handle(firstLetter.charAt(0));
