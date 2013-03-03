@@ -7,13 +7,13 @@
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/top_bar_size"
         android:layout_alignParentTop="true"
-        android:background="@color/orange" >
+        android:background="@color/simple_blue" >
 
         <ImageButton
             android:id="@+id/button_left"
-            android:layout_width="50dp"
+            android:layout_width="@dimen/top_bar_size"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:background="@drawable/bg_main_center_button_left"
@@ -31,11 +31,11 @@
             android:textColor="@color/white" />
 
         <ImageButton
-            android:layout_width="50dp"
+            android:layout_width="@dimen/top_bar_size"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_margin="0dp"
-            android:background="@drawable/bg_main_center_button_left"
+            android:background="@color/transparent"
             android:src="@android:drawable/ic_menu_directions" />
     </RelativeLayout>
 
@@ -50,20 +50,29 @@
     <RelativeLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/bottom_bar_size"
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg_music_progress" >
+
+        <ImageView
+            android:id="@+id/image_view_music_icon"
+            android:layout_width="@dimen/bottom_bar_size"
+            android:layout_height="fill_parent"
+            android:background="@color/skyblue"
+            android:contentDescription="hello world"
+            android:src="@android:drawable/ic_menu_day" />
 
         <SeekBar
             android:id="@+id/seek_bar_time"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/image_view_music_icon"
             android:max="100"
-            android:maxHeight="5dp"
-            android:minHeight="5dp"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
+            android:maxHeight="3dp"
+            android:minHeight="3dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:progress="0"
             android:progressDrawable="@drawable/ve_progress_horizonal"
             android:thumb="@drawable/seekbar_thumb"
@@ -72,7 +81,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/seek_bar_time" >
+            android:layout_below="@+id/seek_bar_time"
+            android:layout_toRightOf="@+id/image_view_music_icon" >
 
             <ImageView
                 android:id="@+id/btn_play"

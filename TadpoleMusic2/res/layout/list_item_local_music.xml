@@ -6,9 +6,10 @@
         android:id="@+id/text_view_section_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/powderblue"
+        android:background="@drawable/bg_list_item_line"
         android:paddingLeft="8dp"
         android:textAppearance="@style/TextAppearance.Large"
+        android:textColor="@color/simple_blue"
         android:visibility="gone" />
 
     <RelativeLayout

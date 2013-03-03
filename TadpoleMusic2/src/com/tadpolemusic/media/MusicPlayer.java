@@ -91,13 +91,13 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener{
 		switch(mPlayState)
 		{
 		case MusicPlayState.MPS_NOFILE:
-			prepare(0);
+//			prepare(0);
 			break;
 		case MusicPlayState.MPS_INVALID:
-			prepare(0);
+//			prepare(0);
 			break;
 		case MusicPlayState.MPS_PREPARE:
-			prepare(0);
+//			prepare(0);
 			break;
 		case MusicPlayState.MPS_PLAYING:
 			break;

@@ -40,7 +40,7 @@
     <RelativeLayout
         android:id="@+id/left_menu_bottom_bar"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/bottom_bar_height"
+        android:layout_height="@dimen/bottom_bar_size"
         android:layout_alignParentBottom="true"
         android:background="@color/gray" >
     </RelativeLayout>

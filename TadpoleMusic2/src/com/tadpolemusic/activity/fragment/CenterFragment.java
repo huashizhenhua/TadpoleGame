@@ -209,13 +209,13 @@ public class CenterFragment extends AbsMenuFragment {
         mPollMusicTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Log.d("mPollMusicTimer", "=====>mPollMusicTimer");
+//                Log.d("mPollMusicTimer", "=====>mPollMusicTimer");
                 final MusicPlayerProxy player = VEApplication.getMusicPlayer(getActivity());
                 final MusicData md = mCurMusicData;
                 final View v = mViewFooter;
                 final CenterFragment me = CenterFragment.this;
 
-                Log.w("", "mCurMusicData = " + mCurMusicData);
+//                Log.w("", "mCurMusicData = " + mCurMusicData);
                 if (md == null) {
                     return;
                 }
@@ -226,7 +226,6 @@ public class CenterFragment extends AbsMenuFragment {
                 v.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("mPollMusicTimer", "=====>onMusicTimeAndProgressUpdate");
                         me.onMusicTimeAndProgressUpdate(timerText, progress);
                     }
                 });
@@ -365,17 +364,14 @@ public class CenterFragment extends AbsMenuFragment {
         this.startPoll(600);
         mTextViewMusicTitle.setText(musicData.musicName);
         mTextViewMusicTitle.startFor0();
+        mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_pause);
+        
         mProgressBarPrepare.setVisibility(View.GONE);
-
+        mProgressBarPrepare.setVisibility(View.INVISIBLE);
     }
 
     private void onMusicPreparing() {
         mProgressBarPrepare.setVisibility(View.VISIBLE);
-    }
-
-    private void onMusicPlaying() {
-        mProgressBarPrepare.setVisibility(View.INVISIBLE);
-        mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_pause);
     }
 
     private void onMusicTimeAndProgressUpdate(String timerText, int progress) {
