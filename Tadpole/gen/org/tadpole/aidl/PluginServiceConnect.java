@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/chenzh/Desktop/github/TadpoleGame/Tadpole/src/org/tadpole/aidl/PluginServiceConnect.aidl
+ * Original file: /Users/chenzh/Desktop/MyArt/TadpoleGame/Tadpole/src/org/tadpole/aidl/PluginServiceConnect.aidl
  */
 package org.tadpole.aidl;
 public interface PluginServiceConnect extends android.os.IInterface

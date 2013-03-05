@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
 
@@ -49,6 +51,14 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IL
             float screenWidth = metrics.widthPixels;
             float screenWidthDIP = screenWidth / density;
             mfirstPageScale = 1 - (FIRST_PAGE_MARGIN_RIGHT_DP / screenWidthDIP);
+        }
+
+        @Override
+        public void destroyItem(View container, int position, Object object) {
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
         }
 
         @Override

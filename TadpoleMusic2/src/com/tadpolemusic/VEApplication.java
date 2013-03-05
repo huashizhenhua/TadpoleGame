@@ -12,6 +12,8 @@ import com.itap.voiceemoticon.db.VoiceDao;
 import com.tadpolemusic.media.service.MusicPlayerProxy;
 
 public class VEApplication {
+    public static final String APPLICATION_NAME = "TadpoleMusic2";
+    
     public static final String TAG = "VEApplication";
     
     private static MusicPlayerProxy mMusicPlayerProxy;

@@ -2,8 +2,10 @@ package com.tadpolemusic.activity.fragment.menu;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +14,19 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.tadpolemusic.R;
+import com.tadpolemusic.TMLog;
 import com.tadpolemusic.activity.fragment.AbsMenuFragment;
 import com.tadpolemusic.adapter.BaseListAdapter;
 import com.tadpolemusic.adapter.MyMusicAdapter;
 import com.tadpolemusic.adapter.MyMusicItem;
-import com.umeng.common.net.m;
 
 
+@SuppressLint("ValidFragment")
 public class LeftMenuFragment extends AbsMenuFragment {
 
+    private static final String TAG = "LeftMenuFragment";
+
     private ArrayList<MyMusicItem> localItems;
-    private int curSelectedItem = -1;
     private MyMusicAdapter mAdapterLocal;
     private MyMusicAdapter mAdapterNetwork;
 
@@ -30,8 +34,23 @@ public class LeftMenuFragment extends AbsMenuFragment {
         localItems = localMusicItems;
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        TMLog.step(TAG, "onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        TMLog.step(TAG, "onViewStateRestored");
+        super.onViewStateRestored(savedInstanceState);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        TMLog.step(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.sliding_menu_left, null);
         initLocalMusic(view);
         initNetworkMusic(view);
@@ -43,8 +62,15 @@ public class LeftMenuFragment extends AbsMenuFragment {
     }
 
     @Override
+    public void onDestroy() {
+        TMLog.step(TAG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        TMLog.step(TAG, "onViewCreated");
 
         if (mDefaultItem != null) {
             int postion = mAdapterLocal.getList().indexOf(mDefaultItem);
@@ -121,7 +147,7 @@ public class LeftMenuFragment extends AbsMenuFragment {
                 if (MyMusicItem.Action.REPLEACE_CENTER.equals(item.action) && (item.centerContentClass != null)) {
                     getLeftMenuControll().setCenterContent(item);
                     getLeftMenuControll().scrollToCenter();
-                    
+
                     // update ui
                     mAdapterLocal.setSelectedPostion(postion);
                     mAdapterNetwork.setSelectedPostion(mAdapterNetwork.INVALID_POSITION);
