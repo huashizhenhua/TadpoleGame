@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="sliding_menu_section_height">25dp</dimen>
+    <dimen name="sliding_menu_section_text_margin_left">10dp</dimen>
+    <dimen name="sliding_menu_left_grid_item_margin_left">15dp</dimen>
+    <dimen name="sliding_menu_left_grid_item_icon_size">22dp</dimen>
+
+     <!-- About Us (AboutActivy) -->
+    <dimen name="about_us_item_height">40dp</dimen>
+	<dimen name="about_us_text_size">16dp</dimen>
+	<dimen name="about_us_item_margin">10dp</dimen>
+	<dimen name="about_us_item_margin_top">5dp</dimen>
+	<dimen name="about_us_text_margin_left">10dp</dimen>
+   
+
+    <!-- SectionIndexBar -->
+    <dimen name="index_bar_width">25dp</dimen>
+
+    <!-- SlidingMenu -->
+    <dimen name="sliding_menu_offset">60dp</dimen>
+    <dimen name="sliding_menu_second_offset">0dp</dimen>
+    <dimen name="list_padding">10dp</dimen>
+    <dimen name="shadow_width">15dp</dimen>
+
+    <integer name="num_cols">1</integer>
+
+
+    <!-- Main Right -->
+    <dimen name="main_right_seekbar_margin_bottom">64dp</dimen>
+
+    <!-- MainActivity -->
+    <dimen name="section_title_text_size">22dp</dimen>
+
+    <!-- About Us (AboutActivy) -->
+    <dimen name="about_us_item_height">60dp</dimen>
+    <dimen name="about_us_text_size">20dp</dimen>
+
+</resources>

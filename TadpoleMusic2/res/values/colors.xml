@@ -298,9 +298,16 @@
 
     <color name="slide_menu_light_dark">#181818</color>
     <color name="slide_menu_dark">#181818</color>
-    
-    
     <color name="simple_blue">#73A9D7</color>
+    <color name="simple_blue_trans">#AA73A9D7</color>
+    <color name="simple_white">#FFFFFF</color>
+    <color name="simple_white_trans">#AAFFFFFF</color>
+    <color name="simple_black">#000000</color>
+    <color name="simple_black_trans">#AA000000</color>
+    
+    <color name="simple_black_transCC">#CC000000</color>
+    
     <color name="simple_orange">#F4AE3E</color>
+    <color name="simple_orange_trans">#AAF4AE3E</color>
 
 </resources>

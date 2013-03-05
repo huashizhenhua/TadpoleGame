@@ -65,7 +65,7 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener{
 		mMediaPlayer.reset();
 		mMusicFileList.clear();
 		mCurPlayIndex = -1;
-		mPlayState = MusicPlayState.MPS_NOFILE;
+        mPlayState = MusicPlayState.MPS_NOFILE;
 	}
 	
 	public void refreshMusicList(List<MusicData> FileList)
@@ -87,6 +87,7 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener{
 			return ;
 		}
 	
+		mPlayState = MusicPlayState.MPS_HAS_FILE;
 		
 		switch(mPlayState)
 		{

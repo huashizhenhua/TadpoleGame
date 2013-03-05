@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- TopBar -->
+    <dimen name="top_bar_size">50dp</dimen>
+
+    <!-- BottomBar -->
+    <dimen name="bottom_bar_size">60dp</dimen>
+    <dimen name="bottom_bar_size_medium">80dp</dimen>
+
+    <!-- Seekbar Thumb -->
+    <dimen name="seekbar_thumb_size_medium">8dp</dimen>
+    <dimen name="seekbar_thumb_padding_medium">14dp</dimen>
+
+    <!-- ListView -->
+    <dimen name="list_item_size">45dp</dimen>
+
+</resources>

@@ -26,8 +26,6 @@
     </style>
 
     <style name="VE.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/bg_striped</item>
-        <item name="android:background">@drawable/bg_striped</item>
         <item name="titleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
         <item name="android:titleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
         <item name="subtitleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>

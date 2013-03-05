@@ -14,10 +14,11 @@
         <ImageButton
             android:id="@+id/button_left"
             android:layout_width="@dimen/top_bar_size"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/top_bar_size"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/bg_main_center_button_left"
-            android:src="@android:drawable/ic_menu_directions" />
+            android:background="@drawable/bg_btn_title_navigation_1"
+            android:contentDescription="@string/hello_world"
+            android:src="@drawable/btn_title_navigation_1" />
 
         <TextView
             android:id="@+id/title"
@@ -27,7 +28,7 @@
             android:gravity="center"
             android:paddingLeft="10dp"
             android:text="请设置标题"
-            android:textAppearance="@style/TextAppearance.Large"
+            android:textAppearance="@style/TextAppearance.Medium"
             android:textColor="@color/white" />
 
         <ImageButton
@@ -52,7 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_bar_size"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/bg_music_progress" >
+        android:background="@drawable/mc_bg_music_progress" >
 
         <ImageView
             android:id="@+id/image_view_music_icon"
@@ -74,7 +75,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:progress="0"
-            android:progressDrawable="@drawable/ve_progress_horizonal"
+            android:progressDrawable="@drawable/progress_main_center_music"
             android:thumb="@drawable/seekbar_thumb"
             android:thumbOffset="5dp" />
 

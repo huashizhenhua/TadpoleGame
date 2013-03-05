@@ -55,7 +55,7 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
             viewHolder.textViewSectionTitle = (TextView) view.findViewById(R.id.text_view_section_title);
             viewHolder.textViewMusicTitle = (TextView) view.findViewById(R.id.text_view_music_title);
             viewHolder.imageViewIcon = (ImageView) view.findViewById(R.id.image_view_icon);
-            viewHolder.imageButtonOperation = (ImageButton) view.findViewById(R.id.image_button_operation);
+            viewHolder.buttonOperation = (View) view.findViewById(R.id.btn_operation);
             viewHolder.imageViewSelect = (ImageView) view.findViewById(R.id.image_view_select);
             view.setTag(viewHolder);
         } else {
@@ -88,7 +88,7 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
 
         viewHolder.textViewMusicTitle.setText(item.musicName);
         viewHolder.textViewSectionTitle.setText(item.getFirstLetterInUpcase());
-        viewHolder.imageButtonOperation.setOnClickListener(new View.OnClickListener() {
+        viewHolder.buttonOperation.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -136,7 +136,7 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
         ImageView imageViewSelect;
         TextView textViewMusicTitle;
         TextView textViewSectionTitle;
-        ImageButton imageButtonOperation;
+        View buttonOperation;
     }
 
 
