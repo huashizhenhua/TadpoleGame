@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/chenzh/Desktop/MyArt/TadpoleGame/Tadpole/src/org/tadpole/aidl/IPluginCallback.aidl
+ * Original file: G:\\Users\\Administrator\\Documents\\GitHub\\TadpoleGame\\Tadpole\\src\\org\\tadpole\\aidl\\IPluginCallback.aidl
  */
 package org.tadpole.aidl;
 public interface IPluginCallback extends android.os.IInterface

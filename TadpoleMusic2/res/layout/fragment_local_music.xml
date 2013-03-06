@@ -8,7 +8,9 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
-        android:layout_marginRight="@dimen/index_bar_width" />
+        android:layout_marginRight="@dimen/index_bar_width"
+        android:divider="@color/transparent"
+        android:dividerHeight="0dp" />
 
     <com.itap.voiceemoticon.widget.IndexBar
         android:id="@+id/index_bar_local_music"

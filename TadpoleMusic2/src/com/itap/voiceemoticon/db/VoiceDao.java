@@ -8,8 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
-import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.util.StringUtil;
+import com.tadpolemusic.api.Voice;
 
 public class VoiceDao extends VoiceDb {
     public static final String CLASS_NAME = "VoiceDao";
@@ -40,11 +40,11 @@ public class VoiceDao extends VoiceDb {
         SQLiteDatabase db = this.getWriteDB();
 
         long voiceId = voice.id;
-        String[] uniqueKeySelection = new String[] { String.valueOf(voice.url) };
+        String[] uniqueKeySelection = new String[] { String.valueOf(voice.musicPath) };
         Cursor cursor = db.query(TABLE_NAME, new String[] { VoiceColumns.VOICE_PATH }, UNIQUE_KEY_SELECTION, uniqueKeySelection, null, null, null);
         ContentValues values = new ContentValues(5);
-        values.put(VoiceColumns.VOICE_TITLE, voice.title);
-        values.put(VoiceColumns.VOICE_PATH, voice.url);
+        values.put(VoiceColumns.VOICE_TITLE, voice.musicName);
+        values.put(VoiceColumns.VOICE_PATH, voice.musicPath);
         values.put(VoiceColumns.VOICE_TAGS, voice.tags);
         values.put(VoiceColumns.VOICE_CREATE_TIME, voice.creatTime);
 
@@ -62,12 +62,12 @@ public class VoiceDao extends VoiceDb {
 
     public long insertOrUpdate(SQLiteDatabase db, Voice voice) {
         long voiceId = voice.id;
-        String[] uniqueKeySelection = new String[] { String.valueOf(voice.url) };
+        String[] uniqueKeySelection = new String[] { String.valueOf(voice.musicPath) };
         Cursor cursor = db.query(TABLE_NAME, new String[] { VoiceColumns._ID }, UNIQUE_KEY_SELECTION, uniqueKeySelection, null, null, null);
         ContentValues values = new ContentValues(5);
         values.put(VoiceColumns.VOICE_PATH, voiceId);
-        values.put(VoiceColumns.VOICE_TITLE, voice.title);
-        values.put(VoiceColumns.VOICE_PATH, voice.url);
+        values.put(VoiceColumns.VOICE_TITLE, voice.musicName);
+        values.put(VoiceColumns.VOICE_PATH, voice.musicPath);
         values.put(VoiceColumns.VOICE_TAGS, voice.tags);
         values.put(VoiceColumns.VOICE_CREATE_TIME, voice.creatTime);
         if (cursor.getCount() == 0) {
@@ -182,7 +182,7 @@ public class VoiceDao extends VoiceDb {
      */
     public int delete(Voice voice) {
         SQLiteDatabase db = this.getWriteDB();
-        String voicePath = voice.url;
+        String voicePath = voice.musicPath;
         String[] uniqueKeySelection = new String[] { voicePath };
         int count = db.delete(TABLE_NAME, UNIQUE_KEY_SELECTION, uniqueKeySelection);
         return count;
@@ -203,8 +203,8 @@ public class VoiceDao extends VoiceDb {
         Voice voice = new Voice();
         voice.id = id;
         voice.creatTime = (int) creatTime;
-        voice.title = title;
-        voice.url = path;
+        voice.musicName = title;
+        voice.musicPath = path;
         voice.tags = tags;
         return voice;
     }

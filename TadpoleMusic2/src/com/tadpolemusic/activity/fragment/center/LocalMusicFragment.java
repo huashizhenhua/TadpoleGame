@@ -22,6 +22,7 @@ import com.tadpolemusic.adapter.LocalMusicAdapter;
 import com.tadpolemusic.media.LocalMusicItem;
 import com.tadpolemusic.media.MediaQueryHelper;
 import com.tadpolemusic.media.MusicData;
+import com.tadpolemusic.media.PlayAsyncTask;
 
 /**
  * <br>==========================
@@ -46,8 +47,7 @@ public class LocalMusicFragment extends AbsCenterContent {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
                 Log.d(VEApplication.TAG, "HotVoice Fragment onItemClick ");
-                MusicData item = (MusicData) mAdapter.getItem(pos);
-                VEApplication.getMusicPlayer(getActivity()).play(pos);
+                new PlayAsyncTask(getActivity(), mAdapter.getList(), "local_music").execute(pos);
             }
         });
 
@@ -123,7 +123,7 @@ public class LocalMusicFragment extends AbsCenterContent {
                 Collections.sort(list, mCommparator);
 
                 // put int musicplay
-                VEApplication.getMusicPlayer(me.getActivity()).refreshMusicList(list);
+                VEApplication.getMusicPlayer(me.getActivity()).refreshMusicList("localmusic", list);
 
                 System.out.println("list size = " + list.size());
                 message.obj = list;

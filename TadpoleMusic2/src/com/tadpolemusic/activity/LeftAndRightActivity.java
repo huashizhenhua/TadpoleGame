@@ -99,19 +99,21 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IL
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        // content view
+        setContentView(R.layout.activity_left_right);
+
         // init actionBar
         mActionBar = getSupportActionBar();
         mActionBar.hide();
 
-        // content view
-        setContentView(R.layout.activity_left_right);
+
 
         // view pager
         mViewPager = (ViewPager) this.findViewById(R.id.container);
 
         // create fragments
-        mLeft = new LeftMenuFragment(LeftMenuConfig.myMusicItems);
+        mLeft = new LeftMenuFragment();
+        mLeft.setLocalMusicItems(LeftMenuConfig.myMusicItems);
         mCenter = new CenterFragment();
         mRight = new RightMenuFragment();
 
@@ -124,6 +126,8 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IL
         // set default content;
         //        setCenterContent(LeftMenuConfig.localMusicItem);
         mLeft.setDefaultSelectItem(LeftMenuConfig.localMusicItem);
+
+        super.onCreate(savedInstanceState);
     }
 
     public void scrollToCenter() {
@@ -147,6 +151,7 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IL
         case android.R.id.home:
             mSlidingMenu.toggle();
             return true;
+            
         default:
             break;
         }

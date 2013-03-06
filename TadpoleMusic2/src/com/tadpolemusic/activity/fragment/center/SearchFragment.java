@@ -10,12 +10,12 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.widget.SearchPageListView;
 import com.tadpolemusic.R;
 import com.tadpolemusic.VEApplication;
 import com.tadpolemusic.adapter.PullToRefreshListViewAdapter;
 import com.tadpolemusic.adapter.VoiceAdapter;
+import com.tadpolemusic.api.Voice;
 
 public class SearchFragment {
     private Activity mActivity;

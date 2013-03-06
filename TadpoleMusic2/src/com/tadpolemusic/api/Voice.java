@@ -1,4 +1,4 @@
-package com.itap.voiceemoticon.api;
+package com.tadpolemusic.api;
 
 import java.util.ArrayList;
 
@@ -12,22 +12,21 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
-import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.third.WeixinHelper;
 import com.itap.voiceemoticon.util.StringUtil;
+import com.tadpolemusic.VEApplication;
+import com.tadpolemusic.media.MusicData;
 
-public class Voice {
+public class Voice extends MusicData {
     public long id;
-    public String title;
-    public String url;
     public String tags;
     public int creatTime;
 
     public String getFirstLetter() {
         HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
         format.setCaseType(HanyuPinyinCaseType.UPPERCASE);
-        String str = PinyinHelper.toHanyuPinyinString(title, format, "");
+        String str = PinyinHelper.toHanyuPinyinString(musicName, format, "");
         if (str != null && str.length() > 0) {
             if (Character.isLetter(str.toCharArray()[0])) {
                 return (String) str.subSequence(0, 1);
@@ -39,8 +38,8 @@ public class Voice {
 
     public static Voice buildFromJSON(JSONObject jsonObject) {
         Voice hotVoice = new Voice();
-        hotVoice.title = jsonObject.optString("title", "");
-        hotVoice.url = jsonObject.optString("url", "");
+        hotVoice.musicName = jsonObject.optString("title", "");
+        hotVoice.musicPath = jsonObject.optString("url", "");
         hotVoice.tags = jsonObject.optString("metas", "");
         return hotVoice;
     }
@@ -65,7 +64,7 @@ public class Voice {
     }
 
     public void sendToWeixin(final Context context) {
-        new WeixinHelper(context).sendMusic(title, tags, url);
+        new WeixinHelper(context).sendMusic(musicName, tags, musicPath);
         VEApplication.runOnThread(new Runnable() {
 
             @Override
@@ -77,7 +76,7 @@ public class Voice {
 
     public void sendStatisticsUrl(Context context) {
         ArrayList<String> list = new ArrayList<String>();
-        list.add(url);
+        list.add(musicPath);
         VEApplication.getVoiceEmoticonApi().statistics(list);
     }
 

@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/gdi_header"
             android:layout_marginTop="-1px"
-            android:background="#181818" />
+            android:background="#646464" />
 
         <FrameLayout
             android:id="@+id/gdi_footer"

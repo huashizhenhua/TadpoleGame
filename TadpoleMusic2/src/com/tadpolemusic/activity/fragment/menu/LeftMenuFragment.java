@@ -29,11 +29,10 @@ public class LeftMenuFragment extends AbsMenuFragment {
     private ArrayList<MyMusicItem> localItems;
     private MyMusicAdapter mAdapterLocal;
     private MyMusicAdapter mAdapterNetwork;
-
-    public LeftMenuFragment(ArrayList<MyMusicItem> localMusicItems) {
+    
+    public void setLocalMusicItems(ArrayList<MyMusicItem> localMusicItems){
         localItems = localMusicItems;
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

@@ -6,6 +6,9 @@
     <!-- BottomBar -->
     <dimen name="bottom_bar_size">60dp</dimen>
     <dimen name="bottom_bar_size_medium">80dp</dimen>
+    
+    <!-- Content -->
+    <dimen name="bottom_bar_size">60dp</dimen>
 
     <!-- Seekbar Thumb -->
     <dimen name="seekbar_thumb_size_medium">8dp</dimen>

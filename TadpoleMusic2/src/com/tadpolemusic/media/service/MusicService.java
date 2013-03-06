@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.tadpolemusic.media.MusicData;
 import com.tadpolemusic.media.MusicPlayer;
+import com.tadpolemusic.media.PlayListInfo;
 import com.tadpolemusic.media.aidl.MusicConnect;
 import com.tadpolemusic.media.aidl.MusicConnect.Stub;
 
@@ -65,9 +66,9 @@ public class MusicService extends Service {
     private MusicConnect.Stub mBinder = new Stub() {
 
         @Override
-        public void refreshMusicList(List<MusicData> musicFileList) throws RemoteException {
+        public void refreshMusicList(String playListID, List<MusicData> musicFileList) throws RemoteException {
             // TODO Auto-generated method stub
-            m_mMusicPlayer.refreshMusicList(musicFileList);
+            m_mMusicPlayer.refreshMusicList(playListID, musicFileList);
         }
 
 
@@ -171,9 +172,18 @@ public class MusicService extends Service {
         }
 
 
+        @Override
+        public PlayListInfo getCurPlayListInfo() throws RemoteException {
+            // TODO Auto-generated method stub
+            return m_mMusicPlayer.getCurPlayListInfo();
+        }
+
+
+        @Override
+        public void getCurrentPlayListInfo(PlayListInfo info) throws RemoteException {
+            m_mMusicPlayer.getCurrentPlayListInfo(info);
+        }
     };
-
-
 
     class SDStateBrocast extends BroadcastReceiver {
 

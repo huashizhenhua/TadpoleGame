@@ -1,10 +1,15 @@
 package com.tadpolemusic.media.aidl;
 
 import com.tadpolemusic.media.MusicData;
+import com.tadpolemusic.media.PlayListInfo;
 
 interface MusicConnect {
 
-   void refreshMusicList(in List<MusicData> musicFileList);
+   PlayListInfo getCurPlayListInfo();
+
+   void getCurrentPlayListInfo(out PlayListInfo info);
+
+   void refreshMusicList(String playListID, in List<MusicData> musicFileList);
    
    void getFileList(out List<MusicData> musicFileList);
    

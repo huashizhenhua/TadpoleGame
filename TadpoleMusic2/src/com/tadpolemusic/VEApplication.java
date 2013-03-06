@@ -4,18 +4,18 @@ import java.util.ArrayList;
 
 import android.content.Context;
 
-import com.itap.voiceemoticon.api.Voice;
-import com.itap.voiceemoticon.api.VoiceEmoticonApi;
-import com.itap.voiceemoticon.api.impl.VoiceEmoticonApiImpl;
 import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.db.VoiceDao;
+import com.tadpolemusic.api.Voice;
+import com.tadpolemusic.api.VoiceEmoticonApi;
+import com.tadpolemusic.api.impl.VoiceEmoticonApiImpl;
 import com.tadpolemusic.media.service.MusicPlayerProxy;
 
 public class VEApplication {
     public static final String APPLICATION_NAME = "TadpoleMusic2";
-    
+
     public static final String TAG = "VEApplication";
-    
+
     private static MusicPlayerProxy mMusicPlayerProxy;
 
     public static VoiceEmoticonApi getVoiceEmoticonApi() {
@@ -57,7 +57,7 @@ public class VEApplication {
         ArrayList<Voice> list = dao.allVoices();
         for (int i = 0, len = list.size(); i < len; i++) {
             Voice voice = list.get(i);
-            sMusicCollectedCached.add(voice.url);
+            sMusicCollectedCached.add(voice.musicPath);
         }
     }
 

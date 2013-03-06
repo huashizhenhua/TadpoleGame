@@ -7,10 +7,10 @@ import android.util.AttributeSet;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 
-import com.itap.voiceemoticon.api.PageList;
-import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.util.StringUtil;
 import com.tadpolemusic.VEApplication;
+import com.tadpolemusic.api.PageList;
+import com.tadpolemusic.api.Voice;
 
 public class SearchPageListView<Voice> extends PageListView<Voice> {
 

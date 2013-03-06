@@ -6,9 +6,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.itap.voiceemoticon.api.Voice;
 import com.tadpolemusic.R;
 import com.tadpolemusic.VEApplication;
+import com.tadpolemusic.api.Voice;
 
 /**
  * 
@@ -42,10 +42,10 @@ public class VoiceAdapter extends PullToRefreshListViewAdapter<Voice> {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.textViewTitle.setText(item.title);
+        viewHolder.textViewTitle.setText(item.musicName);
         viewHolder.textViewTags.setText(item.tags);
 
-        if (VEApplication.isCollected(mContext, item.url)) {
+        if (VEApplication.isCollected(mContext, item.musicPath)) {
             viewHolder.btnCollect.setImageResource(android.R.drawable.btn_star_big_on);
         } else {
             viewHolder.btnCollect.setImageResource(android.R.drawable.btn_star_big_off);

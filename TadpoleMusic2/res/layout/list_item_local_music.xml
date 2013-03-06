@@ -7,13 +7,15 @@
         android:id="@+id/text_view_section_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/list_view_margin_left"
         android:background="@drawable/bg_list_item_line"
         android:paddingLeft="8dp"
-        android:textAppearance="@style/TextAppearance.Large"
+        android:textAppearance="@style/TextAppearance.Medium"
         android:textColor="@color/simple_blue"
         android:visibility="gone" />
 
     <RelativeLayout
+        android:id="@+id/panel_center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_view_section_title"
@@ -24,43 +26,58 @@
 
         <ImageView
             android:id="@+id/image_view_select"
-            android:layout_width="10dp"
+            android:layout_width="5dp"
             android:layout_height="@dimen/list_item_size"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@color/powderblue"
+            android:background="@color/simple_orange"
             android:contentDescription="@string/hello_world"
-            android:paddingBottom="3dp"
-            android:paddingTop="3dp"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
             android:visibility="invisible" >
         </ImageView>
 
-        <TextView
-            android:id="@+id/text_view_music_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:paddingLeft="16dp"
-            android:textAppearance="@style/TextAppearance.Medium"
-            android:textColor="@color/black" />
-
         <RelativeLayout
-            android:id="@+id/btn_operation"
-            android:layout_width="@dimen/list_item_size"
-            android:layout_height="@dimen/list_item_size"
-            android:layout_alignParentRight="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:background="@drawable/btn_pop_window" >
+            android:layout_marginLeft="@dimen/list_view_margin_left" >
 
-            <ImageView
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_alignParentBottom="true"
+            <TextView
+                android:id="@+id/text_view_music_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="16dp"
+                android:textAppearance="@style/TextAppearance.Medium"
+                android:textColor="@color/black" />
+
+            <RelativeLayout
+                android:id="@+id/btn_operation"
+                android:layout_width="@dimen/list_item_size"
+                android:layout_height="@dimen/list_item_size"
                 android:layout_alignParentRight="true"
-                android:contentDescription="@string/hello_world"
-                android:src="@drawable/icon_pop_window" />
+                android:layout_centerVertical="true"
+                android:background="@drawable/btn_pop_window" >
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:contentDescription="@string/hello_world"
+                    android:src="@drawable/icon_pop_window" />
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/panel_center"
+        android:layout_marginLeft="@dimen/list_view_margin_left"
+        android:contentDescription="hello world"
+        android:src="@color/simple_grey_trans44" />
 
 </RelativeLayout>

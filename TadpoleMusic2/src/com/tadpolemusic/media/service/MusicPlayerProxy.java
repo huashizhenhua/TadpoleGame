@@ -14,6 +14,7 @@ import android.util.Log;
 import com.tadpolemusic.media.MusicData;
 import com.tadpolemusic.media.MusicPlayMode;
 import com.tadpolemusic.media.MusicPlayState;
+import com.tadpolemusic.media.PlayListInfo;
 import com.tadpolemusic.media.aidl.MusicConnect;
 import com.tadpolemusic.media.interface1.IOnServiceConnectComplete;
 
@@ -147,12 +148,12 @@ public class MusicPlayerProxy {
 		mIOnServiceConnectComplete = IServiceConnect;
 	}
 	
-	public void refreshMusicList(List<MusicData> FileList)
+	public void refreshMusicList(String playListID, List<MusicData> FileList)
 	{	
 		if (mMusicConnect != null)
 		{
 			try {
-				mMusicConnect.refreshMusicList(FileList);
+				mMusicConnect.refreshMusicList(playListID, FileList);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -381,5 +382,28 @@ public class MusicPlayerProxy {
 			}
 		}	
 	}
+
+    public PlayListInfo getCurPlayListInfo() {
+        if (mMusicConnect != null)
+        {
+            try {
+             return   mMusicConnect.getCurPlayListInfo();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;   
+    }
+    
+    public  void getCurrentPlayListInfo(PlayListInfo info) {
+        if (mMusicConnect != null)
+        {
+            try {
+                mMusicConnect.getCurrentPlayListInfo(info);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 	
 }
