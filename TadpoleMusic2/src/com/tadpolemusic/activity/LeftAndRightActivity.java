@@ -24,12 +24,12 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 import com.tadpolemusic.R;
+import com.tadpolemusic.activity.dialog.MenuDialog;
 import com.tadpolemusic.activity.fragment.CenterFragment;
 import com.tadpolemusic.activity.fragment.LeftMenuConfig;
 import com.tadpolemusic.activity.fragment.menu.ILeftMenuControl;
 import com.tadpolemusic.activity.fragment.menu.LeftMenuFragment;
 import com.tadpolemusic.activity.fragment.menu.RightMenuFragment;
-import com.tadpolemusic.activity.widget.MenuDialog;
 import com.tadpolemusic.adapter.MyMusicItem;
 
 public class LeftAndRightActivity extends SherlockFragmentActivity implements ILeftMenuControl {

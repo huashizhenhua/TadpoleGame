@@ -40,7 +40,6 @@
     </style>
 
     <style name="ThemeTransprent" parent="android:Theme">
-
         <!-- 是否全屏 -->
         <item name="android:windowFullscreen">true</item>
         <!-- 是否浮现在activity之上 -->

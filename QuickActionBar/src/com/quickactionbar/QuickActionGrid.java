@@ -30,6 +30,7 @@ public class QuickActionGrid extends QuickActionWidget {
 
     private GridView mGridView;
 
+
     public QuickActionGrid(Context context) {
         super(context);
 
@@ -37,6 +38,11 @@ public class QuickActionGrid extends QuickActionWidget {
 
         final View v = getContentView();
         mGridView = (GridView) v.findViewById(R.id.gdi_grid);
+    }
+
+
+    public void setNumColumns(int numColumns) {
+        mGridView.setNumColumns(numColumns);
     }
 
     @Override

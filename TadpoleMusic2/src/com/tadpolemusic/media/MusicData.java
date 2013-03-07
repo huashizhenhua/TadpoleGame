@@ -1,11 +1,20 @@
 package com.tadpolemusic.media;
 
+import java.io.File;
+
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import android.content.ContentValues;
+import android.content.Context;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.widget.Toast;
 
 public class MusicData implements Parcelable {
 
@@ -20,6 +29,40 @@ public class MusicData implements Parcelable {
     public int musicDuration;
     public String musicPath;
     public String musicAritst;
+
+
+    public void setMyRingtone(final Context context) {
+        new AsyncTask<String, String, String>() {
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                Toast.makeText(context, "设置成功", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            protected void onProgressUpdate(String... values) {
+                super.onProgressUpdate(values);
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.MediaColumns.DATA, musicPath);
+                values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3");
+                values.put(MediaStore.MediaColumns.DISPLAY_NAME, musicName);
+                values.put(MediaStore.MediaColumns.TITLE, musicName);
+                values.put(MediaStore.Audio.Media.IS_RINGTONE, true);
+                values.put(MediaStore.Audio.Media.IS_NOTIFICATION, false);
+                values.put(MediaStore.Audio.Media.IS_ALARM, false);
+                values.put(MediaStore.Audio.Media.IS_MUSIC, false);
+                Uri uri = MediaStore.Audio.Media.getContentUriForPath(musicPath);
+                Uri newUri = context.getContentResolver().insert(uri, values);
+                RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, newUri);
+                return null;
+            }
+        }.execute("");
+    }
+
 
     public String getTimerText(int musicPos) {
         if (musicDuration == 0) {
@@ -43,7 +86,7 @@ public class MusicData implements Parcelable {
         }
         return (100 * musicPos) / musicDuration;
     }
-    
+
 
     public MusicData() {
         musicName = "";
@@ -73,7 +116,6 @@ public class MusicData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         // TODO Auto-generated method stub
-
         Bundle mBundle = new Bundle();
 
         mBundle.putString(KEY_MUSIC_NAME, musicName);

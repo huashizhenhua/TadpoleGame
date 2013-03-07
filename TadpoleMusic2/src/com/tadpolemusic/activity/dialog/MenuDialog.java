@@ -1,4 +1,4 @@
-package com.tadpolemusic.activity.widget;
+package com.tadpolemusic.activity.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

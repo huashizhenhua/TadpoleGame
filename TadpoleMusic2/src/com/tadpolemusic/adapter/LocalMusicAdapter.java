@@ -1,5 +1,7 @@
 package com.tadpolemusic.adapter;
 
+import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,6 +9,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -20,7 +23,9 @@ import android.widget.TextView;
 import com.quickactionbar.QuickAction;
 import com.quickactionbar.QuickActionBar;
 import com.quickactionbar.QuickActionGrid;
+import com.quickactionbar.QuickActionWidget;
 import com.tadpolemusic.R;
+import com.tadpolemusic.activity.dialog.BaseDialog;
 import com.tadpolemusic.media.LocalMusicItem;
 import com.tadpolemusic.media.MusicData;
 
@@ -43,10 +48,9 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
         super(context);
     }
 
-    @SuppressLint("NewApi")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        MusicData item = (MusicData) getItem(position);
+        final MusicData item = (MusicData) getItem(position);
         View view = convertView;
         ViewHolder viewHolder = null;
         if (view == null) {
@@ -95,11 +99,49 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
                 Context ctx = v.getContext();
 
                 QuickActionGrid quickActionGrid = new QuickActionGrid(ctx);
-                quickActionGrid.setWidth(400);
-                QuickAction quickActionDel = new QuickAction(ctx, android.R.drawable.ic_menu_delete, "删除");
-                quickActionGrid.addQuickAction(quickActionDel);
-                QuickAction quickActionShare = new QuickAction(ctx, android.R.drawable.ic_menu_share, "分享");
-                quickActionGrid.addQuickAction(quickActionShare);
+                quickActionGrid.setWidth(500);
+                quickActionGrid.setNumColumns(3);
+
+                QuickAction qaSetRing = new QuickAction(ctx, R.drawable.audio_list_item_rightmenu_setring_default, "设为铃声");
+                QuickAction qaActionDel = new QuickAction(ctx, android.R.drawable.ic_menu_delete, "删除");
+                QuickAction qaActionShare = new QuickAction(ctx, android.R.drawable.ic_menu_share, "分享");
+
+                final ArrayList<QuickAction> qaList = new ArrayList<QuickAction>();
+                qaList.add(qaSetRing);
+                qaList.add(qaActionDel);
+                qaList.add(qaActionShare);
+
+                for (int i = 0, N = qaList.size(); i < N; i++) {
+                    quickActionGrid.addQuickAction(qaList.get(i));
+                }
+
+
+
+                quickActionGrid.setOnQuickActionClickListener(new QuickActionGrid.OnQuickActionClickListener() {
+                    @Override
+                    public void onQuickActionClicked(QuickActionWidget widget, int position) {
+                        final Context context = widget.getContentView().getContext();
+                        switch (position) {
+                        case 0:
+                            item.setMyRingtone(context);
+                            break;
+                        case 1:
+                            new BaseDialog(context).show();
+                            //                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            //                            LayoutInflater inflater = LayoutInflater.from(context);
+                            //                            
+                            //                            builder.set
+                            //                            View titleView = inflater.inflate(R.layout.alert_dialog_title, null);
+                            //                            View contentView = inflater.inflate(R.layout.alert_dialog_content, null);
+                            //                            builder.setCustomTitle(titleView);
+                            //                            builder.setView(contentView);
+                            //                            builder.show();
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                });
                 quickActionGrid.show(v);
 
             }
