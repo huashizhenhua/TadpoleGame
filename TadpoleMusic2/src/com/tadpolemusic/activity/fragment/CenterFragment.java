@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,9 +21,10 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.itap.voiceemoticon.widget.MarqueeTextView;
+import com.itap.voiceemoticon.widget.MarqueeTextSurfaceView;
 import com.tadpolemusic.R;
 import com.tadpolemusic.VEApplication;
+import com.tadpolemusic.activity.dialog.PlayListDialog;
 import com.tadpolemusic.adapter.MyMusicItem;
 import com.tadpolemusic.media.MusicData;
 import com.tadpolemusic.media.MusicPlayState;
@@ -129,6 +129,7 @@ public class CenterFragment extends AbsMenuFragment {
 
         final ProgressDialog progress = ProgressDialog.show(getActivity(), "音乐服务", "正在链接..");
         final MusicPlayerProxy player = VEApplication.getMusicPlayer(getActivity().getApplicationContext());
+
         player.setOnServiceConnectComplete(new IOnServiceConnectComplete() {
             @Override
             public void OnServiceConnectComplete() {
@@ -140,7 +141,6 @@ public class CenterFragment extends AbsMenuFragment {
 
         initHeader();
         initMusic();
-
 
         return mViewGroup;
     }
@@ -185,8 +185,9 @@ public class CenterFragment extends AbsMenuFragment {
     // -------------------------------------------
 
     private ImageView mBtnPlay;
+    private ImageView mBtnPlayNext;
     private TextView mTextViewTime;
-    private MarqueeTextView mTextViewMusicTitle;
+    private MarqueeTextSurfaceView mTextViewMusicTitle;
     private SeekBar mSeekBarTime;
     private ProgressBar mProgressBarPrepare;
     private View mViewFooter;
@@ -209,13 +210,13 @@ public class CenterFragment extends AbsMenuFragment {
         mPollMusicTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-//                Log.d("mPollMusicTimer", "=====>mPollMusicTimer");
+                //                Log.d("mPollMusicTimer", "=====>mPollMusicTimer");
                 final MusicPlayerProxy player = VEApplication.getMusicPlayer(getActivity());
                 final MusicData md = mCurMusicData;
                 final View v = mViewFooter;
                 final CenterFragment me = CenterFragment.this;
 
-//                Log.w("", "mCurMusicData = " + mCurMusicData);
+                //                Log.w("", "mCurMusicData = " + mCurMusicData);
                 if (md == null) {
                     return;
                 }
@@ -271,15 +272,10 @@ public class CenterFragment extends AbsMenuFragment {
                             Log.d(VEApplication.TAG, " STATE_PLAY_PLAYING");
                             me.onMusicPlayStart(musicData, playListIndex);
                             break;
-                        //                case MusicPlayState.MPS_PREPARE:
-                        //                    Log.d(VEApplication.TAG, " STATE_PLAY_PREPARING");
-                        //                    mHandler.post(new Runnable() {
-                        //                        @Override
-                        //                        public void run() {
-                        //                            me.onMusicPreparing();
-                        //                        }
-                        //                    });
-                        //                    break;
+                        case MusicPlayState.MPS_NOFILE:
+                            Log.d(VEApplication.TAG, " STATE_PLAY_PLAYING");
+                            me.onPlayListNoFile(playListIndex);
+                            break;
                         case MusicPlayState.MPS_PAUSE:
                             Log.d(VEApplication.TAG, " STATE_PLAY_COMPLETE");
                             me.onMusicPlayComplete();
@@ -294,7 +290,6 @@ public class CenterFragment extends AbsMenuFragment {
                         }
                     }
                 });
-
             }
         }
     };
@@ -317,13 +312,22 @@ public class CenterFragment extends AbsMenuFragment {
         //		setContainer(new LocalMusicFragment());
 
         mBtnPlay = (ImageView) this.findViewById(R.id.btn_play);
+        mBtnPlayNext = (ImageView) this.findViewById(R.id.btn_play_next);
         mTextViewTime = (TextView) this.findViewById(R.id.text_view_time);
         mSeekBarTime = (SeekBar) this.findViewById(R.id.seek_bar_time);
         mProgressBarPrepare = (ProgressBar) this.findViewById(R.id.progress_bar_preparing);
-        mTextViewMusicTitle = (MarqueeTextView) this.findViewById(R.id.text_view_music_title_slide);
+        mTextViewMusicTitle = (MarqueeTextSurfaceView) this.findViewById(R.id.text_view_music_title_slide);
 
         mViewFooter = (View) this.findViewById(R.id.footer);
+
         mViewFooter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new PlayListDialog(v.getContext()).show();
+            }
+        });
+
+        mBtnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final MusicPlayerProxy musicPlayer = VEApplication.getMusicPlayer(getActivity().getApplicationContext());
@@ -332,6 +336,14 @@ public class CenterFragment extends AbsMenuFragment {
                 } else {
                     musicPlayer.play(mCurPlayListIndex);
                 }
+            }
+        });
+
+        mBtnPlayNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final MusicPlayerProxy musicPlayer = VEApplication.getMusicPlayer(getActivity().getApplicationContext());
+                musicPlayer.playNext();
             }
         });
 
@@ -354,20 +366,25 @@ public class CenterFragment extends AbsMenuFragment {
         });
     }
 
-    private void onMusicPlayStart(MusicData musicData, int playListIndex) {
+    private void dispatchPlayingInfo(int playListIndex) {
         if (mCurContent != null) {
             mCurPlayListIndex = playListIndex;
             Log.d("", "onMusicPlayingIndexChange = " + playListIndex);
             mCurContent.onMusicPlayingIndexChange(playListIndex);
         }
+    }
+
+    private void onMusicPlayStart(MusicData musicData, int playListIndex) {
+        dispatchPlayingInfo(playListIndex);
         mCurMusicData = musicData;
         this.startPoll(600);
         mTextViewMusicTitle.setText(musicData.musicName);
-        mTextViewMusicTitle.startFor0();
+        mTextViewMusicTitle.startScroll();
         mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_pause);
-        
+
         mProgressBarPrepare.setVisibility(View.GONE);
         mProgressBarPrepare.setVisibility(View.INVISIBLE);
+
     }
 
     private void onMusicPreparing() {
@@ -383,11 +400,24 @@ public class CenterFragment extends AbsMenuFragment {
         mCurMusicData = null;
         this.stopPoll();
         Log.d(VEApplication.TAG, "onMusicPlayComplete");
-        mTextViewMusicTitle.clearAnimation();
         mProgressBarPrepare.setVisibility(View.GONE);
-        mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_play);
         mTextViewMusicTitle.stopScroll();
+        mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_play);
     }
 
+    private void onPlayListNoFile(int playListIndex) {
+        dispatchPlayingInfo(playListIndex);
+        mCurMusicData = null;
+        this.stopPoll();
+        mProgressBarPrepare.setVisibility(View.GONE);
 
+        mTextViewMusicTitle.stopScroll();
+        mTextViewMusicTitle.setText("");
+
+        mTextViewTime.setText("00:00/00:00");
+
+        mSeekBarTime.setProgress(0);
+
+        mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_play);
+    }
 }

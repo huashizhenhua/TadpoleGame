@@ -25,15 +25,13 @@
     <string name="about_user_feedback">用户反馈</string>
     <string name="about_share_to_friend">推荐给好友</string>
     <string name="about_for_score">为微信语音表情评分</string>
-	<string name="about_version">版本:V1.0</string>
-	
-	
-	<string name="sliding_menu_left_local_music">本地音乐</string>
-	<string name="sliding_menu_left_network_music">网络音乐</string>
-	
-	
+    <string name="about_version">版本:V1.0</string>
+    <string name="sliding_menu_left_network_music">网络音乐</string>
+    <string name="sliding_menu_left_local_music">本地音乐</string>
     <string name="about_share_to_friend">推荐给好友</string>
     <string name="about_for_score">为微信语音表情评分</string>
-	<string name="about_version">版本:V1.0</string>
+    <string name="about_version">版本:V1.0</string>
+    <string name="menu_about">关于我们</string>
+    <string name="zenip_sign">Zenip</string>
 
 </resources>

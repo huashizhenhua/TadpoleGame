@@ -76,6 +76,10 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
             mMusicFileList.clear();
             mPlayState = MusicPlayState.MPS_NOFILE;
             mCurPlayIndex = -1;
+
+            mMediaPlayer.reset();
+            sendPlayStateBrocast();
+
             return;
         }
 
@@ -357,9 +361,6 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
             prepare(mCurPlayIndex);
             break;
         }
-
-
-
     }
 
 
@@ -372,10 +373,7 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
             if (mPlayState != MusicPlayState.MPS_NOFILE) {
                 Bundle bundle = new Bundle();
                 MusicData data = mMusicFileList.get(mCurPlayIndex);
-                
-                
                 data.musicDuration = getDuration();
-                
                 intent.putExtra(MusicData.KEY_MUSIC_DATA, data);
             }
 
@@ -403,6 +401,7 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
         info.playListID = curPlayListID;
         if (mMusicFileList != null) {
             info.listSize = mMusicFileList.size();
+            info.playingIndex = mCurPlayIndex;
         }
         return info;
     }

@@ -2,13 +2,13 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
@@ -39,10 +39,18 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
-
     <style name="Dialog_Transparent">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@color/transparent</item>
+    </style>
+
+    <style name="Dialog_Alert" parent="Dialog_Transparent">
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+    </style>
+
+    <style name="DialogAnimation" parent="@android:style/Animation.Dialog">
+        <item name="@android:windowEnterAnimation">@anim/dialog_alert_enter</item>
+        <item name="@android:windowExitAnimation">@anim/dialog_alert_exit</item>
     </style>
 
 </resources>

@@ -64,6 +64,19 @@ public class MusicData implements Parcelable {
     }
 
 
+    public void deleteFromDB(Context context) {
+        Uri uri = MediaStore.Audio.Media.getContentUriForPath(musicPath);
+        context.getContentResolver().delete(uri, MediaStore.Audio.Media.DATA + " = ?", new String[] { musicPath });
+    }
+
+    public void deleteFile() {
+        File file = new File(musicPath);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+
     public String getTimerText(int musicPos) {
         if (musicDuration == 0) {
             return "00:00/00:00";
@@ -150,4 +163,5 @@ public class MusicData implements Parcelable {
         }
 
     };
+
 }

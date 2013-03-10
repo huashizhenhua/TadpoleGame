@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="30dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="30dp"
+    android:orientation="vertical" >
+
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingRight="20dp" >
+
+        <RadioButton
+            android:id="@+id/radiobtn_playmode_repeate_all"
+            android:layout_width="fill_parent"
+            android:layout_height="50dip"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="循环播放"
+            android:textAppearance="@style/TextAppearance.Medium" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="?android:attr/listDivider" />
+
+        <RadioButton
+            android:id="@+id/radiobtn_playmode_repeate_random"
+            android:layout_width="fill_parent"
+            android:layout_height="50dip"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="随机播放"
+            android:textAppearance="@style/TextAppearance.Medium" />
+
+        <RadioButton
+            android:id="@+id/radiobtn_playmode_repeate_single"
+            android:layout_width="fill_parent"
+            android:layout_height="50dip"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="单曲循环"
+            android:textAppearance="@style/TextAppearance.Medium" />
+
+        <RadioButton
+            android:id="@+id/radiobtn_playmode_sequence"
+            android:layout_width="fill_parent"
+            android:layout_height="50dip"
+            android:button="@null"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="顺序播放"
+            android:textAppearance="@style/TextAppearance.Medium" />
+    </RadioGroup>
+
+</LinearLayout>

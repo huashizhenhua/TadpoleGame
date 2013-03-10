@@ -1,6 +1,7 @@
 package com.tadpolemusic.adapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +12,7 @@ import android.widget.BaseAdapter;
 
 public abstract class BaseListAdapter<T, V extends View> extends BaseAdapter {
     public static final int INVALID_POSITION = -1;
-    protected ArrayList<T> mList;
+    protected List<T> mList;
     protected Activity mContext;
     protected V mListView;
     protected int mSelectedPosition = INVALID_POSITION;
@@ -52,12 +53,12 @@ public abstract class BaseListAdapter<T, V extends View> extends BaseAdapter {
     @Override
     abstract public View getView(int position, View convertView, ViewGroup parent);
 
-    public void setList(ArrayList<T> list) {
+    public void setList(List<T> list) {
         this.mList = list;
         notifyDataSetChanged();
     }
 
-    public ArrayList<T> getList() {
+    public List<T> getList() {
         return mList;
     }
 

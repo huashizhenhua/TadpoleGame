@@ -15,22 +15,23 @@
             android:layout_height="@dimen/top_bar_size" >
 
             <ImageView
-                android:id="@+id/image_view_sound"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:id="@+id/imageview_sound"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@android:drawable/ic_menu_today" />
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/volume_sound" />
 
             <SeekBar
-                android:id="@+id/seek_bar_sound"
+                android:id="@+id/seekbar_sound"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/image_view_sound"
+                android:layout_toRightOf="@+id/imageview_sound"
                 android:max="100"
-                android:maxHeight="3dp"
-                android:minHeight="3dp"
+                android:maxHeight="@dimen/seekbar_height"
+                android:minHeight="@dimen/seekbar_height"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:progress="0"
@@ -49,22 +50,23 @@
             android:layout_height="@dimen/top_bar_size" >
 
             <ImageView
-                android:id="@+id/image_view_brightness"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:id="@+id/imageview_brightness"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@android:drawable/ic_menu_today" />
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/brightness_bright" />
 
             <SeekBar
                 android:id="@+id/seek_bar_brightness"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/image_view_brightness"
+                android:layout_toRightOf="@+id/imageview_brightness"
                 android:max="100"
-                android:maxHeight="3dp"
-                android:minHeight="3dp"
+                android:maxHeight="@dimen/seekbar_height"
+                android:minHeight="@dimen/seekbar_height"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:progress="0"
@@ -82,9 +84,9 @@
         android:paddingTop="3dp" >
 
         <GridView
+            android:id="@+id/gridview_bottom"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray"
             android:horizontalSpacing="1dp"
             android:numColumns="4"
             android:verticalSpacing="1dp" >

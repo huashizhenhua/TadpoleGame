@@ -6,13 +6,16 @@
     <!-- BottomBar -->
     <dimen name="bottom_bar_size">60dp</dimen>
     <dimen name="bottom_bar_size_medium">80dp</dimen>
-    
+
     <!-- Content -->
     <dimen name="bottom_bar_size">60dp</dimen>
 
     <!-- Seekbar Thumb -->
     <dimen name="seekbar_thumb_size_medium">8dp</dimen>
     <dimen name="seekbar_thumb_padding_medium">14dp</dimen>
+
+    <!-- Seekbar Height -->
+    <dimen name="seekbar_height">2dp</dimen>
 
     <!-- ListView -->
     <dimen name="list_item_size">45dp</dimen>

@@ -1,6 +1,6 @@
 package com.itap.voiceemoticon.widget;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -103,7 +103,7 @@ public abstract class PageListView<T> extends PullToRefreshListView implements O
                 }
                 mStartIndex += maxResult;
                 final PullToRefreshListViewAdapter adapter = mAdapter;
-                final ArrayList list = adapter.getList();
+                final List list = adapter.getList();
                 mTotalCount = pageList.totalCount;
                 me.post(new Runnable() {
                     @Override

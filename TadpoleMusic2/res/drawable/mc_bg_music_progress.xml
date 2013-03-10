@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item>
-        <shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_focused="false" android:state_pressed="false">
+        <shape android:shape="rectangle">
             <solid android:color="@color/simple_blue" />
         </shape>
+      
+    </item>
+    
+    
+    <item android:state_pressed="true">
+            <shape android:shape="rectangle">
+                <solid android:color="@color/simple_blue_trans" />
+            </shape>
     </item>
 
-</layer-list>
+</selector>

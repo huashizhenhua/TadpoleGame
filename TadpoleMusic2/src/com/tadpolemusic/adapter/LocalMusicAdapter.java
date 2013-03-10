@@ -2,30 +2,23 @@ package com.tadpolemusic.adapter;
 
 import java.util.ArrayList;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.quickactionbar.QuickAction;
-import com.quickactionbar.QuickActionBar;
 import com.quickactionbar.QuickActionGrid;
 import com.quickactionbar.QuickActionWidget;
 import com.tadpolemusic.R;
-import com.tadpolemusic.activity.dialog.BaseDialog;
+import com.tadpolemusic.activity.dialog.LocalMusicDeleteDialog;
 import com.tadpolemusic.media.LocalMusicItem;
 import com.tadpolemusic.media.MusicData;
 
@@ -51,6 +44,7 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final MusicData item = (MusicData) getItem(position);
+        final LocalMusicAdapter me = this;
         View view = convertView;
         ViewHolder viewHolder = null;
         if (view == null) {
@@ -103,8 +97,8 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
                 quickActionGrid.setNumColumns(3);
 
                 QuickAction qaSetRing = new QuickAction(ctx, R.drawable.audio_list_item_rightmenu_setring_default, "设为铃声");
-                QuickAction qaActionDel = new QuickAction(ctx, android.R.drawable.ic_menu_delete, "删除");
-                QuickAction qaActionShare = new QuickAction(ctx, android.R.drawable.ic_menu_share, "分享");
+                QuickAction qaActionDel = new QuickAction(ctx, R.drawable.audio_list_item_rightmenu_delete_default, "删除");
+                QuickAction qaActionShare = new QuickAction(ctx, R.drawable.audio_list_item_rightmenu_share_default, "分享");
 
                 final ArrayList<QuickAction> qaList = new ArrayList<QuickAction>();
                 qaList.add(qaSetRing);
@@ -115,8 +109,6 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
                     quickActionGrid.addQuickAction(qaList.get(i));
                 }
 
-
-
                 quickActionGrid.setOnQuickActionClickListener(new QuickActionGrid.OnQuickActionClickListener() {
                     @Override
                     public void onQuickActionClicked(QuickActionWidget widget, int position) {
@@ -126,16 +118,26 @@ public class LocalMusicAdapter extends ListViewAdapter<MusicData> implements Sec
                             item.setMyRingtone(context);
                             break;
                         case 1:
-                            new BaseDialog(context).show();
-                            //                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                            //                            LayoutInflater inflater = LayoutInflater.from(context);
-                            //                            
-                            //                            builder.set
-                            //                            View titleView = inflater.inflate(R.layout.alert_dialog_title, null);
-                            //                            View contentView = inflater.inflate(R.layout.alert_dialog_content, null);
-                            //                            builder.setCustomTitle(titleView);
-                            //                            builder.setView(contentView);
-                            //                            builder.show();
+                            LocalMusicDeleteDialog delDialog = new LocalMusicDeleteDialog(context);
+                            delDialog.setTip("你确定删除音乐“" + item.musicName + "”");
+                            delDialog.setPositiveButtonListener(new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    LocalMusicDeleteDialog d = (LocalMusicDeleteDialog) dialog;
+                                    boolean isToDelFile = d.isNeedToDeleteFile();
+                                    me.getList().remove(item);
+                                    me.notifyDataSetChanged();
+                                    item.deleteFromDB(d.getContext());
+                                    if (isToDelFile) {
+                                        item.deleteFile();
+                                    }
+                                }
+                            });
+
+
+
+                            delDialog.setTitle("删除歌曲");
+                            delDialog.show();
                             break;
                         default:
                             break;

@@ -1,0 +1,18 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_btn_dialog_alert" >
+
+    <TextView
+        android:id="@+id/textview_music_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:text="hello world"
+        android:textAppearance="@style/TextAppearance.Medium"
+        android:textColor="@color/black" />
+
+</RelativeLayout>
