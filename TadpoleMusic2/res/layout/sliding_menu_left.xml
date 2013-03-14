@@ -8,7 +8,16 @@
         android:layout_width="fill_parent"
         android:layout_height="@dimen/abs__action_bar_default_height"
         android:layout_alignParentTop="true"
-        android:background="@color/slide_menu_dark" >
+        android:background="#494949" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/textview_padding_left"
+            android:text="Zenip"
+            android:textAppearance="@style/TextAppearance.Large"
+            android:textColor="@color/white" />
     </RelativeLayout>
 
     <!--  -->
@@ -19,7 +28,7 @@
         android:layout_height="fill_parent"
         android:layout_above="@+id/left_menu_bottom_bar"
         android:layout_below="@+id/left_menu_top_bar"
-        android:background="@color/slide_menu_dark"
+        android:background="#313234"
         android:orientation="vertical" >
 
         <include
@@ -42,7 +51,8 @@
         android:layout_width="fill_parent"
         android:layout_height="@dimen/bottom_bar_size"
         android:layout_alignParentBottom="true"
-        android:background="@color/gray" >
+        android:background="#252628"
+        android:visibility="gone" >
     </RelativeLayout>
 
 </RelativeLayout>

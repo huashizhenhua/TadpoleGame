@@ -89,7 +89,7 @@ public class MarqueeTextSurfaceView extends SurfaceView implements SurfaceHolder
         @Override
         public void run() {
             Canvas c = null;
-            while (canRun) {
+            while (canRun && isSurfaceValid) {
                 try {
                     c = holder.lockCanvas();//锁定画布，一般在锁定后就可以通过其返回的画布对象Canvas，在其上面画图等操作了。
                     handlerDrawInternal(c);
@@ -101,7 +101,7 @@ public class MarqueeTextSurfaceView extends SurfaceView implements SurfaceHolder
                     }
                 }
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(30);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }//睡眠时间为1秒
@@ -146,6 +146,10 @@ public class MarqueeTextSurfaceView extends SurfaceView implements SurfaceHolder
 
 
     private void handlerDrawInternal(Canvas canvas) {
+        if (canvas == null) {
+            return;
+        }
+
         canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG); //创建画笔
         paint.setTextSize(spToPixel(getContext(), 12f));
@@ -170,7 +174,7 @@ public class MarqueeTextSurfaceView extends SurfaceView implements SurfaceHolder
         if (xOffset > (width + 10)) {
             xOffset = -textWidth - 10;
         } else {
-            xOffset += 2;
+            xOffset += 1;
         }
 
     }

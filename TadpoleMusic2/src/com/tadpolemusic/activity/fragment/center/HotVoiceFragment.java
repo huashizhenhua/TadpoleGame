@@ -9,8 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
+import com.itap.voiceemoticon.widget.LoadingUtil;
 import com.itap.voiceemoticon.widget.PageListView;
 import com.tadpolemusic.VEApplication;
 import com.tadpolemusic.activity.fragment.AbsCenterContent;
@@ -30,14 +33,27 @@ public class HotVoiceFragment extends AbsCenterContent {
     private PageListView<Voice> mListView;
     private PullToRefreshListViewAdapter<Voice> mVoiceAdapter;
 
+    private View mLoadingView;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final HotVoiceFragment me = this;
 
         mListView = new PageListView<Voice>(getActivity()) {
             @Override
             public PageList<Voice> onLoadPageList(int startIndex, int maxResult) {
-                return VEApplication.getVoiceEmoticonApi().getHostVoicesList(startIndex, maxResult);
+                PageList<Voice> pageList = VEApplication.getVoiceEmoticonApi().getHostVoicesList(startIndex, maxResult);
+                me.getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (mLoadingView != null) {
+                            container.removeView(mLoadingView);
+                            mLoadingView = null;
+                        }
+                    }
+                });
+                return pageList;
             }
         };
 
@@ -45,6 +61,10 @@ public class HotVoiceFragment extends AbsCenterContent {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 Log.d(VEApplication.TAG, "HotVoice Fragment onItemClick ");
+
+                //since we use headerview , so we must do this.
+                position = position - 1;
+
                 me.refreshAndPlay(position);
             }
         });
@@ -55,48 +75,20 @@ public class HotVoiceFragment extends AbsCenterContent {
 
         mListView.doLoad();
 
+
+        mLoadingView = LoadingUtil.getLoadingWidget(getActivity());
+        container.addView(mLoadingView);
+
         return mListView;
     }
 
 
     public void refreshAndPlay(int position) {
-        if(mVoiceAdapter == null){
+        if (mVoiceAdapter == null) {
             return;
         }
         List<? extends MusicData> dataList = mVoiceAdapter.getList();
         new PlayAsyncTask(getActivity(), dataList, MY_PLAY_LIST_ID).execute(position);
-        
-        
-        
-//        new AsyncTask<Integer, String, String>() {
-//            @Override
-//            protected String doInBackground(Integer... params) {
-//                final PullToRefreshListViewAdapter<Voice> adapter = mVoiceAdapter;
-//
-//                if (adapter == null || params.length == 0) {
-//                    return "";
-//                }
-//
-//                
-//                if (dataList == null) {
-//                    return "";
-//                }
-//
-//                int position = params[0];
-//
-//                final MusicPlayerProxy mpProxy = VEApplication.getMusicPlayer(getActivity());
-//                PlayListInfo info = new PlayListInfo();
-//                mpProxy.getCurrentPlayListInfo(info);
-//
-//                boolean needToRefresh = !(MY_PLAY_LIST_ID.equals(info.playListID) && (position < info.listSize));
-//                if (needToRefresh) {
-//                    mpProxy.refreshMusicList(MY_PLAY_LIST_ID, (List<MusicData>) dataList);
-//                }
-//                mpProxy.play(position);
-//
-//                return "";
-//            }
-//        }.execute(position);
     }
 
 

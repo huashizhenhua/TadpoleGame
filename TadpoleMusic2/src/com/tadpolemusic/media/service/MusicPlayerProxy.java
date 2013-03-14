@@ -3,17 +3,21 @@ package com.tadpolemusic.media.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.BoringLayout;
 import android.util.Log;
 
 import com.tadpolemusic.media.MusicData;
 import com.tadpolemusic.media.MusicPlayMode;
 import com.tadpolemusic.media.MusicPlayState;
+import com.tadpolemusic.media.MusicPlayer;
 import com.tadpolemusic.media.PlayListInfo;
 import com.tadpolemusic.media.aidl.MusicConnect;
 import com.tadpolemusic.media.interface1.IOnServiceConnectComplete;
@@ -65,6 +69,12 @@ public class MusicPlayerProxy {
 
         mConnectComplete = false;
         mMusicConnect = null;
+    }
+
+    public IntentFilter getBrocastIntentFilter() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MusicPlayer.BROCAST_NAME);
+        return intentFilter;
     }
 
     public void callbackServiceConnectComplete() {
@@ -143,8 +153,8 @@ public class MusicPlayerProxy {
     public void refreshMusicList(String playListID, List<MusicData> FileList) {
         if (mMusicConnect != null) {
             try {
-                
-                if(FileList != null){
+
+                if (FileList != null) {
                     FileList = new ArrayList<MusicData>(FileList);
                 }
                 mMusicConnect.refreshMusicList(playListID, FileList);

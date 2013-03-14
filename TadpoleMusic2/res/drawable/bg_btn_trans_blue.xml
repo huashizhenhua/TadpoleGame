@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Defaut -->
+    <item android:state_focused="false" android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transparent"/>
+        </shape>
+        </item>
+
+    <!-- Pressed -->
+    <item android:drawable="@drawable/bg_btn_dialog_alert_pressed" android:state_pressed="true">
+    	<shape android:shape="rectangle">
+            <solid android:color="@color/simple_blue"/>
+        </shape>
+    </item>
+
+</selector>

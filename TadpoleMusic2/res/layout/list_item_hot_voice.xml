@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/white" >
 
     <TextView
         android:id="@+id/text_view_section_title"
@@ -16,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/text_view_section_title"
-        android:background="@color/white"
+        android:background="@drawable/bg_btn_trans_blue"
         android:paddingBottom="5dp"
         android:paddingLeft="8dp"
         android:paddingTop="5dp" >
@@ -24,7 +25,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_list_select"
             android:descendantFocusability="blocksDescendants" >
 
             <RelativeLayout

@@ -13,17 +13,18 @@
         android:background="@color/simple_black_transCC" >
 
         <ImageButton
-            android:id="@+id/button_left"
+            android:id="@+id/btn_left"
             android:layout_width="@dimen/top_bar_size"
             android:layout_height="@dimen/top_bar_size"
             android:layout_alignParentLeft="true"
-            android:background="@android:drawable/btn_default" />
+            android:background="@drawable/bg_btn_trans_blue"
+            android:src="@drawable/btn_playback_titile_back" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/button_left"
+            android:layout_toRightOf="@+id/btn_left"
             android:gravity="center"
             android:paddingLeft="10dp"
             android:text="请设置标题"
@@ -53,6 +54,7 @@
             android:layout_height="wrap_content" >
 
             <TextView
+                android:id="@+id/textview_progress_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -64,6 +66,7 @@
                 android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/textview_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -87,7 +90,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="96dp"
                 android:layout_toLeftOf="@+id/btn_play"
-                android:background="@android:drawable/ic_media_previous" />
+                android:background="@drawable/bg_btn_trans_blue"
+                android:src="@android:drawable/ic_media_previous" />
 
             <ImageButton
                 android:id="@+id/btn_prev"
@@ -96,7 +100,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="32dp"
                 android:layout_toLeftOf="@+id/btn_play"
-                android:background="@android:drawable/ic_media_previous" />
+                android:background="@drawable/bg_btn_trans_blue"
+                android:src="@android:drawable/ic_media_previous" />
 
             <ImageButton
                 android:id="@+id/btn_play"
@@ -104,7 +109,8 @@
                 android:layout_height="36dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:background="@android:drawable/ic_media_play" />
+                android:background="@drawable/bg_btn_trans_blue"
+                android:src="@android:drawable/ic_media_play" />
 
             <ImageButton
                 android:id="@+id/btn_next"
@@ -113,7 +119,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="32dp"
                 android:layout_toRightOf="@+id/btn_play"
-                android:background="@android:drawable/ic_media_next" />
+                android:background="@drawable/bg_btn_trans_blue"
+                android:src="@android:drawable/ic_media_next" />
 
             <ImageButton
                 android:id="@+id/btn_list"
@@ -122,7 +129,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="96dp"
                 android:layout_toRightOf="@+id/btn_play"
-                android:background="@android:drawable/ic_media_next" />
+                android:background="@drawable/bg_btn_trans_blue"
+                android:src="@drawable/skin_theme_image_btn_slidingdrawer_playback_playingbar_openqueue_1" />
 
             <RelativeLayout
                 android:layout_width="100dp"
@@ -163,7 +171,7 @@
     </RelativeLayout>
 
     <SeekBar
-        android:id="@+id/seek_bar_time"
+        android:id="@+id/seekbar_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

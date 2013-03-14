@@ -92,6 +92,28 @@ public class MusicData implements Parcelable {
         curTimeString = curTimeString + "/" + totalTimeString;
         return curTimeString;
     }
+    
+    public String getProgressTimeText(int musicPos){
+        if (musicDuration == 0) {
+            return "00:00/00:00";
+        }
+        int curTime = musicPos / 1000;
+        int curminute = curTime / 60;
+        int cursecond = curTime % 60;
+        String curTimeString = String.format("%02d:%02d", curminute, cursecond);
+        return curTimeString;
+    }
+    
+    public String getDurtaionText(){
+        if (musicDuration == 0) {
+            return "00:00";
+        }
+        int totalTime = musicDuration / 1000;
+        int totalminute = totalTime / 60;
+        int totalsecond = totalTime % 60;
+        String totalTimeString = String.format("%02d:%02d", totalminute, totalsecond).intern();
+        return totalTimeString;
+    }
 
     public int getProgress(int musicPos) {
         if (musicDuration == 0) {

@@ -7,10 +7,10 @@
 
             <gradient
                 android:angle="270"
-                android:centerColor="@color/simple_orange"
+                android:centerColor="@color/simple_white_trans22"
                 android:centerY="0.75"
-                android:endColor="@color/simple_orange"
-                android:startColor="@color/simple_orange" />
+                android:endColor="@color/simple_white_trans22"
+                android:startColor="@color/simple_white_trans22" />
         </shape>
     </item>
     <item android:id="@android:id/secondaryProgress">
@@ -20,10 +20,10 @@
 
                 <gradient
                     android:angle="270"
-                    android:centerColor="#80ffb600"
+                    android:centerColor="@color/simple_white_transCC"
                     android:centerY="0.75"
-                    android:endColor="#a0ffcb00"
-                    android:startColor="#80ffd300" />
+                    android:endColor="@color/simple_white_transCC"
+                    android:startColor="@color/simple_white_transCC" />
             </shape>
         </clip>
     </item>
@@ -34,10 +34,10 @@
 
                 <gradient
                     android:angle="270"
-                    android:centerColor="#FFFFFFFF"
+                    android:centerColor="@color/simple_orange"
                     android:centerY="0.75"
-                    android:endColor="#FFFFFFFF"
-                    android:startColor="#FFFFFFFF" />
+                    android:endColor="@color/simple_orange"
+                    android:startColor="@color/simple_orange" />
             </shape>
         </clip>
     </item>

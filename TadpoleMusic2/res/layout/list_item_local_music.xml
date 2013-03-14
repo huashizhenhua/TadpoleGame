@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_view_section_title"
         android:layout_centerVertical="true"
+        android:background="@drawable/bg_btn_trans_blue"
         android:descendantFocusability="blocksDescendants"
         android:paddingBottom="7dp"
         android:paddingTop="7dp" >

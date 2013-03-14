@@ -12,11 +12,12 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon_default"
         android:label="@string/app_name"
         android:theme="@style/Theme.Styled" >
         <activity
             android:name="com.tadpolemusic.activity.LeftAndRightActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Styled"
             android:uiOptions="none"
@@ -64,7 +65,7 @@
         <!--
              <activity
             android:label="@string/umeng_example_home_btn_fb"
-            android:name=".fb.SimpleExample" />
+            android:name=".fb.SimpleExample" />
         -->
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"

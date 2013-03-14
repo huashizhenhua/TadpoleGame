@@ -1,6 +1,6 @@
 package com.tadpolemusic.activity.fragment;
 
-import com.tadpolemusic.activity.fragment.menu.ILeftMenuControl;
+import com.tadpolemusic.activity.fragment.menu.IMenuControl;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
@@ -14,15 +14,15 @@ import android.support.v4.app.Fragment;
  * <br>==========================
  */
 public abstract class AbsMenuFragment extends Fragment {
-    public ILeftMenuControl getLeftMenuControll() {
+    public IMenuControl getLeftMenuControll() {
         Activity act = getActivity();
         if (act == null) {
             throw new RuntimeException("getLeftMenuControll must call after createView call");
         }
-        if (!(act instanceof ILeftMenuControl)) {
+        if (!(act instanceof IMenuControl)) {
             throw new RuntimeException("getLeftMenuControll is not a ILeftMenuControl");
         }
-        return (ILeftMenuControl) act;
+        return (IMenuControl) act;
     }
 
 

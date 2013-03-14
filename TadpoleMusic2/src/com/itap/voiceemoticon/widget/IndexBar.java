@@ -1,14 +1,14 @@
 package com.itap.voiceemoticon.widget;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -22,32 +22,23 @@ import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.tadpolemusic.R;
+
 public class IndexBar extends View {
     private char[] mCharArr = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '?' };
     private SectionIndexer mSectionIndexter = null;
     private TextView mDialogText;
     private ListView mListView;
-    private Bitmap mbitmap;
-    private int mType = 1;
-    private int mColor = 0xff858c94;
-    private int mBgColor = 0xFFDDDDDD;
     private int mCurrentSelectIndex = -1;
     private int mLastSelectIndex = -1;
+
+    private Paint mTextPaint;
+    private Paint mBgPaint;
+    private Rect mRect = new Rect();
 
     public IndexBar(Context context) {
         super(context);
         init();
-    }
-    
-    public void setCurrentSection(char setctionLetter){
-        setctionLetter = Character.toUpperCase(setctionLetter);
-        for(int i = 0, len = mCharArr.length; i < len; i++){
-            if(setctionLetter == mCharArr[i]){
-                mCurrentSelectIndex = i;
-                postInvalidate();
-                break;
-            }
-        }
     }
 
     public IndexBar(Context context, AttributeSet attrs) {
@@ -59,8 +50,6 @@ public class IndexBar extends View {
         super(context, attrs, defStyle);
         init();
     }
-
-
 
     public void setListView(ListView listView) {
         mListView = listView;
@@ -77,9 +66,42 @@ public class IndexBar extends View {
         }
     }
 
+    public void setCurrentSection(char setctionLetter) {
+        setctionLetter = Character.toUpperCase(setctionLetter);
+        for (int i = 0, len = mCharArr.length; i < len; i++) {
+            if (setctionLetter == mCharArr[i]) {
+                mCurrentSelectIndex = i;
+                postInvalidate();
+                break;
+            }
+        }
+    }
+
+
+    private int mColorSimpleBlue;
+    private int mColorSimpleGrey;
+
+    private boolean isTouching = false;
+
     private void init() {
         createDialogText();
-        mbitmap = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_search);
+
+        // color
+        mColorSimpleBlue = getContext().getResources().getColor(R.color.simple_blue_trans);
+        int colorOrange = getContext().getResources().getColor(R.color.orange);
+        mColorSimpleGrey = getContext().getResources().getColor(R.color.simple_grey);
+
+
+        // init paints 
+        mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBgPaint.setColor(mColorSimpleBlue);
+        mBgPaint.setStyle(Style.FILL);
+
+
+        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mTextPaint.setTextAlign(Align.CENTER);
+        mTextPaint.setColor(mColorSimpleGrey);
+
     }
 
     private void createDialogText() {
@@ -92,10 +114,6 @@ public class IndexBar extends View {
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         mWindowManager.addView(mDialogText, lp);
 
-    }
-
-    public void setTextView(TextView mDialogText) {
-        this.mDialogText = mDialogText;
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -117,7 +135,8 @@ public class IndexBar extends View {
 
 
         if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
-//            setBackgroundColor(0xFFFFFFFF);
+            isTouching = true;
+            setBackgroundDrawable(new ColorDrawable(mColorSimpleBlue));
             if (mSectionIndexter == null) {
                 mSectionIndexter = (SectionIndexer) mListView.getAdapter();
             }
@@ -135,11 +154,12 @@ public class IndexBar extends View {
             mDialogText.setVisibility(View.INVISIBLE);
 
         }
-        if (event.getAction() == MotionEvent.ACTION_UP) {
+        if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+            isTouching = false;
+            setBackgroundColor(Color.WHITE);
             if (mLastSelectIndex != mCurrentSelectIndex) {
                 this.invalidate();
             }
-//            setBackgroundDrawable(new ColorDrawable(0x00000000));
         }
         return true;
     }
@@ -152,32 +172,28 @@ public class IndexBar extends View {
     }
 
     protected void onDraw(Canvas canvas) {
-        Paint paint = new Paint();
-        paint.setColor(mColor);
-        paint.setTextAlign(Align.CENTER);
-
         final int width = getMeasuredWidth();
         int x = width / 2;
         int y = 0;
         int textBaseLine = y;
-
         if (mCharArr.length > 0) {
             float height = getMeasuredHeight() / (mCharArr.length);
-            paint.setTextSize(height - 2);
-            float fontHeight = getFontHeight(paint);
-
+            mTextPaint.setTextSize(height - 2);
+            float fontHeight = getFontHeight(mTextPaint);
             for (int i = 0; i < mCharArr.length; i++) {
                 y = (int) (i * height);
                 textBaseLine = (int) (y + height);
                 if (mCurrentSelectIndex == i) {
-                    Rect rect = new Rect();
-                    rect.set(0, y, 0 + width, y + (int) height);
-                    Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                    bgPaint.setColor(mBgColor);
-                    bgPaint.setStyle(Style.FILL);
-                    canvas.drawRect(rect, bgPaint);
+                    mRect.set(0, y, 0 + width, y + (int) height);
+                    canvas.drawRect(mRect, mBgPaint);
                 }
-                canvas.drawText(String.valueOf(mCharArr[i]), x, textBaseLine - ((height - fontHeight) / 2), paint);
+
+                if (isTouching || mCurrentSelectIndex == i) {
+                    mTextPaint.setColor(Color.WHITE);
+                } else {
+                    mTextPaint.setColor(mColorSimpleGrey);
+                }
+                canvas.drawText(String.valueOf(mCharArr[i]), x, textBaseLine - ((height - fontHeight) / 2), mTextPaint);
             }
         }
         super.onDraw(canvas);

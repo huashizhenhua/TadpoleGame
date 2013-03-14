@@ -309,6 +309,8 @@
     <color name="simple_orange_trans">#AAF4AE3E</color>
     <color name="simple_grey">#646464</color>
     <color name="simple_grey_trans">#AA646464</color>
-     <color name="simple_grey_trans44">#44646464</color>
+    <color name="simple_grey_trans44">#44646464</color>
+    <color name="simple_white_trans22">#22FFFFFF</color>
+    <color name="simple_white_transCC">#CCFFFFFF</color>
 
 </resources>

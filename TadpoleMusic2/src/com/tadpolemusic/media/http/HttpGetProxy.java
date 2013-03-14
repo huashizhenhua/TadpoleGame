@@ -128,7 +128,13 @@ public class HttpGetProxy {
     }
 
     public String getProxyUrl(String fromUrl) {
-        return getProxyUrl(fromUrl, null);
+        if (fromUrl != null && fromUrl.startsWith("http")) {
+            String proxyUrl = getProxyUrl(fromUrl, null);
+            printLog("proxyUrl = " + fromUrl);
+            return proxyUrl;
+        }
+        printLog("getProxyUrl not work");
+        return fromUrl;
     }
 
     /**

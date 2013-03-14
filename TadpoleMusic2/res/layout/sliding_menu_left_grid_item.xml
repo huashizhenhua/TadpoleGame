@@ -1,7 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/slide_menu_dark" >
+    android:orientation="vertical" >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,4 +29,11 @@
             android:textColor="@color/white" />
     </RelativeLayout>
 
-</RelativeLayout>
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:contentDescription="@string/hello_world"
+        android:scaleType="fitXY"
+        android:src="@drawable/navigation_item_horizontal_divider" />
+
+</LinearLayout>

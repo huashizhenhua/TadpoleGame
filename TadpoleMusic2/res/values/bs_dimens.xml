@@ -1,5 +1,7 @@
 <resources>
 
+    <dimen name="textview_padding_left">10dp</dimen>
+
     <!-- TopBar -->
     <dimen name="top_bar_size">50dp</dimen>
 

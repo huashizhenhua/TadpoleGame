@@ -7,16 +7,17 @@
         android:id="@+id/section_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey" >
-
-        <TextView
+        android:background="#272729" >
+        <TextView
             android:id="@+id/text_view_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/sliding_menu_section_text_margin_left"
+            android:layout_marginLeft="@dimen/textview_padding_left"
             android:gravity="center_vertical"
+            android:paddingBottom="6dp"
+            android:paddingTop="6dp"
             android:textAppearance="@style/TextAppearance.Small"
             android:textColor="@color/ghostwhite" />
     </RelativeLayout>
@@ -26,10 +27,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/section_title"
-        android:background="@color/grey"
+        android:background="#313234"
         android:horizontalSpacing="1dp"
-        android:listSelector="@drawable/sliding_menu_left_grid_item_icon_select"
-        android:numColumns="2"
+        android:numColumns="1"
         android:paddingBottom="1dp"
         android:paddingTop="1dp"
         android:verticalSpacing="1dp" >

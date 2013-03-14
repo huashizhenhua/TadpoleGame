@@ -25,5 +25,6 @@ public class MusicPlayState {
     public static final String MUSIC_PLAY = "MUSIC_PLAY";
     public static final String MUSIC_PAUSE = "MUSIC_PAUSE";
     public static final String MUSIC_STOP = "MUSIC_STOP";
+    public static final String PLAY_BUFFER_PERCENT = "PLAY_BUFFER_PERCENT";
 
 }

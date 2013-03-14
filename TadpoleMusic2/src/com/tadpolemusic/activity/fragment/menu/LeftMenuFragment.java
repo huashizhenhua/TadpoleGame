@@ -21,22 +21,24 @@ import com.tadpolemusic.adapter.MyMusicAdapter;
 import com.tadpolemusic.adapter.MyMusicItem;
 
 
-@SuppressLint("ValidFragment")
 public class LeftMenuFragment extends AbsMenuFragment {
 
     private static final String TAG = "LeftMenuFragment";
 
-    private ArrayList<MyMusicItem> localItems;
+    private ArrayList<MyMusicItem> mLocalItems;
     private MyMusicAdapter mAdapterLocal;
     private MyMusicAdapter mAdapterNetwork;
-    
-    public void setLocalMusicItems(ArrayList<MyMusicItem> localMusicItems){
-        localItems = localMusicItems;
+    private MyMusicItem mCurMyMusicItem;
+
+    public void setLocalMusicItems(ArrayList<MyMusicItem> localMusicItems) {
+        mLocalItems = localMusicItems;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         TMLog.step(TAG, "onSaveInstanceState");
+        outState.putSerializable("mLocalItems", mLocalItems);
+        outState.putSerializable("mCurMyMusicItem", mCurMyMusicItem);
         super.onSaveInstanceState(outState);
     }
 
@@ -44,6 +46,17 @@ public class LeftMenuFragment extends AbsMenuFragment {
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         TMLog.step(TAG, "onViewStateRestored");
+        if (savedInstanceState != null) {
+            ArrayList<MyMusicItem> items = (ArrayList<MyMusicItem>) savedInstanceState.get("mLocalItems");
+            mLocalItems = items;
+            mAdapterLocal.setList(items);
+            mAdapterLocal.notifyDataSetChanged();
+
+            MyMusicItem item = (MyMusicItem) savedInstanceState.get("mCurMyMusicItem");
+            setDefaultSelectItem(item);
+            selectedDefaultItem();
+        }
+
         super.onViewStateRestored(savedInstanceState);
     }
 
@@ -53,11 +66,9 @@ public class LeftMenuFragment extends AbsMenuFragment {
         View view = inflater.inflate(R.layout.sliding_menu_left, null);
         initLocalMusic(view);
         initNetworkMusic(view);
+        
+        feedLocalItems(mLocalItems);
         return view;
-    }
-
-    public ArrayList<MyMusicItem> loadLocalItems() {
-        return localItems;
     }
 
     @Override
@@ -70,30 +81,29 @@ public class LeftMenuFragment extends AbsMenuFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TMLog.step(TAG, "onViewCreated");
+        selectedDefaultItem();
+    }
 
-        if (mDefaultItem != null) {
-            int postion = mAdapterLocal.getList().indexOf(mDefaultItem);
+    public void selectedDefaultItem() {
+        if (mCurMyMusicItem != null) {
+            int postion = mAdapterLocal.getList().indexOf(mCurMyMusicItem);
             if (postion != BaseListAdapter.INVALID_POSITION) {
                 mAdapterLocal.setSelectedPostion(postion);
                 mAdapterLocal.notifyDataSetChanged();
             }
 
-            postion = mAdapterNetwork.getList().indexOf(mDefaultItem);
+            postion = mAdapterNetwork.getList().indexOf(mCurMyMusicItem);
             if (postion != BaseListAdapter.INVALID_POSITION) {
                 mAdapterNetwork.setSelectedPostion(postion);
                 mAdapterNetwork.notifyDataSetChanged();
             }
 
-            getLeftMenuControll().setCenterContent(mDefaultItem);
-
-            mDefaultItem = null;
+            getLeftMenuControll().setCenterContent(mCurMyMusicItem);
         }
     }
 
-    private MyMusicItem mDefaultItem;
-
     public void setDefaultSelectItem(MyMusicItem musicItem) {
-        mDefaultItem = musicItem;
+        mCurMyMusicItem = musicItem;
     }
 
     public ArrayList<MyMusicItem> loadNetworkItems() {
@@ -110,13 +120,19 @@ public class LeftMenuFragment extends AbsMenuFragment {
         myMusicList.add(item);
 
         // 制造假数据
-        for (int i = 0, len = 4; i < len; i++) {
+        for (int i = 0, len = 1; i < len; i++) {
             item = new MyMusicItem();
             item.text = "text" + i;
             item.iconDefaultResId = R.drawable.ic_launcher;
             myMusicList.add(item);
         }
         return myMusicList;
+    }
+
+
+    private void feedLocalItems(ArrayList<MyMusicItem> myMusicList) {
+        mAdapterLocal.setList(myMusicList);
+        mAdapterLocal.notifyDataSetChanged();
     }
 
     /**
@@ -129,20 +145,18 @@ public class LeftMenuFragment extends AbsMenuFragment {
         // section
         TextView textViewSection = (TextView) viewMusic.findViewById(R.id.text_view_section);
         textViewSection.setText(R.string.sliding_menu_left_local_music);
-
         // gridview
         mAdapterLocal = new MyMusicAdapter(getActivity());
-        final ArrayList<MyMusicItem> myMusicList = loadLocalItems();
-        mAdapterLocal.setList(myMusicList);
         gridViewMusic.setAdapter(mAdapterLocal);
-
         final LeftMenuFragment me = this;
         gridViewMusic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int postion, long arg3) {
 
+                ArrayList<MyMusicItem> musicList = (ArrayList<MyMusicItem>) mAdapterLocal.getList();
+
                 // item action
-                MyMusicItem item = myMusicList.get(postion);
+                MyMusicItem item = musicList.get(postion);
                 if (MyMusicItem.Action.REPLEACE_CENTER.equals(item.action) && (item.centerContentClass != null)) {
                     getLeftMenuControll().setCenterContent(item);
                     getLeftMenuControll().scrollToCenter();

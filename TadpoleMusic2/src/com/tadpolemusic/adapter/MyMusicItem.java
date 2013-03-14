@@ -1,10 +1,12 @@
 package com.tadpolemusic.adapter;
 
+import java.io.Serializable;
+
 import android.app.Activity;
 
 import com.tadpolemusic.activity.fragment.AbsCenterContent;
 
-public class MyMusicItem {
+public class MyMusicItem implements Serializable {
     public enum Action {
         NEW_ACTIVITY, REPLEACE_CENTER
     }

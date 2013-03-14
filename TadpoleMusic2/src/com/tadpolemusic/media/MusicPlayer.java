@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.tadpolemusic.TMLog;
+import com.tadpolemusic.media.http.HttpGetProxy;
+
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
 import android.util.Log;
 
-public class MusicPlayer implements OnCompletionListener, OnErrorListener {
+public class MusicPlayer implements OnCompletionListener, OnErrorListener, OnBufferingUpdateListener {
 
     public static final String BROCAST_NAME = "com.tadpolemusic.media.brocast";
 
@@ -32,12 +36,19 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
 
     private Context mContext;
 
+    private HttpGetProxy mHttpGetProxy;
+
+    private int mCurBufferPercent = 100;
+    private int mLastBufferPercent = 100;
+
     private void defaultParam() {
         mMediaPlayer = new MediaPlayer();
 
         mMediaPlayer.setOnCompletionListener(this);
 
         mMediaPlayer.setOnErrorListener(this);
+
+        mMediaPlayer.setOnBufferingUpdateListener(this);
 
         mMusicFileList = new ArrayList<MusicData>();
 
@@ -47,6 +58,9 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
 
         mPLayMode = MusicPlayMode.MPM_LIST_LOOP_PLAY;
 
+        mHttpGetProxy = new HttpGetProxy(9090);
+
+        mHttpGetProxy.start();
 
     }
 
@@ -307,7 +321,7 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
 
         String path = mMusicFileList.get(index).musicPath;
         try {
-            mMediaPlayer.setDataSource(path);
+            mMediaPlayer.setDataSource(mHttpGetProxy.getProxyUrl(path));
             mMediaPlayer.prepare();
             mPlayState = MusicPlayState.MPS_PREPARE;
             Log.i(TAG, "mMediaPlayer.prepare	path = " + path);
@@ -369,6 +383,7 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
             Intent intent = new Intent(BROCAST_NAME);
             intent.putExtra(MusicPlayState.PLAY_STATE_NAME, mPlayState);
             intent.putExtra(MusicPlayState.PLAY_MUSIC_INDEX, mCurPlayIndex);
+            intent.putExtra(MusicPlayState.PLAY_BUFFER_PERCENT, mCurBufferPercent);
 
             if (mPlayState != MusicPlayState.MPS_NOFILE) {
                 Bundle bundle = new Bundle();
@@ -411,5 +426,16 @@ public class MusicPlayer implements OnCompletionListener, OnErrorListener {
         if (mMusicFileList != null) {
             info.listSize = mMusicFileList.size();
         }
+    }
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer arg0, int percent) {
+        TMLog.step(TAG, "onBufferingUpdate percent" + percent);
+        mLastBufferPercent = mCurBufferPercent;
+        mCurBufferPercent = percent;
+        if (mCurBufferPercent != mLastBufferPercent) {
+            sendPlayStateBrocast();
+        }
+        return;
     }
 }

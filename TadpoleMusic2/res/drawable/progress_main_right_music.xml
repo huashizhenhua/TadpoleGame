@@ -7,11 +7,25 @@
 
             <gradient
                 android:angle="270"
-                android:centerColor="@color/grey"
+                android:centerColor="@color/simple_white_trans22"
                 android:centerY="0.75"
-                android:endColor="@color/grey"
-                android:startColor="@color/grey" />
+                android:endColor="@color/simple_white_trans22"
+                android:startColor="@color/simple_white_trans22" />
         </shape>
+    </item>
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <corners android:radius="5dip" />
+
+                <gradient
+                    android:angle="270"
+                    android:centerColor="@color/simple_white_transCC"
+                    android:centerY="0.75"
+                    android:endColor="@color/simple_white_transCC"
+                    android:startColor="@color/simple_white_transCC" />
+            </shape>
+        </clip>
     </item>
     <item android:id="@android:id/progress">
         <clip>
