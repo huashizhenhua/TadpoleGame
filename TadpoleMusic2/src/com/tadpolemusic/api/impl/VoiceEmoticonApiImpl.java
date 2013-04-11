@@ -3,6 +3,8 @@ package com.tadpolemusic.api.impl;
 import java.util.ArrayList;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.itap.voiceemoticon.common.ConstValues;
@@ -35,6 +37,14 @@ public class VoiceEmoticonApiImpl implements VoiceEmoticonApi {
             return Voice.buildPageListFromJSON(resp.data);
         }
         return null;
+    }
+    
+    public void searchHostVoicesByHandler(String searchKey, int startIndex, int maxResults, Handler handler){
+        PageList<Voice> obj = searchHostVoices(searchKey, startIndex, maxResults);
+        Message msg= new Message();
+        msg.what = 1;
+        msg.obj = obj;
+        handler.sendMessage(msg);
     }
 
     @Override

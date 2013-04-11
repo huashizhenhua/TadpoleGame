@@ -3,23 +3,15 @@
     android:layout_height="match_parent"
     android:background="@color/white" >
 
-    <TextView
-        android:id="@+id/text_view_section_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#cccccc"
-        android:paddingLeft="8dp"
-        android:text="hello world"
-        android:textSize="@dimen/section_title_text_size"
-        android:visibility="gone" />
-
     <LinearLayout
+        android:id="@+id/panel_center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/text_view_section_title"
         android:background="@drawable/bg_btn_trans_blue"
         android:paddingBottom="5dp"
-        android:paddingLeft="8dp"
+        android:paddingLeft="@dimen/list_view_margin_left"
+        android:paddingRight="@dimen/list_view_margin_left"
         android:paddingTop="5dp" >
 
         <RelativeLayout
@@ -38,9 +30,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:singleLine="true"
-                    android:text="zhenby is a sb"
-                    android:textColor="@color/black"
-                    android:textSize="22sp" />
+                    android:textAppearance="@style/TextAppearance.Medium"
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/text_view_tags"
@@ -49,7 +40,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/text_view_title"
                     android:singleLine="true"
-                    android:text="zhenby is a sb" />
+                    android:textAppearance="@style/TextAppearance.Small"
+                    android:textColor="@color/gray" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -74,7 +66,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
                 android:background="@color/transparent"
-                android:src="@android:drawable/btn_star_big_off" >
+                android:src="@drawable/btn_favorite" >
             </ImageButton>
 
             <RelativeLayout
@@ -92,5 +84,13 @@
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/panel_center"
+        android:paddingLeft="@dimen/list_view_margin_left"
+        android:paddingRight="@dimen/list_view_margin_left"
+        android:src="@color/simple_grey_trans44" />
 
 </RelativeLayout>

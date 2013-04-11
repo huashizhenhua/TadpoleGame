@@ -1,18 +1,10 @@
 package com.itap.voiceemoticon.widget;
 
-import com.markupartist.android.widget.ScrollingTextView;
-import com.tadpolemusic.R;
-
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.Scroller;
-import android.widget.TextView;
+
+import com.tadpolemusic.R;
 
 /**
  * <br>==========================

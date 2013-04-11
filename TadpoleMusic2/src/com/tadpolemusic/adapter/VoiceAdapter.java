@@ -46,9 +46,9 @@ public class VoiceAdapter extends PullToRefreshListViewAdapter<Voice> {
         viewHolder.textViewTags.setText(item.tags);
 
         if (VEApplication.isCollected(mContext, item.musicPath)) {
-            viewHolder.btnCollect.setImageResource(android.R.drawable.btn_star_big_on);
+            viewHolder.btnCollect.setImageResource(R.drawable.btn_hasfavorite_default);
         } else {
-            viewHolder.btnCollect.setImageResource(android.R.drawable.btn_star_big_off);
+            viewHolder.btnCollect.setImageResource(R.drawable.btn_favorite_default);
         }
 
         viewHolder.btnShare.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +64,7 @@ public class VoiceAdapter extends PullToRefreshListViewAdapter<Voice> {
             public void onClick(View v) {
                 mList.get(position).saveToCollect(v.getContext());
                 VEApplication.reloadVoiceCollectedCache(mContext);
-                finalBtnCollect.setImageResource(android.R.drawable.btn_star_big_on);
+                finalBtnCollect.setImageResource(R.drawable.btn_hasfavorite_default);
             }
         });
 

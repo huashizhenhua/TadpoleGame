@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.tadpole.adapter.DragGridAdapter;
-import org.tadpole.aidl.IPluginCallback;
-import org.tadpole.aidl.PluginServiceConnect;
 import org.tadpole.common.TLog;
 import org.tadpole.util.ListUtil;
 import org.tadpole.widget.BoardDataConfig;
@@ -17,13 +15,7 @@ import org.tadpole.widget.DragGridView;
 import org.tadpole.widget.DragGridView.G_ItemChangeListener;
 import org.tadpole.widget.PagedView;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -48,7 +40,6 @@ public class MainActivity extends BaseActvity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.board);
-
         mBoardPagedView = (PagedView) this.findViewById(R.id.page_view_board);
         mMoveBackgroundView = (View) this.findViewById(R.id.move_background);
         new MoveBackground(mMoveBackgroundView).startMove();
@@ -184,7 +175,7 @@ public class MainActivity extends BaseActvity {
 
         return rl;
     }
-
+    
     public void setCurPage(final int page) {
         Animation a = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_in);
         a.setAnimationListener(new Animation.AnimationListener() {

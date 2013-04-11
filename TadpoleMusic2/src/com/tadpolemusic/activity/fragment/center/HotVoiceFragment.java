@@ -1,17 +1,14 @@
 package com.tadpolemusic.activity.fragment.center;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.itap.voiceemoticon.widget.LoadingUtil;
 import com.itap.voiceemoticon.widget.PageListView;
@@ -23,16 +20,12 @@ import com.tadpolemusic.api.PageList;
 import com.tadpolemusic.api.Voice;
 import com.tadpolemusic.media.MusicData;
 import com.tadpolemusic.media.PlayAsyncTask;
-import com.tadpolemusic.media.PlayListInfo;
-import com.tadpolemusic.media.service.MusicPlayerProxy;
 
 public class HotVoiceFragment extends AbsCenterContent {
 
     private static final String MY_PLAY_LIST_ID = "HotVoiceFragment";
-
     private PageListView<Voice> mListView;
     private PullToRefreshListViewAdapter<Voice> mVoiceAdapter;
-
     private View mLoadingView;
 
     @Override
@@ -44,7 +37,6 @@ public class HotVoiceFragment extends AbsCenterContent {
             public PageList<Voice> onLoadPageList(int startIndex, int maxResult) {
                 PageList<Voice> pageList = VEApplication.getVoiceEmoticonApi().getHostVoicesList(startIndex, maxResult);
                 me.getActivity().runOnUiThread(new Runnable() {
-
                     @Override
                     public void run() {
                         if (mLoadingView != null) {
@@ -57,14 +49,16 @@ public class HotVoiceFragment extends AbsCenterContent {
             }
         };
 
+        // 设置ListView样式
+        ListView listView = mListView.getRefreshableView();
+        listView.setDivider(null);
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 Log.d(VEApplication.TAG, "HotVoice Fragment onItemClick ");
-
                 //since we use headerview , so we must do this.
                 position = position - 1;
-
                 me.refreshAndPlay(position);
             }
         });
@@ -96,7 +90,6 @@ public class HotVoiceFragment extends AbsCenterContent {
     public String geTitle() {
         return "热门语音";
     }
-
 
     @Override
     public String getUniqueId() {

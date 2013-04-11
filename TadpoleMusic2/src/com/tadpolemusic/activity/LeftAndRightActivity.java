@@ -24,7 +24,6 @@ import android.view.WindowManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.slidingmenu.lib.SlidingMenu;
 import com.tadpolemusic.R;
 import com.tadpolemusic.TMLog;
 import com.tadpolemusic.VEApplication;
@@ -101,7 +100,6 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IM
     // ------------------------------------------
 
     private ActionBar mActionBar;
-    private SlidingMenu mSlidingMenu;
     private ViewPager mViewPager;
     private ArrayList<Fragment> mFragments = new ArrayList<Fragment>(3);
 
@@ -181,19 +179,6 @@ public class LeftAndRightActivity extends SherlockFragmentActivity implements IM
         mViewPager.setCurrentItem(0);
     }
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            mSlidingMenu.toggle();
-            return true;
-
-        default:
-            break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     // -------------------------------------------
 
