@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="@dimen/tp_list_item_size"
+    android:minHeight="@dimen/tp_list_item_size" >
 
     <TextView
         android:id="@+id/text_view_section_title"
@@ -49,44 +50,38 @@
                     android:text="zhenby is a sb" />
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/btn_share"
-                android:layout_width="42dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="42dp" >
+                android:orientation="horizontal" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_share"
+                    android:layout_width="@dimen/tp_list_item_size"
+                    android:layout_height="@dimen/tp_list_item_size"
+                    android:padding="@dimen/tp_padding_medium"
                     android:src="@android:drawable/ic_menu_share" />
-            </RelativeLayout>
 
-            <ImageButton
-                android:id="@+id/btn_collect"
-                android:layout_width="42dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:background="@color/transparent"
-                android:src="@android:drawable/btn_star_big_off" >
-            </ImageButton>
-
-            <RelativeLayout
-                android:id="@+id/btn_delete"
-                android:layout_width="42dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:visibility="gone" >
+                <ImageButton
+                    android:id="@+id/btn_collect"
+                    android:layout_width="@dimen/tp_list_item_size"
+                    android:layout_height="@dimen/tp_list_item_size"
+                    android:background="@color/transparent"
+                    android:padding="@dimen/tp_padding_medium"
+                    android:src="@drawable/btn_favorite_default" >
+                </ImageButton>
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:drawable/ic_menu_delete" />
-            </RelativeLayout>
+                    android:id="@+id/btn_delete"
+                    android:layout_width="@dimen/tp_list_item_size"
+                    android:layout_height="@dimen/tp_list_item_size"
+                    android:background="@color/transparent"
+                    android:padding="@dimen/tp_padding_medium"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:visibility="gone" />
+            </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
 

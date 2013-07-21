@@ -18,6 +18,7 @@
         <item name="android:homeAsUpIndicator">@drawable/abs__ic_ab_back_holo_dark</item>
         <item name="android:progressBarStyle">@style/VE.Widget.ProgressBar</item>
         <item name="android:progressBarStyleHorizontal">@style/VE.Widget.ProgressBar.Horizontal</item>
+        <item name="android:windowBackground">@drawable/wb_retweet_bg</item>
     </style>
 
     <style name="VE.Holo.ListView" parent="android:Widget.Holo.ListView">

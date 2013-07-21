@@ -1,3 +1,4 @@
+
 package com.itap.voiceemoticon.activity;
 
 import java.io.Closeable;
@@ -30,18 +31,25 @@ public class LocalRemoteIOComunicator implements Runnable {
      * Delimiter between Http Header and Http Content
      */
     private static final String HEADER_CONTENT_DELIMITER = "\r\n\r\n";
+
     private static final String LOCATION = "Location";
+
     private static final String CONTENT_LENGTH = "Content-Length";
 
     private InputStream mLocalIn = null;
+
     private OutputStream mLocalOut = null;
+
     private InputStream mRemoteIn;
+
     private OutputStream mRemoteOut;
 
     private int mLocalProxyPort = -1;
 
     private HttpGetProxy mHttpGetProxy;
+
     private Socket mRemoteSocket;
+
     private Socket mLocalSocket;
 
     /**
@@ -50,14 +58,17 @@ public class LocalRemoteIOComunicator implements Runnable {
     private String mRootUrl;
 
     private boolean mCacheHeaderUsing = false;
+
     private boolean mCacheBodyNeedSave = true;
+
     private boolean mCacheHeaderHadWritten = false;
 
-
     private int mCacheBodyLength = 0;
+
     private long mCacheSaveRangeStart = 0;
 
     private Runnable mWriteCacheHeaderTask;
+
     private Runnable mWriteCacheContentStreamTask;
 
     private Object mTmpWriteBodyLock = new Object();
@@ -83,14 +94,14 @@ public class LocalRemoteIOComunicator implements Runnable {
             connectLocal();
             LocalRemoteIOComunicator.this.requestFromLocalToRemote();
         } catch (Exception e) {
-            //            Log.e("LocalRemoteIOComunicator", e.getMessage());
+            // Log.e("LocalRemoteIOComunicator", e.getMessage());
             e.printStackTrace();
             closeIO();
         }
     }
 
     private void connectLocal() throws IOException {
-        // System.out.println("=====>init local Socket I/O");
+        // printlog("=====>init local Socket I/O");
         // mLocalSocket.setSoTimeout(20000);
         mLocalIn = mLocalSocket.getInputStream();
         mLocalOut = mLocalSocket.getOutputStream();
@@ -102,45 +113,42 @@ public class LocalRemoteIOComunicator implements Runnable {
         mRemoteSocket = new Socket();
         mRemoteSocket.setSoTimeout(20000);
         mRemoteSocket.connect(address);
-        //        System.out.println("=====>remote Server connected");
+        // printlog("=====>remote Server connected");
         mRemoteOut = mRemoteSocket.getOutputStream();
         mRemoteIn = mRemoteSocket.getInputStream();
-        //        System.out.println("=====>init remote Server I/O");
+        // printlog("=====>init remote Server I/O");
     }
 
-
     public void requestFromLocalToRemote() throws IOException, InterruptedException {
-        //        System.out.println("=====>local start to receive");
+        // printlog("=====>local start to receive");
         long byteRead = 0;
         byte[] buffer = new byte[5120];
         String bufferStr = "";
         while ((byteRead = mLocalIn.read(buffer)) != -1) {
 
             String reqStr = new String(buffer);
-            System.out.println("----->localSocket[local-proxy]:" + reqStr);
+            printlog("----->localSocket[local-proxy]:" + reqStr);
             bufferStr = bufferStr + reqStr;
             if (bufferStr.contains("GET") && bufferStr.contains(HEADER_CONTENT_DELIMITER)) {
 
-                // ----- parse proxy request 
+                // ----- parse proxy request
                 String messageHeaer = bufferStr;
                 String requestUri = HttpParser.getRequestLine(messageHeaer).uri;
                 String remoteAddr = HttpParser.getRemoteAddrFromHackedUri(requestUri);
                 String[] arr = remoteAddr.split(":");
                 String remoteHostWithPort = arr[0];
-                String uri = HttpParser.getRemoteUri(requestUri);   // uri without proxy
-                String musicUrl = remoteAddr + uri;                 // music url
-                mRootUrl = HttpParser.getMetaAddr(requestUri);      // music root url    
+                String uri = HttpParser.getRemoteUri(requestUri); // uri without
+                                                                  // proxy
+                String musicUrl = remoteAddr + uri; // music url
+                mRootUrl = HttpParser.getMetaAddr(requestUri); // music root url
                 if (mRootUrl == null) {
                     mRootUrl = musicUrl;
                 }
                 // ----- end
 
-
                 // get http rrange
                 mLocalRequestRange = HttpParser.getRange(messageHeaer);
-                System.out.println("----->localRequestRange:" + mLocalRequestRange);
-
-
+                printlog("----->localRequestRange:" + mLocalRequestRange);
 
                 final HttpCache cache = new HttpCache(getMusicCachePath(), mHttpGetProxy);
                 final Properties properties = cache.readProperties();
@@ -149,19 +157,23 @@ public class LocalRemoteIOComunicator implements Runnable {
 
                 //
                 if (cache.exist()) {
-                    System.out.println("=====>local request has response cahce");
+                    printlog("=====>local request has response cahce");
                     int cacheStatusCode = 200;
                     if (localRequestRangeStart != 0) {
-                        cacheStatusCode = 206; //Http Partial Content
+                        cacheStatusCode = 206; // Http Partial Content
                     }
-                    System.out.println("=====>local request has response cahce statusCode = " + cacheStatusCode);
+                    printlog("=====>local request has response cahce statusCode = "
+                            + cacheStatusCode);
 
                     final int finalCacheStatusCode = cacheStatusCode;
                     final int completeContentLength = cache.getContentLength();
-                    mCacheBodyLength = (int) cache.getBodyLength(); // music stream seek pos to write
+                    mCacheBodyLength = (int)cache.getBodyLength(); // music
+                                                                   // stream
+                                                                   // seek pos
+                                                                   // to write
                     mCacheHeaderUsing = true;
-                    System.out.println("----->cacheBodyLength = " + mCacheBodyLength + ", completeContentLength = " + completeContentLength);
-
+                    printlog("----->cacheBodyLength = " + mCacheBodyLength
+                            + ", completeContentLength = " + completeContentLength);
 
                     // write header from cache
                     mWriteCacheHeaderTask = new Runnable() {
@@ -169,7 +181,8 @@ public class LocalRemoteIOComunicator implements Runnable {
                         public void run() {
                             mCacheHeaderHadWritten = true;
                             try {
-                                cache.writeHeaderWithModified(mLocalOut, completeContentLength, finalCacheStatusCode, (int) localRequestRangeStart);
+                                cache.writeHeaderWithModified(mLocalOut, completeContentLength,
+                                        finalCacheStatusCode, (int)localRequestRangeStart);
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 closeIO();
@@ -179,7 +192,8 @@ public class LocalRemoteIOComunicator implements Runnable {
 
                     if (mCacheBodyLength >= localRequestRangeStart) {
                         mCacheSaveRangeStart = mCacheBodyLength;
-                        System.out.println("----->local body cache used length = " + (mCacheSaveRangeStart - localRequestRangeStart));
+                        printlog("----->local body cache used length = "
+                                + (mCacheSaveRangeStart - localRequestRangeStart));
                         // write music stream from cache
                         final long finalRangeStart = mCacheSaveRangeStart;
                         final long finalContentLength = completeContentLength;
@@ -188,14 +202,17 @@ public class LocalRemoteIOComunicator implements Runnable {
                             public void run() {
                                 synchronized (mTmpWriteBodyLock) {
                                     try {
-                                        cache.writeBodyCacheToLocalOut(mLocalOut, localRequestRangeStart, mCacheBodyLength);
+                                        cache.writeBodyCacheToLocalOut(mLocalOut,
+                                                localRequestRangeStart, mCacheBodyLength);
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                        //                                    Log.e("LocalRemoteIOComunicator", e.getMessage());
+                                        // Log.e("LocalRemoteIOComunicator",
+                                        // e.getMessage());
                                         closeIO();
                                     }
                                     if (finalRangeStart >= finalContentLength) {
-                                        System.out.println("=====>local finish writing response totally by using cache");
+                                        System.out
+                                                .println("=====>local finish writing response totally by using cache");
                                         closeIO();
                                     }
                                 }
@@ -203,7 +220,8 @@ public class LocalRemoteIOComunicator implements Runnable {
                         };
                     } else {
                         mCacheBodyNeedSave = false;
-                        System.out.println("----->local no cache for requestRange =  " + localRequestRangeStart);
+                        printlog("----->local no cache for requestRange =  "
+                                + localRequestRangeStart);
                         mCacheSaveRangeStart = localRequestRangeStart;
                     }
 
@@ -212,13 +230,13 @@ public class LocalRemoteIOComunicator implements Runnable {
                         mWriteCacheHeaderTask = null;
                         new Thread(mWriteCacheContentStreamTask).start();
                         mWriteCacheContentStreamTask = null;
-                        System.out.println("=====>local writing response totally by using cache");
+                        printlog("=====>local writing response totally by using cache");
                         return;
                     }
                 }
 
                 else {
-                    System.out.println("=====>local request has no cache");
+                    printlog("=====>local request has no cache");
                 }
 
                 String remoteHostToConnect = arr[0];
@@ -227,7 +245,7 @@ public class LocalRemoteIOComunicator implements Runnable {
                     remotePortToConnect = Integer.valueOf(arr[1]);
                 }
 
-                System.out.println("----->localMusicUrl: " + musicUrl);
+                printlog("----->localMusicUrl: " + musicUrl);
                 if (messageHeaer.contains("GET") && messageHeaer.contains(HEADER_CONTENT_DELIMITER)) {
                     String locationStr = properties.getProperty(LOCATION);
                     if (locationStr != null && !"".equals(locationStr)) {
@@ -240,23 +258,26 @@ public class LocalRemoteIOComunicator implements Runnable {
                         remoteHostWithPort = HttpGetProxy.getHostWithPort(locationStr).trim();
                         uri = HttpGetProxy.getUriFromUrl(locationStr).trim();
 
-                        System.out.println("----->location:" + locationStr);
-                        System.out.println("----->url:" + uri);
+                        printlog("----->location:" + locationStr);
+                        printlog("----->url:" + uri);
                     }
 
                     // ---把request中的本地ip改为远程ip---//
                     messageHeaer = messageHeaer.replace(requestUri, uri);
-                    messageHeaer = messageHeaer.replace(HttpGetProxy.LOCAL_IP_ADDRESS + ":" + mLocalProxyPort, remoteHostWithPort);
-                    System.out.println("=====>replace request host");
+                    messageHeaer = messageHeaer.replace(HttpGetProxy.LOCAL_IP_ADDRESS + ":"
+                            + mLocalProxyPort, remoteHostWithPort);
+                    printlog("=====>replace request host");
                     if (mCacheSaveRangeStart != 0) {
-                        messageHeaer = HttpParser.replaceOrAddHeader(messageHeaer, "Range", "bytes=" + mCacheSaveRangeStart + "-");
-                        System.out.println("=====>replace request range");
+                        messageHeaer = HttpParser.replaceOrAddHeader(messageHeaer, "Range",
+                                "bytes=" + mCacheSaveRangeStart + "-");
+                        printlog("=====>replace request range");
                     }
                 }
 
-                System.out.println("----->connteRemote: remoteHostToConnect = " + remoteHostToConnect + ", remotePortToConnect = " + remotePortToConnect);
+                printlog("----->connteRemote: remoteHostToConnect = " + remoteHostToConnect
+                        + ", remotePortToConnect = " + remotePortToConnect);
                 connectRemote(remoteHostToConnect, remotePortToConnect);
-                System.out.println("----->localSocket[proxy->remote]:" + messageHeaer);
+                printlog("----->localSocket[proxy->remote]:" + messageHeaer);
                 // wait until reading response thread ready
                 synchronized (this) {
                     // since response reading has a while statement
@@ -283,7 +304,7 @@ public class LocalRemoteIOComunicator implements Runnable {
                 mRemoteOut.flush();
             }
         }
-        System.out.println("=====>local finish receive");
+        printlog("=====>local finish receive");
     }
 
     private int getMusicStreamLength(String messageHeader) {
@@ -292,7 +313,8 @@ public class LocalRemoteIOComunicator implements Runnable {
         if (!"".equals(contentRange)) {
             try {
                 int i = contentRange.indexOf("/");
-                contentRange = contentRange.subSequence(i + 1, contentRange.length()).toString().trim();
+                contentRange = contentRange.subSequence(i + 1, contentRange.length()).toString()
+                        .trim();
                 contentLength = Integer.valueOf(contentRange);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -302,7 +324,7 @@ public class LocalRemoteIOComunicator implements Runnable {
     }
 
     public void responseFromRemoteToLocal() throws IOException {
-        System.out.println("=====>remote start to receive");
+        printlog("=====>remote start to receive");
         int bytesRead;
 
         // notify response ready
@@ -316,23 +338,22 @@ public class LocalRemoteIOComunicator implements Runnable {
         byte[] messageHeaderRaw = HttpParser.readMessageHeaderRaw(mRemoteIn);
         String messageHeader = new String(messageHeaderRaw);
         StatusLine statusLine = HttpParser.getStatusLine(messageHeader);
-        System.out.println("statusLine = " + statusLine);
-
+        printlog("statusLine = " + statusLine);
 
         HttpCache httpCache = new HttpCache(getMusicCachePath(), mHttpGetProxy);
         Properties properties = httpCache.readProperties();
 
-        // handle 302 redirect 
+        // handle 302 redirect
         if (statusLine.statusCode == 302) {
             String location = HttpParser.getLocation(messageHeader);
-            System.out.println("=====>remote has 302 redirect. location = " + location);
+            printlog("=====>remote has 302 redirect. location = " + location);
             if (location != null) {
                 try {
                     String proxyUrl = mHttpGetProxy.getProxyUrl(location, mRootUrl);
                     messageHeader = messageHeader.replace(location, proxyUrl);
                     properties.setProperty(LOCATION, location);
                 } catch (Exception e) {
-                    System.out.println("remote start proxy exception");
+                    printlog("remote start proxy exception");
                     e.printStackTrace();
                 }
             }
@@ -343,7 +364,7 @@ public class LocalRemoteIOComunicator implements Runnable {
             // skip 164 byte
             byte[] bb = new byte[164];
             mRemoteIn.read(bb);
-            System.out.println("-----> bb  =  " + new String(bb));
+            printlog("-----> bb  =  " + new String(bb));
 
             if (mCacheHeaderUsing) {
                 if ((!mCacheHeaderHadWritten) && mWriteCacheHeaderTask != null) {
@@ -357,22 +378,21 @@ public class LocalRemoteIOComunicator implements Runnable {
 
                 // save MusicStreamLength
                 int contentLength = getMusicStreamLength(messageHeader);
-                System.out.println("contentLength = " + contentLength);
+                printlog("contentLength = " + contentLength);
                 properties.setProperty(CONTENT_LENGTH, "" + contentLength);
             }
         }
         httpCache.writeProperties(getMusicCachePath(), properties);
 
-        System.out.println("----->remoteSocket messageHeader ..." + messageHeader);
-        System.out.println("----->remoteSocket rootUrl ..." + mRootUrl);
+        printlog("----->remoteSocket messageHeader ..." + messageHeader);
+        printlog("----->remoteSocket rootUrl ..." + mRootUrl);
         if (!mCacheHeaderHadWritten) {
             mLocalOut.write(messageHeader.getBytes());
         }
-        System.out.println("======>remote read message content");
+        printlog("======>remote read message content");
 
-
-        if (mCacheBodyNeedSave) {
-            RandomAccessFile ras = httpCache.openCacheResponseBody();
+        RandomAccessFile ras = httpCache.openCacheResponseBody();
+        if (mCacheBodyNeedSave && null != ras) {
             ras.seek(mCacheSaveRangeStart);
             int saveBodyCacheLength = 0;
             while ((bytesRead = mRemoteIn.read(buffer)) != -1) {
@@ -393,7 +413,8 @@ public class LocalRemoteIOComunicator implements Runnable {
                 mLocalOut.flush();
             }
             close(ras);
-            System.out.println("----->remote writeRangeStart(seekPos) = " + mCacheSaveRangeStart + ", saveBodyCacheLength = " + saveBodyCacheLength + ", contentLength = "
+            printlog("----->remote writeRangeStart(seekPos) = " + mCacheSaveRangeStart
+                    + ", saveBodyCacheLength = " + saveBodyCacheLength + ", contentLength = "
                     + properties.getProperty(CONTENT_LENGTH));
         } else {
             while ((bytesRead = mRemoteIn.read(buffer)) != -1) {
@@ -401,7 +422,7 @@ public class LocalRemoteIOComunicator implements Runnable {
                 mLocalOut.flush();
             }
         }
-        System.out.println("=====>remote finish receive...........");
+        printlog("=====>remote finish receive...........");
     }
 
     public void closeIO() {
@@ -414,6 +435,7 @@ public class LocalRemoteIOComunicator implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    
     }
 
     private static void close(Closeable obj) {
@@ -423,6 +445,12 @@ public class LocalRemoteIOComunicator implements Runnable {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static final void printlog(String msg) {
+        if (HttpGetProxy.DEBUG) {
+            System.out.println(msg);
         }
     }
 }

@@ -11,7 +11,7 @@ import com.tencent.mm.sdk.openapi.WXMusicObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
 
 public class WeixinHelper {
-    public final static String APP_ID = "wxc016b630efe232d5";
+    public final static String APP_ID = "wx21df18dbb520d624";
 
     private IWXAPI mApi;
 

@@ -70,7 +70,5 @@ public class SearchPageListView<Voice> extends PageListView<Voice> {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawText("打酱油", 0, 10, new Paint());
-        invalidate();
     }
 }

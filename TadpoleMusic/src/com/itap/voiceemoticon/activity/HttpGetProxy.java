@@ -1,3 +1,4 @@
+
 package com.itap.voiceemoticon.activity;
 
 import java.io.IOException;
@@ -11,12 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * http get proxy
- * 
- * instruction: generate a proxy url with hacked source url. then in every
- * request. we will know the source url from the hacked source uri.
- * 
- * <br>=
+ * http get proxy instruction: generate a proxy url with hacked source url. then
+ * in every request. we will know the source url from the hacked source uri. <br>=
  * ========================= <br>
  * author：Zenip <br>
  * email：lxyczh@gmail.com <br>
@@ -24,11 +21,19 @@ import java.util.regex.Pattern;
  * =========================
  */
 public class HttpGetProxy {
+
+    public final static boolean DEBUG = false;
+
     public static final String LOCAL_IP_ADDRESS = "127.0.0.1";
+
     public static final int REMOTE_DEFAULT_PORT = 80;
+
     private ArrayList<LocalRemoteIOComunicator> comunicatorList = new ArrayList<LocalRemoteIOComunicator>();
+
     private ServerSocket localServer = null;
+
     private int mLocalPort;
+
     private boolean mGoOnListening = false;
 
     public HttpGetProxy(int localPort) {
@@ -73,10 +78,8 @@ public class HttpGetProxy {
     }
 
     /**
-     * return uri
-     * .e.g
-     * in: http://www.baidu.com/hello/index.html?gg=true
-     * out: /hello/index.html?gg=true
+     * return uri .e.g in: http://www.baidu.com/hello/index.html?gg=true out:
+     * /hello/index.html?gg=true
      * 
      * @param fromUrl
      * @return
@@ -92,20 +95,12 @@ public class HttpGetProxy {
     }
 
     /**
-     * get proxy url.
-     * 
-     * .e.g
-     * 
-     * ---input--- http://www.baidu.com:8080/{query}
-     * 
+     * get proxy url. .e.g ---input--- http://www.baidu.com:8080/{query}
      * ---ouput---
      * http://127.0.0.1:{mLocalPort}/{query}hackwww.baidu.com:8080hack
      * 
-     * @param fromUrl
-     *            the url need be proxy
-     * @param rootUrl
-     *            the root request source url
-     * 
+     * @param fromUrl the url need be proxy
+     * @param rootUrl the root request source url
      * @return
      */
     public String getProxyUrl(String fromUrl, String rootUrl) {
@@ -117,8 +112,9 @@ public class HttpGetProxy {
                 addr = addr + ":" + fromURL.getPort();
             }
             proxyUrl = fromUrl.replace(addr, LOCAL_IP_ADDRESS + ":" + mLocalPort);
-            proxyUrl = proxyUrl + HttpParser.hackString(addr) + (rootUrl != null ? HttpParser.metaStr(rootUrl) : "");
-            printLog("proxyUrl = " + proxyUrl);
+            proxyUrl = proxyUrl + HttpParser.hackString(addr)
+                    + (rootUrl != null ? HttpParser.metaStr(rootUrl) : "");
+            printErrLog("proxyUrl = " + proxyUrl);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -132,7 +128,6 @@ public class HttpGetProxy {
     /**
      * start proxy
      * 
-     * 
      * @return true when localServer is running. false otherwise ;
      */
     public boolean start() {
@@ -140,9 +135,9 @@ public class HttpGetProxy {
             if (localServer != null && (!localServer.isClosed())) {
                 return true;
             }
-            printLog("..........localServer start prepare...........");
+            printErrLog("..........localServer start prepare...........");
             localServer = new ServerSocket(mLocalPort, 1, InetAddress.getByName(LOCAL_IP_ADDRESS));
-            printLog("..........localServer start finish...........");
+            printErrLog("..........localServer start finish...........");
             mGoOnListening = true;
 
             // start a local request listener on a new thread
@@ -156,11 +151,12 @@ public class HttpGetProxy {
 
                             // recept a new local http request socket
                             Socket localSocket = localServer.accept();
-                            printLog("..........localSocket connected..........");
+                            printErrLog("..........localSocket connected..........");
 
                             // start a proxy communicator on a new thread
                             // to handle request/response
-                            LocalRemoteIOComunicator communicator = new LocalRemoteIOComunicator(HttpGetProxy.this, localSocket, mLocalPort);
+                            LocalRemoteIOComunicator communicator = new LocalRemoteIOComunicator(
+                                    HttpGetProxy.this, localSocket, mLocalPort);
                             comunicatorList.add(communicator);
                             new Thread(communicator).start();
                         }
@@ -177,14 +173,14 @@ public class HttpGetProxy {
     }
 
     public void printStateInfo() {
-        printLog("localServer isClosed = " + localServer.isClosed());
+        printErrLog("localServer isClosed = " + localServer.isClosed());
     }
 
     /**
      * close the local server socket
      */
     public void stop() {
-        printLog("..........localServer stop..........");
+        printErrLog("..........localServer stop..........");
         mGoOnListening = false;
         if (localServer != null) {
             try {
@@ -202,7 +198,15 @@ public class HttpGetProxy {
         comunicatorList.clear();
     }
 
-    public void printLog(String msg) {
-        System.err.println("HttpGetProxy [port:" + mLocalPort + "] content = " + msg);
+    public void printErrLog(String msg) {
+        if (DEBUG) {
+            System.err.println("HttpGetProxy [port:" + mLocalPort + "] content = " + msg);
+        }
+    }
+
+    public static void printLog(Object msg) {
+        if (DEBUG) {
+            System.out.println(msg);
+        }
     }
 }

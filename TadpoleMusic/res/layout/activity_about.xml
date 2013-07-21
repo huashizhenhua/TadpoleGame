@@ -12,11 +12,12 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             android:layout_gravity="top|center_horizontal"
             android:layout_weight="6"
+            android:padding="30dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/icon" />
 
         <TextView
             android:layout_width="match_parent"

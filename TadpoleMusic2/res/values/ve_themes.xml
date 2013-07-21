@@ -37,7 +37,7 @@
         <item name="android:paddingLeft">16dip</item>
         <item name="android:paddingRight">16dip</item>
         <item name="background">@drawable/ve__tab_indicator_ab_holo</item>
-        <item name="android:background">@drawable/ve__tab_indicator_ab_holo</item>
+        <item name="android:background">@drawable/ve__tab_indicator_ab_holo</item>
         -->
     </style>
 

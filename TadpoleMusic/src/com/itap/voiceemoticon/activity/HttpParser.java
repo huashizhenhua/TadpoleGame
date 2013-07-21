@@ -290,35 +290,35 @@ public class HttpParser {
     public static void main(String[] args) {
         String bodySegment = "Location: http://www.baidu.com \r\n";
         String location = getLocation(bodySegment);
-        System.out.println("Location = " + location);
+        HttpGetProxy.printLog("Location = " + location);
 
         String requestLineStrRaw = "GET A/B/C/CC HTTP/1.1\n";
-        System.out.println("requestLine = " + getRequestLine(requestLineStrRaw));
+        HttpGetProxy.printLog("requestLine = " + getRequestLine(requestLineStrRaw));
 
         String statusLineStrRaw = "HTTP/1.1 200 OK\n";
-        System.out.println("statusLine = " + getStatusLine(statusLineStrRaw));
+        HttpGetProxy.printLog("statusLine = " + getStatusLine(statusLineStrRaw));
 
         String hackedUrl = "sdfdsfs /sddddhackwww.baidu.com:80hackmetabb.commeta sdfsdfsd";
 
 
-        System.out.println("url = " + HttpParser.getRemoteAddrFromHackedUri(hackedUrl));
-        System.out.println("url = " + HttpParser.getMetaAddr(hackedUrl));
+        HttpGetProxy.printLog("url = " + HttpParser.getRemoteAddrFromHackedUri(hackedUrl));
+        HttpGetProxy.printLog("url = " + HttpParser.getMetaAddr(hackedUrl));
 
 
         String rangeStr = "Range: bytes=0 \r\n";
         String range = getHeader("Range", rangeStr, "0");
-        System.out.println("range = " + getRange(rangeStr));
-        System.out.println("changeStatusCode = " + replaceStatusCode(statusLineStrRaw, 203));
-        System.out.println(addHeader(statusLineStrRaw, "Content-Range", "77777"));
+        HttpGetProxy.printLog("range = " + getRange(rangeStr));
+        HttpGetProxy.printLog("changeStatusCode = " + replaceStatusCode(statusLineStrRaw, 203));
+        HttpGetProxy.printLog(addHeader(statusLineStrRaw, "Content-Range", "77777"));
 
 
         String headerStr = replaceOrAddHeader(requestLineStrRaw + rangeStr, "Range", "dfddsdfsd");
-        System.out.println("headerStr = " + headerStr);
+        HttpGetProxy.printLog("headerStr = " + headerStr);
 
         headerStr = replaceOrAddHeader(requestLineStrRaw + rangeStr, "Content-Length", "10000");
-        System.out.println("headerStr = " + headerStr);
+        HttpGetProxy.printLog("headerStr = " + headerStr);
 
-        System.out.println((byte) '\r');
+        HttpGetProxy.printLog((byte) '\r');
 
 
 
@@ -327,17 +327,17 @@ public class HttpParser {
             url = new URL("http://www.baidu.com/ttt/index.html?dd=1121#121212121");
             int port = url.getPort();
             String host = url.getHost();
-            System.out.println("port = " + port);
-            System.out.println("host = " + host);
-            System.out.println("uri = " + url.getPath());
-            System.out.println("query = " + url.getQuery());
-            System.out.println("ref = " + url.getRef());
+            HttpGetProxy.printLog("port = " + port);
+            HttpGetProxy.printLog("host = " + host);
+            HttpGetProxy.printLog("uri = " + url.getPath());
+            HttpGetProxy.printLog("query = " + url.getQuery());
+            HttpGetProxy.printLog("ref = " + url.getRef());
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        System.out.println("uri = " + HttpGetProxy.getUriFromUrl("http://www.baidu.com/ttt/"));
-        System.out.println("uri = " + HttpGetProxy.getUriFromUrl("http://www.baidu.com"));
+        HttpGetProxy.printLog("uri = " + HttpGetProxy.getUriFromUrl("http://www.baidu.com/ttt/"));
+        HttpGetProxy.printLog("uri = " + HttpGetProxy.getUriFromUrl("http://www.baidu.com"));
     }
 }
