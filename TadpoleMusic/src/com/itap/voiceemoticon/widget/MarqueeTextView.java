@@ -1,7 +1,5 @@
 package com.itap.voiceemoticon.widget;
 
-import com.markupartist.android.widget.ScrollingTextView;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -17,12 +15,14 @@ import android.widget.TextView;
  * <br> create：2013-1-26下午12:02:43
  * <br>==========================
  */
+
 public class MarqueeTextView extends TextView implements Runnable {
     private int currentScrollX;// 当前滚动的位置 
     private boolean isStop = false;
     private int textWidth;
     private String mLastTextValue = null;
     private Scroller mScroller;
+    
 
     public MarqueeTextView(Context context) {
         super(context);

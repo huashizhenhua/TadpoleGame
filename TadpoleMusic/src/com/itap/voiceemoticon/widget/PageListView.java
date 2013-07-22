@@ -2,8 +2,11 @@ package com.itap.voiceemoticon.widget;
 
 import java.util.ArrayList;
 
+import android.R;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -28,18 +31,26 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
     public int maxResult = 20;
 
     public PageListView(Context context) {
-
         super(context);
+        init();
     }
+    
 
     public PageListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
     }
 
     public PageListView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
+    private void init() {
+        setDivider(getResources().getDrawable(org.tadpoleframework.R.drawable.divider));
+        setSelector(new ColorDrawable(Color.TRANSPARENT));
+    }
+    
     @Override
     public void setAdapter(ListAdapter adapter) {
         mAdapter = (ArrayListAdapter<T>) adapter;

@@ -1,10 +1,13 @@
 
 package com.itap.voiceemoticon.widget;
 
+import com.itap.voiceemoticon.R;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
@@ -105,12 +108,17 @@ public class SegmentBar extends View {
 
     private void createDialogText() {
         mDialogText = new TextView(getContext());
-        mDialogText.setGravity(Gravity.CENTER_HORIZONTAL);
+        mDialogText.setTextColor(Color.WHITE);
+        mDialogText.setGravity(Gravity.CENTER);
         mDialogText.setVisibility(View.INVISIBLE);
-        mDialogText.setTextSize(34 * TypedValue.COMPLEX_UNIT_SP);
+        int textSize = getResources().getDimensionPixelSize(
+                R.dimen.tp_section_indexer_tip_text_size);
+        int size = getResources().getDimensionPixelSize(R.dimen.tp_section_indexer_tip_size);
 
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(120,
-                LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_APPLICATION,
+        mDialogText.setTextSize(textSize);
+        mDialogText.setBackgroundResource(R.drawable.chatfrom_bg_voiceforward_pressed);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(size, size,
+                WindowManager.LayoutParams.TYPE_APPLICATION,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                         | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         mWindowManager.addView(mDialogText, lp);

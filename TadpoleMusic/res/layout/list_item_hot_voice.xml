@@ -8,26 +8,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#cccccc"
-        android:paddingLeft="8dp"
-        android:text="hello world"
-        android:textSize="@dimen/section_title_text_size"
+        android:paddingLeft="@dimen/tp_padding_medium"
+        android:textAppearance="@style/TextAppearance.Medium"
+        android:textColor="@color/black"
         android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/text_view_section_title"
-        android:paddingLeft="8dp" >
+        android:background="@drawable/selector_setting_item_bg_normal"
+        android:descendantFocusability="blocksDescendants"
+        android:paddingLeft="@dimen/tp_padding_medium" >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_list_select"
-            android:descendantFocusability="blocksDescendants" >
+            android:layout_height="match_parent" >
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="84dp" >
 
                 <TextView
@@ -35,10 +36,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
+                    android:paddingLeft="@dimen/tp_padding_medium"
                     android:singleLine="true"
                     android:text="zhenby is a sb"
-                    android:textColor="@color/black"
-                    android:textSize="22sp" />
+                    android:textAppearance="@style/TextAppearance.Large"
+                    android:textColor="@color/tp_title_text_color" />
 
                 <TextView
                     android:id="@+id/text_view_tags"
@@ -46,8 +48,10 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/text_view_title"
+                    android:paddingLeft="@dimen/tp_padding_medium"
                     android:singleLine="true"
-                    android:text="zhenby is a sb" />
+                    android:textAppearance="@style/TextAppearance.Small"
+                    android:textColor="@color/tp_summary_text_color" />
             </RelativeLayout>
 
             <LinearLayout
