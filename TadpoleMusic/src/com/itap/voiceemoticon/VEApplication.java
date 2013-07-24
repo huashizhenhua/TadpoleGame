@@ -12,6 +12,7 @@ import com.itap.voiceemoticon.api.impl.VoiceEmoticonApiImpl;
 import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.db.VoiceDao;
 import com.itap.voiceemoticon.media.MusicPlayer;
+import com.tencent.tauth.Tencent;
 
 public class VEApplication {
     public static final String TAG = "VEApplication";
@@ -19,8 +20,12 @@ public class VEApplication {
     public static VoiceEmoticonApi getVoiceEmoticonApi() {
         return new VoiceEmoticonApiImpl();
     }
-
+    
     private static MusicPlayer mMusicPlayer;
+    
+    private static Tencent sInstance; 
+    
+    
 
     public static synchronized MusicPlayer getMusicPlayer(Context context) {
         if (mMusicPlayer == null) {

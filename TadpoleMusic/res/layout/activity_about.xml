@@ -6,45 +6,44 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="6"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/tp_padding_very_large" >
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="100dp"
             android:layout_gravity="top|center_horizontal"
-            android:layout_weight="6"
-            android:padding="30dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/icon" />
+            android:src="@drawable/icon_webchat" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_weight="1"
             android:gravity="center"
+            android:paddingTop="@dimen/tp_padding_medium"
             android:text="@string/about_version"
-            android:textColor="@color/black"
-            android:textSize="@dimen/about_us_text_size" />
+            android:textAppearance="@style/TextAppearance.VeryLarge"
+            android:textColor="@color/tp_title_text_color" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="4"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/tp_padding_medium"
+        android:layout_marginRight="@dimen/tp_padding_medium"
+        android:background="@drawable/selector_setting_group_bg"
+        android:orientation="vertical"
+        android:padding="@dimen/tp_stroke_size" >
 
         <LinearLayout
             android:id="@+id/btn_user_feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/about_us_item_margin"
-            android:layout_marginRight="@dimen/about_us_item_margin"
-            android:layout_marginTop="@dimen/about_us_item_margin_top"
-            android:background="@drawable/bg_list_item_round"
-            android:clickable="true" >
+            android:background="@drawable/selector_setting_item_bg_top"
+            android:clickable="true"
+            android:padding="@dimen/tp_padding_large" >
 
             <TextView
                 android:layout_width="match_parent"
@@ -53,19 +52,21 @@
                 android:layout_marginLeft="@dimen/about_us_text_margin_left"
                 android:gravity="left"
                 android:text="@string/about_user_feedback"
-                android:textColor="@color/black"
-                android:textSize="@dimen/about_us_text_size" />
+                android:textAppearance="@style/TextAppearance.Medium"
+                android:textColor="@color/tp_title_text_color" />
         </LinearLayout>
+        
+        <ImageView android:layout_width="match_parent"
+      	  android:layout_height="@dimen/tp_divider_height"
+       	 android:background="@drawable/divider" />
 
         <LinearLayout
             android:id="@+id/btn_share_to_friend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/about_us_item_margin"
-            android:layout_marginRight="@dimen/about_us_item_margin"
-            android:layout_marginTop="@dimen/about_us_item_margin_top"
-            android:background="@drawable/bg_list_item_round"
-            android:clickable="true" >
+            android:background="@drawable/selector_setting_item_bg_bottom"
+            android:clickable="true"
+            android:padding="@dimen/tp_padding_large" >
 
             <TextView
                 android:layout_width="match_parent"
@@ -74,19 +75,19 @@
                 android:layout_marginLeft="@dimen/about_us_text_margin_left"
                 android:gravity="left"
                 android:text="@string/about_share_to_friend"
-                android:textColor="@color/black"
-                android:textSize="@dimen/about_us_text_size" />
+                android:textAppearance="@style/TextAppearance.Medium"
+                android:textColor="@color/tp_title_text_color" />
         </LinearLayout>
+        
+      t
 
         <LinearLayout
             android:id="@+id/btn_score"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/about_us_item_margin"
-            android:layout_marginRight="@dimen/about_us_item_margin"
-            android:layout_marginTop="@dimen/about_us_item_margin_top"
             android:background="@drawable/bg_list_item_round"
             android:clickable="true"
+            android:padding="@dimen/tp_padding_large"
             android:visibility="gone" >
 
             <TextView
@@ -96,8 +97,8 @@
                 android:layout_marginLeft="@dimen/about_us_text_margin_left"
                 android:gravity="left"
                 android:text="@string/about_for_score"
-                android:textSize="@dimen/about_us_text_size"
-                android:color="@color/black" />
+                android:textAppearance="@style/TextAppearance.Medium"
+                android:color="@color/tp_title_text_color" />
         </LinearLayout>
     </LinearLayout>
 

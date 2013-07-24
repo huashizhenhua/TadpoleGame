@@ -159,7 +159,16 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
         if (mList == null || firstVisibleItem == -1) {
             return;
         }
+        
+        if(firstVisibleItem < 0 || firstVisibleItem >= mList.size()) {
+            return;
+        }
+        
         Voice item = mList.get(firstVisibleItem);
+        if(null == item) {
+            return;
+        }
+        
         String firstLetter = item.getFirstLetter();
         if (mSectionChangeListener != null) {
             mSectionChangeListener.handle(firstLetter.charAt(0));

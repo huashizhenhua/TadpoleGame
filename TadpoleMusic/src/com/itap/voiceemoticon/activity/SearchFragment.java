@@ -28,7 +28,7 @@ public class SearchFragment {
     private SearchPageListView<Voice> mListView;
     private ImageButton mBtnSearch;
     private EditText mEdSearch;
-    private ArrayListAdapter<Voice> mVoiceAdapter;
+    private VoiceAdapter mVoiceAdapter;
 
 
     public View onCreateView(LayoutInflater inflater) {

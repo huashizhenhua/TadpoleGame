@@ -1,30 +1,27 @@
 package com.itap.voiceemoticon.widget;
 
-import java.util.ArrayList;
+import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.adapter.ArrayListAdapter;
+import com.itap.voiceemoticon.api.PageList;
 
-import android.R;
+import org.tadpoleframework.widget.adapter.BaseListAdapter;
+
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView;
 
-import com.itap.voiceemoticon.VEApplication;
-import com.itap.voiceemoticon.adapter.ArrayListAdapter;
-import com.itap.voiceemoticon.api.PageList;
-import com.itap.voiceemoticon.api.Voice;
+import java.util.ArrayList;
 
 public abstract class PageListView<T> extends XListView implements OnScrollListener, XListView.IXListViewListener {
     private LinearLayout mLoadLayout;
-    private ArrayListAdapter<T> mAdapter;
+    private BaseListAdapter<T, ListView> mAdapter;
     private int mTotalCount;
     private int mLastItem;
     private int mStartIndex;
@@ -53,7 +50,7 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
     
     @Override
     public void setAdapter(ListAdapter adapter) {
-        mAdapter = (ArrayListAdapter<T>) adapter;
+        mAdapter = (BaseListAdapter<T, ListView>) adapter;
         this.setFooterDividersEnabled(false);
         this.setXListViewListener(this);
         super.setAdapter(adapter);
@@ -105,8 +102,8 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
                     return;
                 }
                 mStartIndex += maxResult;
-                final ArrayListAdapter adapter = mAdapter;
-                final ArrayList list = adapter.getList();
+                final BaseListAdapter adapter = mAdapter;
+                final ArrayList list = (ArrayList)adapter.getList();
                 mTotalCount = pageList.totalCount;
                 me.post(new Runnable() {
                     @Override
