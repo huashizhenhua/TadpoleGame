@@ -135,10 +135,9 @@ public class Voice {
         // bundle.putString("site", siteUrl.getText() + "");
         bundle.putString("appName", "语音表情-微信QQ聊天必备");
 
+        System.out.println(Tencent.createInstance("100497165", context));
         
-        System.out.println(Tencent.createInstance("222222", context));
-        
-        Tencent.createInstance("222222", context).shareToQQ((Activity)context, bundle,
+        Tencent.createInstance("100497165", context).shareToQQ((Activity)context, bundle,
                 new IUiListener() {
                     
                     @Override

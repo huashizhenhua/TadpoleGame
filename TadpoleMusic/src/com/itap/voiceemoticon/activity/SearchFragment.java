@@ -18,9 +18,9 @@ import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.widget.SearchPageListView;
 
 public class SearchFragment {
-    private Activity mActivity;
+    private MainActivity mActivity;
 
-    public SearchFragment(Activity activity) {
+    public SearchFragment(MainActivity activity) {
         mActivity = activity;
     }
 
@@ -52,6 +52,8 @@ public class SearchFragment {
         mVoiceAdapter = new VoiceAdapter(mActivity);
         mVoiceAdapter.setList(new ArrayList<Voice>(0));
         mVoiceAdapter.setListView(mListView);
+        mVoiceAdapter.setCallback(mActivity);
+        
         mListView.setAdapter(mVoiceAdapter);
 
         mBtnSearch.setOnClickListener(new View.OnClickListener() {

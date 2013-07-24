@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="my_app_name">微信语音表情</string>
+    <string name="my_app_name">语音表情</string>
      <string name="app_cancel">取消</string>
     
     
@@ -28,6 +28,6 @@
     <string name="about_user_feedback">用户反馈</string>
     <string name="about_share_to_friend">推荐给好友</string>
     <string name="about_for_score">为微信语音表情评分</string>
-	<string name="about_version">版本:V1.0</string>
+	<string name="about_version">语音表情v1.0</string>
 
 </resources>
