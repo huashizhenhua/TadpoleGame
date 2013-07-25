@@ -1,9 +1,13 @@
+
 package com.itap.voiceemoticon.activity;
 
 import java.util.ArrayList;
 
 import org.tadpole.view.ViewPager;
+import org.tadpoleframework.widget.SwitchButton;
+import org.tadpoleframework.widget.adapter.AdapterCallback;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -29,14 +34,18 @@ import com.actionbarsherlock.view.MenuItem;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.adapter.MyPagerAdapter;
+import com.itap.voiceemoticon.adapter.VoiceAdapter;
+import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.media.MusicData;
 import com.itap.voiceemoticon.media.MusicPlayer;
 import com.itap.voiceemoticon.util.MusicUtil;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
+import com.itap.voiceemoticon.widget.WeixinAlert;
+import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
 import com.itap.voiceemoticon.wxapi.WXEntryActivity;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener,
-        ViewPager.OnPageChangeListener {
+        ViewPager.OnPageChangeListener, AdapterCallback<Voice> {
 
     /**
      * MusicInfo update span
@@ -385,5 +394,41 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         Log.d(VEApplication.TAG, "---->onDestroy call");
     }
 
+    @Override
+    public void onCommand(final View view, final Voice obj, int command) {
+        final MainActivity me = this;
+        switch (command) {
+            case VoiceAdapter.CMD_SHARE:
+                WeixinAlert.showAlert(view.getContext(), "发送【" + obj.title + "】", "",
+                        new OnAlertSelectId() {
+                            @Override
+                            public void onClick(Dialog dialog, int whichButton) {
+                                boolean isHideTitle = false;
+                                SwitchButton sb = (SwitchButton)dialog.findViewById(R.id.switchbtn);
+                                isHideTitle = sb.isTurnOn();
+
+                                switch (whichButton) {
+                                    case R.id.webchat:
+                                        obj.sendToWeixin(me);
+                                        Toast.makeText(me, "内测版暂时无法分享到微信，请分享到QQ", Toast.LENGTH_LONG).show();
+                                        break;
+                                    case R.id.qq:
+                                        obj.sendToQQ(me, isHideTitle);
+                                        break;
+                                    case R.id.friends:
+                                        obj.sendToFriends(me);
+                                        Toast.makeText(me, "内测版暂时无法分享到微信朋友，请分享到QQ", Toast.LENGTH_LONG).show();
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                            }
+                        }, null);
+                break;
+            default:
+                break;
+        }
+    }
 
 }

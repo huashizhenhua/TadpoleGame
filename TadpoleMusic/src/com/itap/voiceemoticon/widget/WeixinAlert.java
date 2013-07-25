@@ -2,39 +2,21 @@
 package com.itap.voiceemoticon.widget;
 
 import com.itap.voiceemoticon.R;
-import com.tencent.mm.sdk.MMAppMgr;
-import com.tencent.mm.sdk.platformtools.Util;
-import com.umeng.common.net.l;
+import com.itap.voiceemoticon.VEApplication;
 
 import org.tadpoleframework.widget.SwitchButton;
+import org.tadpoleframework.widget.SwitchButton.SwitchListener;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.webkit.WebView.FindListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class WeixinAlert {
 
@@ -46,6 +28,12 @@ public final class WeixinAlert {
 
     }
 
+    
+    public static Dialog showAlert(final Context context, final String title, String exit,
+            final OnAlertSelectId alertDo, OnCancelListener cancelListener) {
+        return showAlert(context, title, exit, alertDo, cancelListener, true);
+    }
+    
     /**
      * @param context Context.
      * @param title The title of this AlertDialog can be null .
@@ -55,13 +43,20 @@ public final class WeixinAlert {
      * @return A AlertDialog
      */
     public static Dialog showAlert(final Context context, final String title, String exit,
-            final OnAlertSelectId alertDo, OnCancelListener cancelListener) {
+            final OnAlertSelectId alertDo, OnCancelListener cancelListener, boolean showHideTitleOption) {
         String cancel = context.getString(R.string.app_cancel);
         final Dialog dlg = new Dialog(context, R.style.MMTheme_DataSheet);
         LayoutInflater inflater = (LayoutInflater)context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout layout = (LinearLayout)inflater.inflate(R.layout.alert_dialog_menu_layout,
                 null);
+        
+        View view = layout.findViewById(R.id.options);
+        if(showHideTitleOption) {
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
 
         TextView titleView = (TextView)layout.findViewById(R.id.title);
         titleView.setText(title);
@@ -92,6 +87,19 @@ public final class WeixinAlert {
         layout.findViewById(R.id.qq).setOnClickListener(listener);
         layout.findViewById(R.id.friends).setOnClickListener(listener);
         SwitchButton sb = (SwitchButton)layout.findViewById(R.id.switchbtn);
+        
+        sb.setTurnOn(VEApplication.getHideTitle());
+        sb.setSwitchListener(new SwitchListener() {
+            @Override
+            public void on() {
+                VEApplication.setHideTitle(true);
+            }
+            
+            @Override
+            public void off() {
+                VEApplication.setHideTitle(false);
+            }
+        });
 
         final int cFullFillWidth = 10000;
         layout.setMinimumWidth(cFullFillWidth);

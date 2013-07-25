@@ -78,13 +78,10 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
             }
         }
 
+        
         // click events
-        viewHolder.btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mList.get(position).sendToWeixin(v.getContext());
-            }
-        });
+        viewHolder.btnShare.setTag(position);
+        viewHolder.btnShare.setOnClickListener(this);
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -2,9 +2,9 @@
 package com.itap.voiceemoticon.api;
 
 import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.common.GlobalConst;
 import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.third.WeixinHelper;
-import com.itap.voiceemoticon.util.StringUtil;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -13,8 +13,6 @@ import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +20,6 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.webkit.URLUtil;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -121,24 +118,24 @@ public class Voice {
     }
 
     public void sendToQQ(Context context, boolean isHideTitle) {
-
+        String toTitle = isHideTitle ? "这是条语音表情" : title;
+        String toTags = isHideTitle ? "神秘" : tags;
         
         String targetUrl = "http://voiceemoticon.sinaapp.com/static/play.htm?";
-        targetUrl += "title=" + URLEncoder.encode(title);
-        targetUrl += "&tags=" + URLEncoder.encode(tags);
+        targetUrl += "title=" + URLEncoder.encode(toTitle);
+        targetUrl += "&tags=" + URLEncoder.encode(toTags);
         targetUrl += "&voiceUrl=" + URLEncoder.encode(url);
         
         Bundle bundle = new Bundle();
-        bundle.putString("title", isHideTitle ? "这是条语音表情" : title);
+        bundle.putString("title", toTitle);
         bundle.putString("targetUrl", targetUrl);
-        bundle.putString("summary", isHideTitle ? "" : tags);
+        bundle.putString("summary", toTags);
         // bundle.putString("site", siteUrl.getText() + "");
-        bundle.putString("appName", "语音表情-微信QQ聊天必备");
+        bundle.putString("appName", GlobalConst.SHARE_APP_NAME);
 
+        System.out.println(Tencent.createInstance("100497165", context));
         
-        System.out.println(Tencent.createInstance("222222", context));
-        
-        Tencent.createInstance("222222", context).shareToQQ((Activity)context, bundle,
+        Tencent.createInstance("100497165", context).shareToQQ((Activity)context, bundle,
                 new IUiListener() {
                     
                     @Override

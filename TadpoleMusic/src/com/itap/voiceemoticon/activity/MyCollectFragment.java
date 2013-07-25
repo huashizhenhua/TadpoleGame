@@ -37,9 +37,9 @@ public class MyCollectFragment {
     private ListView mListView;
     private SegmentBar mSegmentBar;
     private MyCollectAdapter mVoiceAdapter;
-    private Activity mActivity;
+    private MainActivity mActivity;
 
-    public MyCollectFragment(Activity activity) {
+    public MyCollectFragment(MainActivity activity) {
         mActivity = activity;
     }
 
@@ -66,6 +66,7 @@ public class MyCollectFragment {
 
         mVoiceAdapter = new MyCollectAdapter(mActivity);
         mVoiceAdapter.setListView(mListView);
+        mVoiceAdapter.setCallback(mActivity);
 
         mListView.setOnScrollListener(mVoiceAdapter);
         mListView.setAdapter(mVoiceAdapter);

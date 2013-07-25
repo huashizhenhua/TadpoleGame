@@ -1,10 +1,5 @@
+
 package com.itap.voiceemoticon;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import android.app.Notification;
-import android.content.Context;
 
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.api.VoiceEmoticonApi;
@@ -14,18 +9,45 @@ import com.itap.voiceemoticon.db.VoiceDao;
 import com.itap.voiceemoticon.media.MusicPlayer;
 import com.tencent.tauth.Tencent;
 
-public class VEApplication {
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
+import java.util.ArrayList;
+
+public class VEApplication extends Application {
     public static final String TAG = "VEApplication";
 
     public static VoiceEmoticonApi getVoiceEmoticonApi() {
         return new VoiceEmoticonApiImpl();
     }
-    
+
+    public static final String PREF_NAME = "voiceemoticon";
+
+    public static final String PREF_KEY_HIDE_TITLE = "hidetitle";
+
+    private static SharedPreferences sPrefs;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        sPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+    }
+
+    public static boolean getHideTitle() {
+        return sPrefs.getBoolean(PREF_KEY_HIDE_TITLE, false);
+    }
+
+    public static void setHideTitle(boolean flag) {
+        Editor editor = sPrefs.edit();
+        editor.putBoolean(PREF_KEY_HIDE_TITLE, flag);
+        editor.commit();
+    }
+
     private static MusicPlayer mMusicPlayer;
-    
-    private static Tencent sInstance; 
-    
-    
+
+    private static Tencent sInstance;
 
     public static synchronized MusicPlayer getMusicPlayer(Context context) {
         if (mMusicPlayer == null) {
@@ -39,16 +61,14 @@ public class VEApplication {
 
     }
 
-
-    //-------------------------------------------------------------
-    //Music Collected Cache
-    //-------------------------------------------------------------
+    // -------------------------------------------------------------
+    // Music Collected Cache
+    // -------------------------------------------------------------
 
     private static ArrayList<String> sMusicCollectedCached = null;
 
     /**
-     * 是否已经被收藏
-     * instruction。
+     * 是否已经被收藏 instruction。
      */
     public static boolean isCollected(Context context, String path) {
         if (sMusicCollectedCached == null) {

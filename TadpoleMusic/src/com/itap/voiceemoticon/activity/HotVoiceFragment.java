@@ -24,14 +24,14 @@ import org.tadpoleframework.app.AlertDialog;
 import org.tadpoleframework.widget.SwitchButton;
 import org.tadpoleframework.widget.adapter.AdapterCallback;
 
-public class HotVoiceFragment implements AdapterCallback<Voice> {
+public class HotVoiceFragment {
     private PageListView<Voice> mListView;
 
     private VoiceAdapter mVoiceAdapter;
 
-    private Activity mActivity;
+    private MainActivity mActivity;
 
-    public HotVoiceFragment(Activity activity) {
+    public HotVoiceFragment(MainActivity activity) {
         mActivity = activity;
     }
 
@@ -51,7 +51,7 @@ public class HotVoiceFragment implements AdapterCallback<Voice> {
             }
         });
         mVoiceAdapter = new VoiceAdapter(mActivity);
-        mVoiceAdapter.setCallback(this);
+        mVoiceAdapter.setCallback(mActivity);
         mVoiceAdapter.setListView(mListView);
         mListView.setAdapter(mVoiceAdapter);
 
@@ -59,37 +59,4 @@ public class HotVoiceFragment implements AdapterCallback<Voice> {
         return mListView;
     }
 
-    @Override
-    public void onCommand(View view, final  Voice obj, int command) {
-        switch (command) {
-            case VoiceAdapter.CMD_SHARE:
-                WeixinAlert.showAlert(view.getContext(), "发送【" + obj.title + "】", "", new OnAlertSelectId() {
-                    @Override
-                    public void onClick(Dialog dialog, int whichButton) {
-                        boolean isHideTitle = false;
-                        SwitchButton sb = (SwitchButton)dialog.findViewById(R.id.switchbtn);
-                        isHideTitle = sb.isTurnOn();
-                        
-                        switch (whichButton) {
-                            case R.id.webchat:
-                                obj.sendToWeixin(mActivity);
-                                break;
-                            case R.id.qq:
-                                obj.sendToQQ(mActivity, isHideTitle);
-                                break;
-                            case R.id.friends:
-                                obj.sendToFriends(mActivity);
-                                break;
-                            default:
-                                break;
-                        }
-                        
-                        
-                    }
-                }, null);
-                break;
-            default:
-                break;
-        }
-    }
 }
