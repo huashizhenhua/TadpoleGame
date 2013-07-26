@@ -1,3 +1,4 @@
+
 package com.itap.voiceemoticon.third;
 
 import android.content.Context;
@@ -11,7 +12,7 @@ import com.tencent.mm.sdk.openapi.WXMusicObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
 
 public class WeixinHelper {
-    public final static String APP_ID = "wx21df18dbb520d624";
+    public final static String APP_ID = "wxc016b630efe232d5";
 
     private IWXAPI mApi;
 
@@ -26,8 +27,7 @@ public class WeixinHelper {
     /**
      * send my webpage to friends
      * 
-     * @param extInfo
-     *            app descriptioin
+     * @param extInfo app descriptioin
      * @param description
      */
     public void sendWebpage(String title, String description, String webpageUrl) {
@@ -63,6 +63,7 @@ public class WeixinHelper {
         msg.title = title;
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.scene = SendMessageToWX.Req.WXSceneSession;
         req.transaction = "" + System.currentTimeMillis();
         req.message = msg;
 

@@ -8,13 +8,21 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="16" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.tencent.mm.plugin.permission.SEND" />
+    <uses-permission android:name="com.tencent.mm.permission.MM_MESSAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
+        android:name="com.itap.voiceemoticon.VEApplication"
         android:allowBackup="true"
         android:icon="@drawable/icon"
-        android:name="com.itap.voiceemoticon.VEApplication"
         android:label="@string/my_app_name"
         android:theme="@style/Theme.Styled" >
         <activity
@@ -23,13 +31,16 @@
             android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="tencent100497165" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.itap.voiceemoticon.activity.MainActivity"
+            android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Styled"
             android:uiOptions="none"
@@ -50,6 +61,7 @@
         </activity>
         <activity
             android:name="com.itap.voiceemoticon.activity.AboutActivity"
+            android:exported="true"
             android:label="@string/title_activity_about"
             android:theme="@style/Theme.Styled" >
         </activity>
@@ -71,7 +83,7 @@
         <!--
              <activity
             android:label="@string/umeng_example_home_btn_fb"
-            android:name=".fb.SimpleExample" />
+            android:name=".fb.SimpleExample" />
         -->
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"
@@ -99,18 +111,5 @@
             android:process=":DownloadingService" >
         </service>
     </application>
-
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-
-    <!-- Permission for Unit Test -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
 
 </manifest>

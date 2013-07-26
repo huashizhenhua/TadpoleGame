@@ -92,7 +92,7 @@ public class MusicPlayer implements OnBufferingUpdateListener, OnPreparedListene
                         mHttpGetProxy.closeOpenedStreams();
                         mPlayer.stop();
                         mPlayer.reset();
-//                        mHttpGetProxy.getProxyUrl(url)
+                        // mHttpGetProxy.getProxyUrl(url)
                         mPlayer.setDataSource(url);
                         mPlayer.prepareAsync();
                         mState = STATE_PLAY_PREPARING;
@@ -117,7 +117,6 @@ public class MusicPlayer implements OnBufferingUpdateListener, OnPreparedListene
         if (mPlayer == null) {
             return;
         }
-
         mPlayer.stop();
         mState = STATE_PLAY_STOP;
         this.sendPlayStateBrocast();
@@ -157,6 +156,9 @@ public class MusicPlayer implements OnBufferingUpdateListener, OnPreparedListene
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        if (mState == STATE_PLAY_COMPLETE) {
+            return;
+        }
         mp.start();
         mState = STATE_PLAY_START;
         this.sendPlayStateBrocast();
@@ -201,7 +203,7 @@ public class MusicPlayer implements OnBufferingUpdateListener, OnPreparedListene
 
     public boolean isPlaying() {
         if (mPlayer != null) {
-            return mPlayer.isPlaying();
+            return mPlayer.isPlaying() || mState == STATE_PLAY_PREPARING;
         }
         return false;
     }

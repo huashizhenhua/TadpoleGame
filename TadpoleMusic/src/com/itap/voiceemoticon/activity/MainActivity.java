@@ -166,13 +166,14 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
     private void onMusicPreparing() {
         mProgressBarPrepare.setVisibility(View.VISIBLE);
+        mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_pause);
     }
 
     private void onMusicPlayStart(MusicData musicData) {
         mTextViewMusicTitle.setText(musicData.musicName);
         mTextViewMusicTitle.startFor0();
         mProgressBarPrepare.setVisibility(View.GONE);
-        mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_pause);
+     
         performUpdateMusicProgressLoop();
     }
 
@@ -395,7 +396,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     }
 
     @Override
-    public void onCommand(final View view, final Voice obj, int command) {
+    public void onCommand(View view, final Voice obj, int command) {
         final MainActivity me = this;
         switch (command) {
             case VoiceAdapter.CMD_SHARE:
@@ -410,14 +411,16 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
                                 switch (whichButton) {
                                     case R.id.webchat:
                                         obj.sendToWeixin(me);
-                                        Toast.makeText(me, "内测版暂时无法分享到微信，请分享到QQ", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(me, "内测版暂时无法分享到微信，请分享到QQ", Toast.LENGTH_LONG)
+                                                .show();
                                         break;
                                     case R.id.qq:
                                         obj.sendToQQ(me, isHideTitle);
                                         break;
                                     case R.id.friends:
                                         obj.sendToFriends(me);
-                                        Toast.makeText(me, "内测版暂时无法分享到微信朋友，请分享到QQ", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(me, "内测版暂时无法分享到微信朋友，请分享到QQ",
+                                                Toast.LENGTH_LONG).show();
                                         break;
                                     default:
                                         break;

@@ -120,12 +120,12 @@ public class Voice {
     public void sendToQQ(Context context, boolean isHideTitle) {
         String toTitle = isHideTitle ? "这是条语音表情" : title;
         String toTags = isHideTitle ? "神秘" : tags;
-        
+
         String targetUrl = "http://voiceemoticon.sinaapp.com/static/play.htm?";
         targetUrl += "title=" + URLEncoder.encode(toTitle);
         targetUrl += "&tags=" + URLEncoder.encode(toTags);
         targetUrl += "&voiceUrl=" + URLEncoder.encode(url);
-        
+
         Bundle bundle = new Bundle();
         bundle.putString("title", toTitle);
         bundle.putString("targetUrl", targetUrl);
@@ -134,29 +134,37 @@ public class Voice {
         bundle.putString("appName", GlobalConst.SHARE_APP_NAME);
 
         System.out.println(Tencent.createInstance("100497165", context));
-        
+
         Tencent.createInstance("100497165", context).shareToQQ((Activity)context, bundle,
                 new IUiListener() {
-                    
+
                     @Override
                     public void onError(UiError e) {
                         System.out.println("shareToQQ:" + "onError code:" + e.errorCode + ", msg:"
                                 + e.errorMessage + ", detail:" + e.errorDetail);
                     }
-                    
+
                     @Override
                     public void onComplete(JSONObject arg0) {
                         System.out.println("shareToQQ:" + "onComplete");
                     }
-                    
+
                     @Override
                     public void onCancel() {
                         System.out.println("shareToQQ" + "onCancel");
-                        
+
                     }
                 });
     }
 
-    public void sendToFriends(Context context) {
+    public void sendToFriends(final Context context) {
+        new WeixinHelper(context).sendMusic(title, tags, url);
+        VEApplication.runOnThread(new Runnable() {
+
+            @Override
+            public void run() {
+                sendStatisticsUrl(context);
+            }
+        });
     }
 }
