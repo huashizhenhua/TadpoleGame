@@ -43,12 +43,19 @@
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Styled"
+            android:launchMode="singleTask"
             android:uiOptions="none"
             android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
             </intent-filter>
         </activity>
         <activity
@@ -83,7 +90,7 @@
         <!--
              <activity
             android:label="@string/umeng_example_home_btn_fb"
-            android:name=".fb.SimpleExample" />
+            android:name=".fb.SimpleExample" />
         -->
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"

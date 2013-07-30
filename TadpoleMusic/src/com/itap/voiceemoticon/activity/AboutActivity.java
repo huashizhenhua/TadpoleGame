@@ -10,6 +10,7 @@ import com.itap.voiceemoticon.common.GlobalConst;
 import com.itap.voiceemoticon.third.WeixinHelper;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
+import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -79,51 +80,54 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
 
     @Override
     public void onClick(Dialog dialog, int whichButton) {
+
+        String title = "【语音表情】好好玩";
+        String summary = "这个APP不错！！各种搞笑整蛊语音应有尽有哦！【请点击这条消息下载吧】";
+        String targetUrl = "http://voiceemoticon.sinaapp.com/static/download.htm";
+
         switch (whichButton) {
             case R.id.qq:
-                String title = "微信语音表情好好玩";
-                String summary = "这个APP不错！！各种搞笑整蛊语音应有尽有哦！【请点击这条消息下载吧】";
-                String targetUrl = "http://voiceemoticon.sinaapp.com/static/download.htm";
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
                 bundle.putString("targetUrl", targetUrl);
                 bundle.putString("summary", summary);
                 // bundle.putString("site", siteUrl.getText() + "");
                 bundle.putString("appName", GlobalConst.SHARE_APP_NAME);
-                
+
                 Tencent.createInstance("100497165", this).shareToQQ(this, bundle,
                         new IUiListener() {
-                            
+
                             @Override
                             public void onError(UiError e) {
-                                System.out.println("shareToQQ:" + "onError code:" + e.errorCode + ", msg:"
-                                        + e.errorMessage + ", detail:" + e.errorDetail);
+                                System.out.println("shareToQQ:" + "onError code:" + e.errorCode
+                                        + ", msg:" + e.errorMessage + ", detail:" + e.errorDetail);
                             }
-                            
+
                             @Override
                             public void onComplete(JSONObject arg0) {
                                 System.out.println("shareToQQ:" + "onComplete");
                             }
-                            
+
                             @Override
                             public void onCancel() {
                                 System.out.println("shareToQQ" + "onCancel");
-                                
+
                             }
                         });
-                
+
                 break;
             case R.id.webchat:
-                Toast.makeText(this, "内测版暂时无法分享到微信，请分享到QQ", Toast.LENGTH_LONG).show();
+                new WeixinHelper(this).sendWebpage(title, summary, targetUrl,
+                        SendMessageToWX.Req.WXSceneSession);
                 break;
             case R.id.friends:
-                Toast.makeText(this, "内测版暂时无法分享到微信，请分享到QQ", Toast.LENGTH_LONG).show();
+                new WeixinHelper(this).sendWebpage(title, summary, targetUrl,
+                        SendMessageToWX.Req.WXSceneTimeline);
                 break;
             default:
                 break;
         }
-        new WeixinHelper(this).sendWebpage("微信语音表情好好玩", "微信语音表情这个APP不错！！",
-                "http://voiceemoticon.sinaapp.com/static/play.htm");
+
     }
 
 }

@@ -1,13 +1,8 @@
 
 package com.itap.voiceemoticon.api;
 
-import com.itap.voiceemoticon.VEApplication;
-import com.itap.voiceemoticon.common.GlobalConst;
-import com.itap.voiceemoticon.db.DaoFactory;
-import com.itap.voiceemoticon.third.WeixinHelper;
-import com.tencent.tauth.IUiListener;
-import com.tencent.tauth.Tencent;
-import com.tencent.tauth.UiError;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
@@ -21,8 +16,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import java.net.URLEncoder;
-import java.util.ArrayList;
+import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.common.GlobalConst;
+import com.itap.voiceemoticon.db.DaoFactory;
+import com.itap.voiceemoticon.third.WeiboHelper;
+import com.itap.voiceemoticon.third.WeixinHelper;
+import com.tencent.mm.sdk.openapi.SendMessageToWX;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 public class Voice {
     public long id;
@@ -74,21 +76,29 @@ public class Voice {
         return pageList;
     }
 
-    public void sendToWeixin(final Context context) {
-        new WeixinHelper(context).sendMusic(title, tags, url);
+    public void sendToWeixin(final Context context, boolean isHideTitle) {
+        new WeixinHelper(context).sendMusicToWeixin(getTitle(isHideTitle), getTags(isHideTitle),
+                url, "http://voiceemoticon.sinaapp.com/static/download.htm", SendMessageToWX.Req.WXSceneSession);
+        sendStatisticsUrl(context);
+
+    }
+
+    public void sendToFriends(final Context context, boolean isHideTitle) {
+        new WeixinHelper(context).sendMusicToWeixin(getTitle(isHideTitle), getTags(isHideTitle),
+                url, "http://voiceemoticon.sinaapp.com/static/download.htm", SendMessageToWX.Req.WXSceneTimeline);
+        sendStatisticsUrl(context);
+    }
+
+    public void sendStatisticsUrl(Context context) {
         VEApplication.runOnThread(new Runnable() {
 
             @Override
             public void run() {
-                sendStatisticsUrl(context);
+                ArrayList<String> list = new ArrayList<String>();
+                list.add(url);
+                VEApplication.getVoiceEmoticonApi().statistics(list);
             }
         });
-    }
-
-    public void sendStatisticsUrl(Context context) {
-        ArrayList<String> list = new ArrayList<String>();
-        list.add(url);
-        VEApplication.getVoiceEmoticonApi().statistics(list);
     }
 
     /**
@@ -117,10 +127,19 @@ public class Voice {
         }
     }
 
-    public void sendToQQ(Context context, boolean isHideTitle) {
-        String toTitle = isHideTitle ? "这是条语音表情" : title;
-        String toTags = isHideTitle ? "神秘" : tags;
+    public String getTitle(boolean isHideTitle) {
+        return isHideTitle ? "这是条语音表情" : title;
+    }
 
+    public String getTags(boolean isHideTitle) {
+        return isHideTitle ? "神秘" : tags;
+    }
+
+    public void sendToQQ(Context context, boolean isHideTitle) {
+        String toTitle = getTitle(isHideTitle);
+        String toTags = getTags(isHideTitle);
+
+        // 由于QQ无法直接播放语音，故跳转到页面播放
         String targetUrl = "http://voiceemoticon.sinaapp.com/static/play.htm?";
         targetUrl += "title=" + URLEncoder.encode(toTitle);
         targetUrl += "&tags=" + URLEncoder.encode(toTags);
@@ -155,16 +174,13 @@ public class Voice {
 
                     }
                 });
+        
+        sendStatisticsUrl(context);
     }
 
-    public void sendToFriends(final Context context) {
-        new WeixinHelper(context).sendMusic(title, tags, url);
-        VEApplication.runOnThread(new Runnable() {
-
-            @Override
-            public void run() {
-                sendStatisticsUrl(context);
-            }
-        });
+    public void sendToWeibo(Activity context) {
+        WeiboHelper weiboHelper = new WeiboHelper(context);
+        weiboHelper.sendMusic(context, url);
     }
+
 }

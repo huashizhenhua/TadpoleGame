@@ -72,6 +72,7 @@ public final class WeixinAlert {
                     case R.id.webchat:
                     case R.id.qq:
                     case R.id.friends:
+                    case R.id.weibo:
                         alertDo.onClick(dlg, v.getId());
                         dlg.dismiss();
                         break;
@@ -86,6 +87,7 @@ public final class WeixinAlert {
         layout.findViewById(R.id.webchat).setOnClickListener(listener);
         layout.findViewById(R.id.qq).setOnClickListener(listener);
         layout.findViewById(R.id.friends).setOnClickListener(listener);
+        layout.findViewById(R.id.weibo).setOnClickListener(listener);
         SwitchButton sb = (SwitchButton)layout.findViewById(R.id.switchbtn);
         
         sb.setTurnOn(VEApplication.getHideTitle());

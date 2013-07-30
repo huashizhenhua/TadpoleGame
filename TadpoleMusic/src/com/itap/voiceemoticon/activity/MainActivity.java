@@ -43,9 +43,12 @@ import com.itap.voiceemoticon.widget.MarqueeTextView;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
 import com.itap.voiceemoticon.wxapi.WXEntryActivity;
+import com.sina.weibo.sdk.api.BaseResponse;
+import com.sina.weibo.sdk.api.IWeiboHandler;
+import com.weibo.sdk.android.WeiboAuthListener;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener,
-        ViewPager.OnPageChangeListener, AdapterCallback<Voice> {
+        ViewPager.OnPageChangeListener, AdapterCallback<Voice>, IWeiboHandler.Response {
 
     /**
      * MusicInfo update span
@@ -107,6 +110,14 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
             }
         }
     };
+    
+
+
+    @Override
+    public void onResponse(BaseResponse arg0) {
+        System.out.println("onResponse arg0 = " + arg0);
+        
+    }
 
     /**
      * flag for preventing onTabSelected on onPageSelected cycle invoke . To
@@ -163,6 +174,15 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
             }, UPDATE_TIME_TEXT_LOOP_SPAN);
         }
     }
+    
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        
+        System.out.println("----->onNewIntent");
+        
+        VEApplication.sWeiboApi.responseListener(getIntent(), this);
+    }
 
     private void onMusicPreparing() {
         mProgressBarPrepare.setVisibility(View.VISIBLE);
@@ -173,7 +193,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         mTextViewMusicTitle.setText(musicData.musicName);
         mTextViewMusicTitle.startFor0();
         mProgressBarPrepare.setVisibility(View.GONE);
-     
+
         performUpdateMusicProgressLoop();
     }
 
@@ -189,11 +209,13 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_play);
         mTextViewMusicTitle.stopScroll();
     }
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(VEApplication.TAG, "---->MainActivity onCreate call");
         super.onCreate(savedInstanceState);
+        VEApplication.sWeiboApi.responseListener(getIntent(), this);
         setContentView(R.layout.activity_main);
 
         WXEntryActivity.isRunning = true;
@@ -410,18 +432,19 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
                                 switch (whichButton) {
                                     case R.id.webchat:
-                                        obj.sendToWeixin(me);
-                                        Toast.makeText(me, "内测版暂时无法分享到微信，请分享到QQ", Toast.LENGTH_LONG)
-                                                .show();
+                                        obj.sendToWeixin(me, isHideTitle);
                                         break;
                                     case R.id.qq:
                                         obj.sendToQQ(me, isHideTitle);
                                         break;
                                     case R.id.friends:
-                                        obj.sendToFriends(me);
-                                        Toast.makeText(me, "内测版暂时无法分享到微信朋友，请分享到QQ",
-                                                Toast.LENGTH_LONG).show();
+                                        obj.sendToFriends(me, isHideTitle);
                                         break;
+//                                    case R.id.weibo:
+//                                        obj.sendToWeibo(me);
+//                                        Toast.makeText(me, "内测版暂时无法分享到微信朋友，请分享到QQ",
+//                                                Toast.LENGTH_LONG).show();
+//                                        break;
                                     default:
                                         break;
                                 }

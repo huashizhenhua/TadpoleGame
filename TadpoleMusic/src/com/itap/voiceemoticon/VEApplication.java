@@ -7,6 +7,10 @@ import com.itap.voiceemoticon.api.impl.VoiceEmoticonApiImpl;
 import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.db.VoiceDao;
 import com.itap.voiceemoticon.media.MusicPlayer;
+import com.itap.voiceemoticon.third.WeiboHelper;
+import com.sina.weibo.sdk.WeiboSDK;
+import com.sina.weibo.sdk.api.IWeiboAPI;
+import com.sina.weibo.sdk.api.IWeiboHandler;
 import com.tencent.tauth.Tencent;
 
 import android.app.Application;
@@ -29,10 +33,16 @@ public class VEApplication extends Application {
 
     private static SharedPreferences sPrefs;
 
+    public static IWeiboAPI sWeiboApi = null;
+
     @Override
     public void onCreate() {
         super.onCreate();
         sPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        // 1 初始化SDK
+        sWeiboApi = WeiboSDK.createWeiboAPI(this, WeiboHelper.APP_KEY);
+        // 2 注册到新浪微博
+        sWeiboApi.registerApp();
     }
 
     public static boolean getHideTitle() {
