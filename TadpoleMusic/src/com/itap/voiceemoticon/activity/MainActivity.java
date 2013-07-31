@@ -38,6 +38,7 @@ import com.itap.voiceemoticon.adapter.VoiceAdapter;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.media.MusicData;
 import com.itap.voiceemoticon.media.MusicPlayer;
+import com.itap.voiceemoticon.util.AndroidUtil;
 import com.itap.voiceemoticon.util.MusicUtil;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
 import com.itap.voiceemoticon.widget.WeixinAlert;
@@ -312,6 +313,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
     @Override
     public void onPageSelected(int position) {
+        AndroidUtil.hideInputMethod(getWindow().getDecorView());
         if (true == mFlagPreventCycleInvoke) {
             mFlagPreventCycleInvoke = false;
             return;

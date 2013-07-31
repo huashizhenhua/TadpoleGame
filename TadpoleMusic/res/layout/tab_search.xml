@@ -19,6 +19,8 @@
             android:layout_marginRight="36dp"
             android:background="@drawable/bg_list_search_bar"
             android:gravity="center_vertical"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
             android:hint="请输入"
             android:paddingLeft="10dp" />
 

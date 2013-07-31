@@ -64,7 +64,6 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_user_feedback:
-                Toast.makeText(v.getContext(), "陈庆禧", Toast.LENGTH_LONG).show();
                 UMFeedbackService.enableNewReplyNotification(this, NotificationType.AlertDialog);
                 // 如果您程序界面是iOS风格，我们还提供了左上角的“返回”按钮，用于退出友盟反馈模块。启动友盟反馈模块前，您需要增加如下语句来设置“返回”按钮可见：
                 UMFeedbackService.setGoBackButtonVisible();

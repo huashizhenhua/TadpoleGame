@@ -1,22 +1,22 @@
 
 package com.itap.voiceemoticon.activity;
 
-import com.itap.voiceemoticon.R;
-import com.itap.voiceemoticon.VEApplication;
-import com.itap.voiceemoticon.adapter.VoiceAdapter;
-import com.itap.voiceemoticon.api.Voice;
-import com.itap.voiceemoticon.widget.SearchPageListView;
+import java.util.ArrayList;
 
-import android.content.Context;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import java.util.ArrayList;
+import com.itap.voiceemoticon.R;
+import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.adapter.VoiceAdapter;
+import com.itap.voiceemoticon.api.Voice;
+import com.itap.voiceemoticon.util.AndroidUtil;
+import com.itap.voiceemoticon.widget.SearchPageListView;
 
 public class SearchFragment {
     private MainActivity mActivity;
@@ -24,8 +24,6 @@ public class SearchFragment {
     public SearchFragment(MainActivity activity) {
         mActivity = activity;
     }
-
-    private static final int HANDLER_FILL_LIST = 1;
 
     private SearchPageListView<Voice> mListView;
 
@@ -41,6 +39,19 @@ public class SearchFragment {
         mListView = (SearchPageListView<Voice>)view.findViewById(R.id.list_view_Search);
         mBtnSearch = (ImageButton)view.findViewById(R.id.btn_search);
         mEdSearch = (EditText)view.findViewById(R.id.edit_text_search);
+        mEdSearch.setSingleLine();
+        mEdSearch.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    AndroidUtil.hideInputMethod(v);
+                    String key = mEdSearch.getEditableText().toString();
+                    mListView.doSearch(key);
+                }
+                return false;
+            }
+        });
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,11 +72,10 @@ public class SearchFragment {
         mBtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AndroidUtil.hideInputMethod(v);
                 String key = mEdSearch.getEditableText().toString();
                 mListView.doSearch(key);
-                InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
             }
         });
         return view;
