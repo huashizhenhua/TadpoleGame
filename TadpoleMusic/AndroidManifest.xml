@@ -43,7 +43,6 @@
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Styled"
-            android:launchMode="singleTask"
             android:uiOptions="none"
             android:windowSoftInputMode="adjustPan|stateHidden" >
             <intent-filter>
