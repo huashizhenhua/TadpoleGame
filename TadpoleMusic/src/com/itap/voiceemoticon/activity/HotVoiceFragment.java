@@ -39,6 +39,8 @@ public class HotVoiceFragment {
         mListView = new PageListView<Voice>(mActivity) {
             @Override
             public PageList<Voice> onLoadPageList(int startIndex, int maxResult) {
+                System.out.println("onLoadPageList");
+                
                 return VEApplication.getVoiceEmoticonApi().getHostVoicesList(startIndex, maxResult);
             }
         };

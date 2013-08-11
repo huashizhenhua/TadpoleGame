@@ -131,14 +131,6 @@ public class MyCollectFragment {
                 message.what = HANDLER_FILL_LIST;
 
                 ArrayList<Voice> voiceList = DaoFactory.getInstance(mActivity).getVoiceDao().allVoices();
-
-
-                Voice voice = new Voice();
-                voice.url = "http://qq.djwma.com/mp3/%E4%B8%AD%E5%9B%BD%E5%A5%BD%E5%A3%B0%E9%9F%B3%E7%B2%BE%E9%80%89%E5%A5%BD%E5%90%AC%E6%AD%8C%E6%9B%B2mp3%E4%B8%8B%E8%BD%BD.mp3";
-                voice.title = "中国好声音";
-                voiceList.add(0, voice);
-
-
                 PageList<Voice> pageList = new PageList<Voice>();
                 pageList.records = voiceList;
                 pageList.totalCount = voiceList.size();

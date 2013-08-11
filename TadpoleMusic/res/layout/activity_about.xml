@@ -103,6 +103,30 @@
                 android:textColor="@color/tp_title_text_color" />
         </LinearLayout>
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tp_divider_height"
+            android:background="@drawable/divider" />
+
+        <LinearLayout
+            android:id="@+id/btn_app_download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+               android:background="@drawable/selector_setting_item_bg_bottom"
+            android:clickable="true"
+            android:padding="@dimen/tp_padding_large" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/about_us_text_margin_left"
+                android:gravity="left"
+                android:text="@string/about_app_download"
+                android:textAppearance="@style/TextAppearance.Medium"
+                android:color="@color/tp_title_text_color" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/btn_score"
             android:layout_width="match_parent"

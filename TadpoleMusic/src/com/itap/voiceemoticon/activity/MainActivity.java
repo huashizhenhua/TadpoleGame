@@ -3,7 +3,10 @@ package com.itap.voiceemoticon.activity;
 
 import java.util.ArrayList;
 
+import org.apache.http.auth.params.AuthPNames;
 import org.tadpole.view.ViewPager;
+import org.tadpoleframework.app.AlertDialog;
+import org.tadpoleframework.common.APNUtil;
 import org.tadpoleframework.widget.SwitchButton;
 import org.tadpoleframework.widget.adapter.AdapterCallback;
 
@@ -111,13 +114,11 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
             }
         }
     };
-    
-
 
     @Override
     public void onResponse(BaseResponse arg0) {
         System.out.println("onResponse arg0 = " + arg0);
-        
+
     }
 
     /**
@@ -175,13 +176,13 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
             }, UPDATE_TIME_TEXT_LOOP_SPAN);
         }
     }
-    
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        
+
         System.out.println("----->onNewIntent");
-        
+
         VEApplication.sWeiboApi.responseListener(getIntent(), this);
     }
 
@@ -210,7 +211,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         mBtnPlay.setBackgroundResource(android.R.drawable.ic_media_play);
         mTextViewMusicTitle.stopScroll();
     }
-    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,7 +218,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         super.onCreate(savedInstanceState);
         VEApplication.sWeiboApi.responseListener(getIntent(), this);
         setContentView(R.layout.activity_main);
-
         WXEntryActivity.isRunning = true;
 
         // Set up the action bar to show tabs.
@@ -266,6 +265,13 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(MusicPlayer.BROCAST_NAME);
         this.registerReceiver(mMusicPlayerReceiver, intentFilter);
+
+        if (false == APNUtil.isNetworkAvailable(this)) {
+            AlertDialog dialog = new AlertDialog(this);
+            dialog.setTitle("网络不可用");
+            dialog.setMsg("请打开网络并“下拉刷新”");
+            dialog.show();
+        }
     }
 
     private void initMusicPlayBar() {
@@ -442,11 +448,12 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
                                     case R.id.friends:
                                         obj.sendToFriends(me, isHideTitle);
                                         break;
-//                                    case R.id.weibo:
-//                                        obj.sendToWeibo(me);
-//                                        Toast.makeText(me, "内测版暂时无法分享到微信朋友，请分享到QQ",
-//                                                Toast.LENGTH_LONG).show();
-//                                        break;
+                                    // case R.id.weibo:
+                                    // obj.sendToWeibo(me);
+                                    // Toast.makeText(me,
+                                    // "内测版暂时无法分享到微信朋友，请分享到QQ",
+                                    // Toast.LENGTH_LONG).show();
+                                    // break;
                                     default:
                                         break;
                                 }

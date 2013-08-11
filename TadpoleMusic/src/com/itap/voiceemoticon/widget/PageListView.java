@@ -105,14 +105,13 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
                 final BaseListAdapter adapter = mAdapter;
                 final ArrayList list = (ArrayList)adapter.getList();
                 mTotalCount = pageList.totalCount;
-                me.post(new Runnable() {
+                me.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (isRefresh && list != null) {
                             list.clear();
                             adapter.notifyDataSetChanged();
                         }
-
                         if (list == null) {
                             adapter.setList(pageList.records);
                         } else {
@@ -121,7 +120,7 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
                         adapter.notifyDataSetChanged();
                         me.stopRefreshOrLoad();
                     }
-                });
+                }, 200);
             }
         }).start();
     }

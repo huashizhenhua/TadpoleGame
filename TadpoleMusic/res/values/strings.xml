@@ -28,6 +28,7 @@
     <string name="about_user_feedback">用户反馈</string>
     <string name="about_share_to_friend">推荐给好友</string>
     <string name="about_for_score">为微信语音表情评分</string>
-	<string name="about_version">语音表情v1.0</string>
+	<string name="about_version">语音表情v1.0.2</string>
+	<string name="about_app_download">更多应用</string>
 
 </resources>

@@ -14,16 +14,17 @@ import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
-import com.umeng.fb.NotificationType;
-import com.umeng.fb.UMFeedbackService;
+import com.umeng.fb.FeedbackAgent;
+import com.umeng.newxp.common.ExchangeConstants;
+import com.umeng.newxp.controller.ExchangeDataService;
+import com.umeng.newxp.view.ExchangeViewManager;
 
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 public class AboutActivity extends SherlockFragmentActivity implements View.OnClickListener,
         OnAlertSelectId {
@@ -39,6 +40,7 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
         this.findViewById(R.id.btn_user_feedback).setOnClickListener(this);
         // share_to_friend
         this.findViewById(R.id.btn_share_to_friend).setOnClickListener(this);
+        this.findViewById(R.id.btn_app_download).setOnClickListener(this);
         super.onCreate(bundle);
     }
 
@@ -62,15 +64,19 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
+        final Context context = this;
         switch (v.getId()) {
             case R.id.btn_user_feedback:
-                UMFeedbackService.enableNewReplyNotification(this, NotificationType.AlertDialog);
-                // 如果您程序界面是iOS风格，我们还提供了左上角的“返回”按钮，用于退出友盟反馈模块。启动友盟反馈模块前，您需要增加如下语句来设置“返回”按钮可见：
-                UMFeedbackService.setGoBackButtonVisible();
-                UMFeedbackService.openUmengFeedbackSDK(this);
+                FeedbackAgent agent = new FeedbackAgent(this);
+                agent.startFeedbackActivity();
                 break;
             case R.id.btn_share_to_friend:
                 WeixinAlert.showAlert(this, "分享【语音表情】给好友", "", this, null, false);
+                break;
+            case R.id.btn_app_download:
+                ExchangeDataService service = new ExchangeDataService();
+                new ExchangeViewManager(context,service)
+                            .addView(ExchangeConstants.type_list_curtain, null);   
                 break;
             default:
                 break;
