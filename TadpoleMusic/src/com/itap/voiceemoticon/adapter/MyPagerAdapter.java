@@ -1,5 +1,6 @@
 package com.itap.voiceemoticon.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.tadpole.view.PagerAdapter;
@@ -21,7 +22,21 @@ public class MyPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(View arg0, int arg1, Object arg2) {
-        ((ViewPager) arg0).removeView(mListViews.get(arg1));
+        
+        final List<View> listViews = mListViews;
+        
+        if (null == listViews) {
+            return;
+        }
+
+        View viewToDestory = listViews.get(arg1);
+        if (null == viewToDestory) {
+            return;
+        }
+        
+        if (viewToDestory.getParent() != null) {
+            ((ViewPager) arg0).removeView(mListViews.get(arg1));
+        }
     }
 
     @Override

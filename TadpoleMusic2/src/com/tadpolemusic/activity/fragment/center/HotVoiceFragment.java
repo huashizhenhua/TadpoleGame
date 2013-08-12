@@ -32,11 +32,13 @@ public class HotVoiceFragment extends AbsCenterContent {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final HotVoiceFragment me = this;
-
         mListView = new PageListView<Voice>(getActivity()) {
             @Override
             public PageList<Voice> onLoadPageList(int startIndex, int maxResult) {
                 PageList<Voice> pageList = VEApplication.getVoiceEmoticonApi().getHostVoicesList(startIndex, maxResult);
+                
+                System.out.println("pageList = " + pageList);
+                
                 me.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -47,19 +49,6 @@ public class HotVoiceFragment extends AbsCenterContent {
                     }
                 });
                 return pageList;
-            }
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-                    int totalItemCount) {
-                // TODO Auto-generated method stub
-                
             }
         };
 

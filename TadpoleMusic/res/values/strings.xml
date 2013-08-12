@@ -12,6 +12,7 @@
     <string name="title_section_hot_voice">热门语音</string>
     <string name="title_section_my_collection">我的收藏</string>
     <string name="title_section_search">搜索</string>
+    <string name="title_section_app_recommend">应用推荐</string>
     <string name="menu_settings">设置</string>
     <string name="menu_about">关于我们</string>
     <string name="title_item_detail">Item Detail</string>
@@ -27,7 +28,7 @@
     <string name="title_activity_about">关于</string>
     <string name="about_user_feedback">用户反馈</string>
     <string name="about_share_to_friend">推荐给好友</string>
-    <string name="about_for_score">为微信语音表情评分</string>
+    <string name="about_for_score">为语音表情打分</string>
 	<string name="about_version">语音表情v1.0.2</string>
 	<string name="about_app_download">更多应用</string>
 

@@ -103,7 +103,9 @@ public class SegmentBar extends View {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mWindowManager.removeView(mDialogText);
+        if (mDialogText.getParent() != null) {
+            mWindowManager.removeView(mDialogText);
+        }
     }
 
     private void createDialogText() {

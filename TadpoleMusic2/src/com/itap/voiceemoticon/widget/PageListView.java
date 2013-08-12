@@ -3,6 +3,8 @@ package com.itap.voiceemoticon.widget;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -76,6 +78,9 @@ public abstract class PageListView<T> extends PullToRefreshListView implements O
     public void doRefresh() {
         this.doLoad(true);
     }
+    
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+    
 
     private void loadData(final boolean isRefresh) {
         Log.d(VEApplication.TAG, "loadData startIndex = " + mStartIndex + ", mTotalCount = " + mTotalCount);
@@ -92,7 +97,7 @@ public abstract class PageListView<T> extends PullToRefreshListView implements O
                 final PageList<T> pageList = me.onLoadPageList(toLoadStartIndex, maxResult);
                 if (pageList == null) {
                     Log.d(VEApplication.TAG, "page list is null");
-                    me.post(new Runnable() {
+                    mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(me.getContext(), "服务器木有数据", Toast.LENGTH_LONG).show();
@@ -101,11 +106,14 @@ public abstract class PageListView<T> extends PullToRefreshListView implements O
                     });
                     return;
                 }
+                
+                System.out.println("mStartIndex += maxResult;");
+                
                 mStartIndex += maxResult;
                 final PullToRefreshListViewAdapter adapter = mAdapter;
                 final List list = adapter.getList();
                 mTotalCount = pageList.totalCount;
-                me.post(new Runnable() {
+                mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         if (isRefresh && list != null) {

@@ -3,9 +3,9 @@ package com.itap.voiceemoticon.activity;
 
 import java.util.ArrayList;
 
-import org.apache.http.auth.params.AuthPNames;
 import org.tadpole.view.ViewPager;
 import org.tadpoleframework.app.AlertDialog;
+import org.tadpoleframework.app.BaseDialog;
 import org.tadpoleframework.common.APNUtil;
 import org.tadpoleframework.widget.SwitchButton;
 import org.tadpoleframework.widget.adapter.AdapterCallback;
@@ -27,7 +27,6 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -36,11 +35,16 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.activity.fragment.AppRecommendFragment;
+import com.itap.voiceemoticon.activity.fragment.HotVoiceFragment;
+import com.itap.voiceemoticon.activity.fragment.MyCollectFragment;
+import com.itap.voiceemoticon.activity.fragment.SearchFragment;
 import com.itap.voiceemoticon.adapter.MyPagerAdapter;
 import com.itap.voiceemoticon.adapter.VoiceAdapter;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.media.MusicData;
 import com.itap.voiceemoticon.media.MusicPlayer;
+import com.itap.voiceemoticon.third.UmengEvent;
 import com.itap.voiceemoticon.util.AndroidUtil;
 import com.itap.voiceemoticon.util.MusicUtil;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
@@ -49,10 +53,11 @@ import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
 import com.itap.voiceemoticon.wxapi.WXEntryActivity;
 import com.sina.weibo.sdk.api.BaseResponse;
 import com.sina.weibo.sdk.api.IWeiboHandler;
-import com.weibo.sdk.android.WeiboAuthListener;
+import com.umeng.analytics.MobclickAgent;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener,
-        ViewPager.OnPageChangeListener, AdapterCallback<Voice>, IWeiboHandler.Response {
+        ViewPager.OnPageChangeListener, AdapterCallback<Voice>, IWeiboHandler.Response,
+        OnAlertSelectId {
 
     /**
      * MusicInfo update span
@@ -118,7 +123,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     @Override
     public void onResponse(BaseResponse arg0) {
         System.out.println("onResponse arg0 = " + arg0);
-
     }
 
     /**
@@ -126,6 +130,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
      * avoid stackoverflow true meam must be prevent
      */
     private boolean mFlagPreventCycleInvoke = true;
+
+    private Tab mTabAppRecommend;
 
     private void handleMusicPlayerIntent(int state, MusicData musicData) {
         Log.d(VEApplication.TAG, "musicData = " + musicData);
@@ -216,6 +222,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(VEApplication.TAG, "---->MainActivity onCreate call");
         super.onCreate(savedInstanceState);
+        MobclickAgent.onError(this); // umeng error handle
+
         VEApplication.sWeiboApi.responseListener(getIntent(), this);
         setContentView(R.layout.activity_main);
         WXEntryActivity.isRunning = true;
@@ -231,10 +239,12 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         mTabMyCollection = actionBar.newTab().setText(R.string.title_section_my_collection)
                 .setTabListener(this);
         mTabSearch = actionBar.newTab().setText(R.string.title_section_search).setTabListener(this);
+        mTabAppRecommend = actionBar.newTab().setText(R.string.title_section_app_recommend).setTabListener(this);;
 
         actionBar.addTab(mTabHostVoice);
         actionBar.addTab(mTabMyCollection);
         actionBar.addTab(mTabSearch);
+        actionBar.addTab(mTabAppRecommend);
         actionBar.selectTab(mTabHostVoice);
 
         RelativeLayout container = (RelativeLayout)this.findViewById(R.id.container);
@@ -256,6 +266,9 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
         SearchFragment searchFragment = new SearchFragment(this);
         viewList.add(searchFragment.onCreateView(inflater));
+        
+        AppRecommendFragment appRecommendFragment = new AppRecommendFragment(this);
+        viewList.add(appRecommendFragment.onCreateView(inflater));
 
         mViewPager.setAdapter(new MyPagerAdapter(viewList));
         mViewPager.setOnPageChangeListener(this);
@@ -430,40 +443,59 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         final MainActivity me = this;
         switch (command) {
             case VoiceAdapter.CMD_SHARE:
-                WeixinAlert.showAlert(view.getContext(), "发送【" + obj.title + "】", "",
-                        new OnAlertSelectId() {
-                            @Override
-                            public void onClick(Dialog dialog, int whichButton) {
-                                boolean isHideTitle = false;
-                                SwitchButton sb = (SwitchButton)dialog.findViewById(R.id.switchbtn);
-                                isHideTitle = sb.isTurnOn();
-
-                                switch (whichButton) {
-                                    case R.id.webchat:
-                                        obj.sendToWeixin(me, isHideTitle);
-                                        break;
-                                    case R.id.qq:
-                                        obj.sendToQQ(me, isHideTitle);
-                                        break;
-                                    case R.id.friends:
-                                        obj.sendToFriends(me, isHideTitle);
-                                        break;
-                                    // case R.id.weibo:
-                                    // obj.sendToWeibo(me);
-                                    // Toast.makeText(me,
-                                    // "内测版暂时无法分享到微信朋友，请分享到QQ",
-                                    // Toast.LENGTH_LONG).show();
-                                    // break;
-                                    default:
-                                        break;
-                                }
-
-                            }
-                        }, null);
+                BaseDialog dialog = WeixinAlert.buildAlertDialog(view.getContext(), "发送【" + obj.title + "】", "", this, null);
+                dialog.setTag(obj);
+                dialog.show();
                 break;
             default:
                 break;
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void onClick(Dialog dialog, int whichButton) {
+        if(false == dialog instanceof BaseDialog) {
+            return;
+        }
+        
+        final BaseDialog dlg = (BaseDialog)dialog;
+        Object tag = dlg.getTag();
+        if(false == tag instanceof Voice) {
+            return;
+        }
+        
+        final Voice obj = (Voice) tag;
+        boolean isHideTitle = false;
+        SwitchButton sb = (SwitchButton)dialog.findViewById(R.id.switchbtn);
+        isHideTitle = sb.isTurnOn();
+
+        switch (whichButton) {
+            case R.id.webchat:
+                MobclickAgent.onEvent(this, UmengEvent.VOICE_SHARE_TO_WEIXIN);
+                obj.sendToWeixin(this, isHideTitle);
+                break;
+            case R.id.qq:
+                MobclickAgent.onEvent(this, UmengEvent.VOICE_SHARE_TO_QQ);
+                obj.sendToQQ(this, isHideTitle);
+                break;
+            case R.id.friends:
+                MobclickAgent.onEvent(this, UmengEvent.VOICE_SHARE_TO_FRIENDS);
+                obj.sendToFriends(this, isHideTitle);
+                break;
+            default:
+                break;
+        }
+    }
 }

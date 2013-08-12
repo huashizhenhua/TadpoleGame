@@ -1,4 +1,4 @@
-package com.itap.voiceemoticon.activity;
+package com.itap.voiceemoticon.activity.fragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +17,7 @@ import android.widget.ListView;
 
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.activity.MainActivity;
 import com.itap.voiceemoticon.adapter.ArrayListAdapter;
 import com.itap.voiceemoticon.adapter.MyCollectAdapter;
 import com.itap.voiceemoticon.api.PageList;

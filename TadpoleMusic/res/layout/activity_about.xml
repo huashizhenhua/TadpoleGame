@@ -98,7 +98,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/about_us_text_margin_left"
                 android:gravity="left"
-                android:text="用户讨论QQ群：134314911"
+                android:text="QQ群(134314911)"
                 android:textAppearance="@style/TextAppearance.Medium"
                 android:textColor="@color/tp_title_text_color" />
         </LinearLayout>
@@ -109,32 +109,12 @@
             android:background="@drawable/divider" />
 
         <LinearLayout
-            android:id="@+id/btn_app_download"
+            android:id="@+id/btn_score"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
                android:background="@drawable/selector_setting_item_bg_bottom"
             android:clickable="true"
             android:padding="@dimen/tp_padding_large" >
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/about_us_text_margin_left"
-                android:gravity="left"
-                android:text="@string/about_app_download"
-                android:textAppearance="@style/TextAppearance.Medium"
-                android:color="@color/tp_title_text_color" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btn_score"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_list_item_round"
-            android:clickable="true"
-            android:padding="@dimen/tp_padding_large"
-            android:visibility="gone" >
 
             <TextView
                 android:layout_width="match_parent"

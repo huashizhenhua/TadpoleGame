@@ -8,12 +8,14 @@ import com.actionbarsherlock.view.MenuItem;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.common.GlobalConst;
 import com.itap.voiceemoticon.third.WeixinHelper;
+import com.itap.voiceemoticon.util.AndroidUtil;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 import com.umeng.newxp.common.ExchangeConstants;
 import com.umeng.newxp.controller.ExchangeDataService;
@@ -34,13 +36,9 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
         actionBar.setDisplayHomeAsUpEnabled(true);
         this.setContentView(R.layout.activity_about);
 
-        final AboutActivity me = this;
-
-        // user feedback
         this.findViewById(R.id.btn_user_feedback).setOnClickListener(this);
-        // share_to_friend
         this.findViewById(R.id.btn_share_to_friend).setOnClickListener(this);
-        this.findViewById(R.id.btn_app_download).setOnClickListener(this);
+        this.findViewById(R.id.btn_score).setOnClickListener(this);
         super.onCreate(bundle);
     }
 
@@ -64,19 +62,16 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        final Context context = this;
         switch (v.getId()) {
             case R.id.btn_user_feedback:
                 FeedbackAgent agent = new FeedbackAgent(this);
                 agent.startFeedbackActivity();
                 break;
             case R.id.btn_share_to_friend:
-                WeixinAlert.showAlert(this, "分享【语音表情】给好友", "", this, null, false);
+                WeixinAlert.buildAlertDialog(this, "分享【语音表情】给好友", "", this, null, false).show();
                 break;
-            case R.id.btn_app_download:
-                ExchangeDataService service = new ExchangeDataService();
-                new ExchangeViewManager(context,service)
-                            .addView(ExchangeConstants.type_list_curtain, null);   
+            case R.id.btn_score:
+                AndroidUtil.scoreApp(this);
                 break;
             default:
                 break;
@@ -133,6 +128,18 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
                 break;
         }
 
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
 }

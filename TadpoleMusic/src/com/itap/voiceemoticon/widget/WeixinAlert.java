@@ -3,7 +3,9 @@ package com.itap.voiceemoticon.widget;
 
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.api.Voice;
 
+import org.tadpoleframework.app.BaseDialog;
 import org.tadpoleframework.widget.SwitchButton;
 import org.tadpoleframework.widget.SwitchButton.SwitchListener;
 
@@ -29,9 +31,9 @@ public final class WeixinAlert {
     }
 
     
-    public static Dialog showAlert(final Context context, final String title, String exit,
+    public static BaseDialog buildAlertDialog(final Context context, final String title, String exit,
             final OnAlertSelectId alertDo, OnCancelListener cancelListener) {
-        return showAlert(context, title, exit, alertDo, cancelListener, true);
+        return buildAlertDialog(context, title, exit, alertDo, cancelListener, true);
     }
     
     /**
@@ -42,10 +44,10 @@ public final class WeixinAlert {
      * @param exit Name can be null.It will be Red Color
      * @return A AlertDialog
      */
-    public static Dialog showAlert(final Context context, final String title, String exit,
+    public static BaseDialog buildAlertDialog(final Context context, final String title, String exit,
             final OnAlertSelectId alertDo, OnCancelListener cancelListener, boolean showHideTitleOption) {
         String cancel = context.getString(R.string.app_cancel);
-        final Dialog dlg = new Dialog(context, R.style.MMTheme_DataSheet);
+        final BaseDialog  dlg = new BaseDialog(context, R.style.MMTheme_DataSheet);
         LayoutInflater inflater = (LayoutInflater)context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout layout = (LinearLayout)inflater.inflate(R.layout.alert_dialog_menu_layout,
@@ -118,7 +120,6 @@ public final class WeixinAlert {
             dlg.setOnCancelListener(cancelListener);
         }
         dlg.setContentView(layout);
-        dlg.show();
         return dlg;
     }
 
