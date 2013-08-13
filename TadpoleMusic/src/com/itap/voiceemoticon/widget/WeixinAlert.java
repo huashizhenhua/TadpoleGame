@@ -3,9 +3,8 @@ package com.itap.voiceemoticon.widget;
 
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
-import com.itap.voiceemoticon.api.Voice;
+import com.itap.voiceemoticon.activity.BaseDialog;
 
-import org.tadpoleframework.app.BaseDialog;
 import org.tadpoleframework.widget.SwitchButton;
 import org.tadpoleframework.widget.SwitchButton.SwitchListener;
 
@@ -30,7 +29,6 @@ public final class WeixinAlert {
 
     }
 
-    
     public static BaseDialog buildAlertDialog(final Context context, final String title, String exit,
             final OnAlertSelectId alertDo, OnCancelListener cancelListener) {
         return buildAlertDialog(context, title, exit, alertDo, cancelListener, true);

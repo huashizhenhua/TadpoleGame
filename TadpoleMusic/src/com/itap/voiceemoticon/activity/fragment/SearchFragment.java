@@ -19,7 +19,7 @@ import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.util.AndroidUtil;
 import com.itap.voiceemoticon.widget.SearchPageListView;
 
-public class SearchFragment {
+public class SearchFragment extends BaseFragment {
     private MainActivity mActivity;
 
     public SearchFragment(MainActivity activity) {

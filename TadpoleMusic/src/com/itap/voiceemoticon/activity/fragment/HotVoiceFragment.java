@@ -1,11 +1,6 @@
 
 package com.itap.voiceemoticon.activity.fragment;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.activity.MainActivity;
 import com.itap.voiceemoticon.adapter.VoiceAdapter;
@@ -13,7 +8,12 @@ import com.itap.voiceemoticon.api.PageList;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.widget.PageListView;
 
-public class HotVoiceFragment {
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+
+public class HotVoiceFragment extends BaseFragment{
     private PageListView<Voice> mListView;
 
     private VoiceAdapter mVoiceAdapter;
@@ -29,7 +29,6 @@ public class HotVoiceFragment {
             @Override
             public PageList<Voice> onLoadPageList(int startIndex, int maxResult) {
                 System.out.println("onLoadPageList");
-                
                 return VEApplication.getVoiceEmoticonApi().getHostVoicesList(startIndex, maxResult);
             }
         };

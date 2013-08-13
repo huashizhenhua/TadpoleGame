@@ -9,6 +9,8 @@ import org.tadpoleframework.widget.adapter.BaseListAdapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.AbsListView.OnScrollListener;
@@ -77,6 +79,8 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
         this.doLoad(true);
     }
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+    
     private void loadData(final boolean isRefresh) {
         Log.d(VEApplication.TAG, "loadData startIndex = " + mStartIndex + ", mTotalCount = " + mTotalCount);
         final PageListView me = this;
@@ -92,7 +96,7 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
                 final PageList<T> pageList = me.onLoadPageList(toLoadStartIndex, maxResult);
                 if (pageList == null) {
                     Log.d(VEApplication.TAG, "page list is null");
-                    me.post(new Runnable() {
+                    mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(me.getContext(), "服务器木有数据", Toast.LENGTH_LONG);
@@ -105,7 +109,7 @@ public abstract class PageListView<T> extends XListView implements OnScrollListe
                 final BaseListAdapter adapter = mAdapter;
                 final ArrayList list = (ArrayList)adapter.getList();
                 mTotalCount = pageList.totalCount;
-                me.postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (isRefresh && list != null) {

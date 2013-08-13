@@ -32,7 +32,7 @@ import com.itap.voiceemoticon.widget.SegmentBar;
  * <br> create：2013-1-31
  * <br>==========================
  */
-public class MyCollectFragment {
+public class MyCollectFragment extends BaseFragment{
     private static final int HANDLER_FILL_LIST = 1;
 
     private ListView mListView;

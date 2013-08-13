@@ -87,7 +87,7 @@
         <!-- Caution! Do not change this app key. It is only for demo usage. -->
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="50f68215527015661000001f" >
+            android:value="5208cf8956240b0e7212ce38" >
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
@@ -99,6 +99,25 @@
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
+
+        <activity
+            android:name="net.youmi.android.AdBrowser"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <service
+            android:name="net.youmi.android.AdService"
+            android:exported="false" >
+        </service>
+        <receiver android:name="net.youmi.android.AdReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <meta-data android:name="YOUMI_CHANNEL"
+                android:value="hiapk" >
+    </meta-data>
     </application>
 
 </manifest>

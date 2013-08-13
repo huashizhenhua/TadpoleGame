@@ -1,11 +1,36 @@
 
 package com.itap.voiceemoticon.activity;
 
-import java.util.ArrayList;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.itap.voiceemoticon.R;
+import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.activity.fragment.AppRecommendFragment;
+import com.itap.voiceemoticon.activity.fragment.BaseFragment;
+import com.itap.voiceemoticon.activity.fragment.HotVoiceFragment;
+import com.itap.voiceemoticon.activity.fragment.MyCollectFragment;
+import com.itap.voiceemoticon.activity.fragment.SearchFragment;
+import com.itap.voiceemoticon.adapter.MyPagerAdapter;
+import com.itap.voiceemoticon.adapter.VoiceAdapter;
+import com.itap.voiceemoticon.api.Voice;
+import com.itap.voiceemoticon.media.MusicData;
+import com.itap.voiceemoticon.media.MusicPlayer;
+import com.itap.voiceemoticon.third.UmengEvent;
+import com.itap.voiceemoticon.util.AndroidUtil;
+import com.itap.voiceemoticon.util.MusicUtil;
+import com.itap.voiceemoticon.widget.MarqueeTextView;
+import com.itap.voiceemoticon.widget.WeixinAlert;
+import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
+import com.itap.voiceemoticon.wxapi.WXEntryActivity;
+import com.sina.weibo.sdk.api.BaseResponse;
+import com.sina.weibo.sdk.api.IWeiboHandler;
+import com.umeng.analytics.MobclickAgent;
 
 import org.tadpole.view.ViewPager;
 import org.tadpoleframework.app.AlertDialog;
-import org.tadpoleframework.app.BaseDialog;
 import org.tadpoleframework.common.APNUtil;
 import org.tadpoleframework.widget.SwitchButton;
 import org.tadpoleframework.widget.adapter.AdapterCallback;
@@ -28,32 +53,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.itap.voiceemoticon.R;
-import com.itap.voiceemoticon.VEApplication;
-import com.itap.voiceemoticon.activity.fragment.AppRecommendFragment;
-import com.itap.voiceemoticon.activity.fragment.HotVoiceFragment;
-import com.itap.voiceemoticon.activity.fragment.MyCollectFragment;
-import com.itap.voiceemoticon.activity.fragment.SearchFragment;
-import com.itap.voiceemoticon.adapter.MyPagerAdapter;
-import com.itap.voiceemoticon.adapter.VoiceAdapter;
-import com.itap.voiceemoticon.api.Voice;
-import com.itap.voiceemoticon.media.MusicData;
-import com.itap.voiceemoticon.media.MusicPlayer;
-import com.itap.voiceemoticon.third.UmengEvent;
-import com.itap.voiceemoticon.util.AndroidUtil;
-import com.itap.voiceemoticon.util.MusicUtil;
-import com.itap.voiceemoticon.widget.MarqueeTextView;
-import com.itap.voiceemoticon.widget.WeixinAlert;
-import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
-import com.itap.voiceemoticon.wxapi.WXEntryActivity;
-import com.sina.weibo.sdk.api.BaseResponse;
-import com.sina.weibo.sdk.api.IWeiboHandler;
-import com.umeng.analytics.MobclickAgent;
+import java.util.ArrayList;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener,
         ViewPager.OnPageChangeListener, AdapterCallback<Voice>, IWeiboHandler.Response,
@@ -244,7 +244,12 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         actionBar.addTab(mTabHostVoice);
         actionBar.addTab(mTabMyCollection);
         actionBar.addTab(mTabSearch);
-        actionBar.addTab(mTabAppRecommend);
+       
+        
+        if(APNUtil.getMProxyType(this) == APNUtil.PROXYTYPE_WIFI) {
+            actionBar.addTab(mTabAppRecommend);
+        }
+        
         actionBar.selectTab(mTabHostVoice);
 
         RelativeLayout container = (RelativeLayout)this.findViewById(R.id.container);
@@ -254,12 +259,12 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
                 LayoutParams.FILL_PARENT));
 
         container.addView(mViewPager);
-        ArrayList<View> viewList = new ArrayList<View>();
+        ArrayList<BaseFragment> viewList = new ArrayList<BaseFragment>();
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
         HotVoiceFragment hotVoiceFragment = new HotVoiceFragment(this);
-        viewList.add(hotVoiceFragment.onCreateView(inflater));
+        viewList.add(hotVoiceFragment);
 
         myCollectVoiceFragment = new MyCollectFragment(this);
         viewList.add(myCollectVoiceFragment.onCreateView(inflater));
@@ -267,8 +272,11 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         SearchFragment searchFragment = new SearchFragment(this);
         viewList.add(searchFragment.onCreateView(inflater));
         
-        AppRecommendFragment appRecommendFragment = new AppRecommendFragment(this);
-        viewList.add(appRecommendFragment.onCreateView(inflater));
+
+        if(APNUtil.getMProxyType(this) == APNUtil.PROXYTYPE_WIFI) {
+            AppRecommendFragment appRecommendFragment = new AppRecommendFragment(this);
+            viewList.add(appRecommendFragment.onCreateView(inflater));
+        }
 
         mViewPager.setAdapter(new MyPagerAdapter(viewList));
         mViewPager.setOnPageChangeListener(this);
