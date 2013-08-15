@@ -108,8 +108,6 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
-        <meta-data android:name="YOUMI_CHANNEL"
-                android:value="xiaomi" >
         <!-- 积分广告必须配置 -->
         <receiver
             android:name="net.youmi.android.offers.OffersReceiver"
@@ -119,9 +117,8 @@
         <!-- 有米渠道号(可选配置) 渠道号不能带空格，类型为整数 -->
         <meta-data
             android:name="YOUMI_CHANNEL"
-            android:value="360" >
+            android:value="10060" >
         </meta-data>
-    </meta-data>
     </application>
 
 </manifest>
