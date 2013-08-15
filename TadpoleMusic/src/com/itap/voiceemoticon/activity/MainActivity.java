@@ -1,6 +1,35 @@
 
 package com.itap.voiceemoticon.activity;
 
+import java.util.ArrayList;
+
+import net.youmi.android.AdManager;
+import net.youmi.android.diy.DiyManager;
+
+import org.tadpole.view.ViewPager;
+import org.tadpoleframework.app.AlertDialog;
+import org.tadpoleframework.common.APNUtil;
+import org.tadpoleframework.widget.SwitchButton;
+import org.tadpoleframework.widget.adapter.AdapterCallback;
+
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -28,32 +57,6 @@ import com.itap.voiceemoticon.wxapi.WXEntryActivity;
 import com.sina.weibo.sdk.api.BaseResponse;
 import com.sina.weibo.sdk.api.IWeiboHandler;
 import com.umeng.analytics.MobclickAgent;
-
-import org.tadpole.view.ViewPager;
-import org.tadpoleframework.app.AlertDialog;
-import org.tadpoleframework.common.APNUtil;
-import org.tadpoleframework.widget.SwitchButton;
-import org.tadpoleframework.widget.adapter.AdapterCallback;
-
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.SeekBar;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener,
         ViewPager.OnPageChangeListener, AdapterCallback<Voice>, IWeiboHandler.Response,
@@ -245,7 +248,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         actionBar.addTab(mTabMyCollection);
         actionBar.addTab(mTabSearch);
        
-        
+     
         if(APNUtil.getMProxyType(this) == APNUtil.PROXYTYPE_WIFI) {
             actionBar.addTab(mTabAppRecommend);
         }
@@ -267,15 +270,18 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         viewList.add(hotVoiceFragment);
 
         myCollectVoiceFragment = new MyCollectFragment(this);
-        viewList.add(myCollectVoiceFragment.onCreateView(inflater));
+        viewList.add(myCollectVoiceFragment);
 
         SearchFragment searchFragment = new SearchFragment(this);
-        viewList.add(searchFragment.onCreateView(inflater));
+        viewList.add(searchFragment);
         
 
         if(APNUtil.getMProxyType(this) == APNUtil.PROXYTYPE_WIFI) {
+            // 初始化应用的发布ID和密钥，以及设置测试模式
+            AdManager.getInstance(this).init("f4c12ac956d1bdb6", "ebaec11e527854aa", false);
+            DiyManager.initAdObjects(this);
             AppRecommendFragment appRecommendFragment = new AppRecommendFragment(this);
-            viewList.add(appRecommendFragment.onCreateView(inflater));
+            viewList.add(appRecommendFragment);
         }
 
         mViewPager.setAdapter(new MyPagerAdapter(viewList));
@@ -506,4 +512,11 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
                 break;
         }
     }
+    
+    @Override
+    public void finish() {
+        overridePendingTransition(0, 0);
+        super.finish();
+    }
+    
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dip"
+    android:background="@drawable/selector_setting_item_bg_normal"
+    >
+    <ImageView android:id="@+id/icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dp"
+        />
+    <LinearLayout
+            android:id="@+id/txtLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toRightOf="@+id/icon"
+            android:layout_toLeftOf="@+id/divider"
+            >
+        <TextView android:id="@+id/appName"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="20sp"
+                  android:textColor="@color/tp_title_text_color"
+                />
+        <TextView android:id="@+id/apptxt"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="13sp"
+                  android:textColor="@color/tp_summary_text_color"
+                  android:singleLine="true"
+                  android:ellipsize="marquee"
+                />
+    </LinearLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="1px"
+        android:layout_height="20dp"
+        android:background="#3e3e3e"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/downloadBtn"></View>
+    <ImageView
+        android:id="@+id/downloadBtn"
+        android:src="@drawable/btn_download_list"
+        android:layout_width="32dip"
+        android:layout_height="32dip"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:clickable="true"
+        ></ImageView>
+</RelativeLayout>

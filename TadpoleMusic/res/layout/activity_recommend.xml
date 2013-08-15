@@ -8,9 +8,17 @@
         android:id="@+id/AdLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:gravity="center_horizontal" >
     </RelativeLayout>
-
+    
+    <RelativeLayout
+        android:id="@+id/AdLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="32dp"
+        android:gravity="center_horizontal" >
+    </RelativeLayout>
+    
     <ListView
         android:id="@+id/list"
         android:layout_below="@+id/AdLayout"

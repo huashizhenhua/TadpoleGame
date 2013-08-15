@@ -295,5 +295,8 @@
     <!-- 海军色 -->
     <color name="black">#000000</color>
     <!-- 黑色 -->
+    
+    <color name="list_normal">#2B2B2B</color>
+    <color name="list_click">#297895</color>
 
 </resources>

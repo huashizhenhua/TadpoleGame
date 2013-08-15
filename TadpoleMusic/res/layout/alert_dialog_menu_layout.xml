@@ -74,14 +74,6 @@
                 android:layout_height="@dimen/tp_list_item_size_large"
                 android:layout_weight="1"
                 android:src="@drawable/icon_qq" />
-            <!--  -->
-            <ImageView
-                android:id="@+id/weibo"
-                android:layout_width="@dimen/tp_list_item_size_large"
-                android:layout_height="@dimen/tp_list_item_size_large"
-                android:layout_weight="1"
-                android:visibility="gone"
-                android:src="@drawable/icon_weibo" />
         </LinearLayout>
     </LinearLayout>
 

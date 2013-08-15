@@ -17,27 +17,27 @@ import android.view.View;
  * ViewPager适配器
  */
 public class MyPagerAdapter extends PagerAdapter {
-    public List<BaseFragment> mListViews;
+    public List<BaseFragment> mFragments;
 
     public MyPagerAdapter(List<BaseFragment> mListViews) {
-        this.mListViews = mListViews;
+        this.mFragments = mListViews;
     }
 
     @Override
     public void destroyItem(View arg0, int arg1, Object arg2) {
 
-        final List<BaseFragment> listViews = mListViews;
+        final List<BaseFragment> list = mFragments;
 
-        if (null == listViews) {
+        if (null == list) {
             return;
         }
 
-        BaseFragment fragment = listViews.get(arg1);
+        BaseFragment fragment = list.get(arg1);
         View view = fragment.getContent();
         if (null == view) {
             return;
         }
-
+        
         if (view.getParent() != null) {
             ((ViewPager)arg0).removeView(view);
         }
@@ -49,15 +49,16 @@ public class MyPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return mListViews.size();
+        return mFragments.size();
     }
 
     @Override
     public Object instantiateItem(View viewPager, int postion) {
-        BaseFragment fragment = mListViews.get(postion);
-        final View view = fragment.getContent();
+        BaseFragment fragment = mFragments.get(postion);
+         View view = fragment.getContent();
         if (null == view) {
             fragment.createContent(LayoutInflater.from(viewPager.getContext()));
+            view = fragment.getContent();
             if (null == view) {
                 return null;
             }
