@@ -42,6 +42,7 @@ import com.itap.voiceemoticon.activity.fragment.BaseFragment;
 import com.itap.voiceemoticon.activity.fragment.HotVoiceFragment;
 import com.itap.voiceemoticon.activity.fragment.MyCollectFragment;
 import com.itap.voiceemoticon.activity.fragment.SearchFragment;
+import com.itap.voiceemoticon.activity.fragment.UserVoiceFragment;
 import com.itap.voiceemoticon.adapter.MyPagerAdapter;
 import com.itap.voiceemoticon.adapter.VoiceAdapter;
 import com.itap.voiceemoticon.api.Voice;
@@ -74,12 +75,16 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 
     public MyCollectFragment myCollectVoiceFragment;
-
+    
+    private Tab mTabUserVoice;
+    
     private Tab mTabHostVoice;
 
     private Tab mTabMyCollection;
 
     private Tab mTabSearch;
+    
+    private Tab mTabAppRecommend;
 
     private ImageView mBtnPlay;
 
@@ -96,6 +101,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     private ViewPager mViewPager;
 
     private Handler mHandler = new Handler();
+    
+    private ArrayList<BaseFragment> mFragmentList = new ArrayList<BaseFragment>();
 
     private BroadcastReceiver mMusicPlayerReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -133,8 +140,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
      * avoid stackoverflow true meam must be prevent
      */
     private boolean mFlagPreventCycleInvoke = true;
-
-    private Tab mTabAppRecommend;
 
     private void handleMusicPlayerIntent(int state, MusicData musicData) {
         Log.d(VEApplication.TAG, "musicData = " + musicData);
@@ -237,6 +242,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         actionBar.setDisplayUseLogoEnabled(false);
 
         // For each of the sections in the app, add a tab to the action bar.
+        mTabUserVoice = actionBar.newTab().setText(R.string.title_section_user_voice).setTabListener(this);
         mTabHostVoice = actionBar.newTab().setText(R.string.title_section_hot_voice)
                 .setTabListener(this);
         mTabMyCollection = actionBar.newTab().setText(R.string.title_section_my_collection)
@@ -244,16 +250,13 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         mTabSearch = actionBar.newTab().setText(R.string.title_section_search).setTabListener(this);
         mTabAppRecommend = actionBar.newTab().setText(R.string.title_section_app_recommend).setTabListener(this);;
 
+        actionBar.addTab(mTabUserVoice);
         actionBar.addTab(mTabHostVoice);
         actionBar.addTab(mTabMyCollection);
         actionBar.addTab(mTabSearch);
-       
-     
         if(APNUtil.getMProxyType(this) == APNUtil.PROXYTYPE_WIFI) {
             actionBar.addTab(mTabAppRecommend);
         }
-        
-        actionBar.selectTab(mTabHostVoice);
 
         RelativeLayout container = (RelativeLayout)this.findViewById(R.id.container);
 
@@ -265,7 +268,10 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         ArrayList<BaseFragment> viewList = new ArrayList<BaseFragment>();
 
         LayoutInflater inflater = LayoutInflater.from(this);
-
+        
+        UserVoiceFragment userVoiceFragment = new UserVoiceFragment(this);
+        viewList.add(userVoiceFragment);
+        
         HotVoiceFragment hotVoiceFragment = new HotVoiceFragment(this);
         viewList.add(hotVoiceFragment);
 
@@ -299,6 +305,14 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
             dialog.setMsg("请打开网络并“下拉刷新”");
             dialog.show();
         }
+        
+        actionBar.selectTab(mTabHostVoice);
+        
+        
+        TextView textView = new TextView(this);
+        actionBar.setCustomView(textView);
+        
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_CUSTOM);
     }
 
     private void initMusicPlayBar() {
@@ -338,6 +352,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
             }
         });
+        
     }
 
     // ----------------------------------------------------------------
@@ -396,7 +411,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         }
         mFlagPreventCycleInvoke = true;
 
-        if (null == mViewPager && null == tab)
+        if (null == mViewPager || null == tab)
             return;
 
         for (int i = 0, len = getSupportActionBar().getTabCount(); i < len; i++) {
@@ -420,11 +435,15 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     // ----------------------------------------------------------------
 
     private static final int MENU_ITEM_ID_ABOUT = 1;
+    
+    private static final int MENU_ITEM_ID_MAKE_VOICE = 2;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem menuItemAbout = menu.add(0, MENU_ITEM_ID_ABOUT, 0, "About");
-        menuItemAbout.setIcon(android.R.drawable.ic_menu_info_details);
+        MenuItem menuItemMakeVoice = menu.add(0, MENU_ITEM_ID_MAKE_VOICE, 0, "制作语音");
+        menuItemMakeVoice.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        
+        MenuItem menuItemAbout = menu.add(0, MENU_ITEM_ID_ABOUT, 0, "更多");
         menuItemAbout.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
@@ -437,11 +456,19 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
                 Intent intent = new Intent(this, AboutActivity.class);
                 startActivity(intent);
                 break;
+            case MENU_ITEM_ID_MAKE_VOICE:
+                Notification notification = NotificationCenter.obtain(NotificationID.N_USERVOICE_MAKE);
+                NotificationCenter.getInstance().notify(notification);
+                break;
             default:
                 break;
         }
         item.getItemId();
         return super.onOptionsItemSelected(item);
+    }
+    
+    public void sendMessage() {
+        
     }
 
     @Override
@@ -450,6 +477,14 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
         this.unregisterReceiver(mMusicPlayerReceiver);
         super.onDestroy();
         Log.d(VEApplication.TAG, "---->onDestroy call");
+        
+        if (null == mFragmentList) {
+            return;
+        }
+        
+        for(BaseFragment fragment: mFragmentList) {
+            fragment.onDestory();
+        }
     }
 
     @Override
@@ -512,7 +547,8 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
                 break;
         }
     }
-    
+
+            
     @Override
     public void finish() {
         overridePendingTransition(0, 0);

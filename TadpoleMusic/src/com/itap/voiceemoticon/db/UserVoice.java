@@ -1,5 +1,5 @@
 
-package com.example.voiceinput;
+package com.itap.voiceemoticon.db;
 
 
 public class UserVoice {

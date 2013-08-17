@@ -1,5 +1,5 @@
 
-package com.example.voiceinput;
+package com.itap.voiceemoticon.db;
 
 import java.io.File;
 import java.io.FileNotFoundException;

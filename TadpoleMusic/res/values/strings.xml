@@ -10,6 +10,7 @@
     <string name="title_section3">Section 3</string>
     <string name="title_activity_main">语音表情</string>
     <string name="title_section_hot_voice">热门语音</string>
+    <string name="title_section_user_voice">制作语音</string>
     <string name="title_section_my_collection">我的收藏</string>
     <string name="title_section_search">搜索</string>
     <string name="title_section_app_recommend">应用推荐</string>

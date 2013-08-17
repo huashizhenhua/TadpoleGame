@@ -19,6 +19,9 @@
         <item name="android:progressBarStyle">@style/VE.Widget.ProgressBar</item>
         <item name="android:progressBarStyleHorizontal">@style/VE.Widget.ProgressBar.Horizontal</item>
         <item name="android:windowBackground">@drawable/wb_retweet_bg</item>
+        <item name="android:actionMenuTextAppearance">@style/VE.TextAppearance.Sherlock.Widget.ActionBar.Menu</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="VE.Holo.ListView" parent="android:Widget.Holo.ListView">
@@ -33,6 +36,10 @@
         <item name="android:titleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
         <item name="subtitleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
         <item name="android:subtitleTextStyle">@style/VE.TextAppearance.ActionBar.Title</item>
+    </style>
+    
+    <style name="VE.TextAppearance.Sherlock.Widget.ActionBar.Menu" parent="TextAppearance.Sherlock.Widget.ActionBar.Menu">
+         <item name="android:textColor">#FFFFFFFF</item>
     </style>
 
     <style name="VE.ActionBar.TabView" parent="Widget.Sherlock.ActionBar.TabView">

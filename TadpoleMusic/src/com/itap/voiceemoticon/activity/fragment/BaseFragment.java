@@ -19,6 +19,20 @@ public abstract class BaseFragment {
         return mView;
     }
 
+    /**
+     * onCreate
+     */
+    public void onCreate() {
+
+    }
+
+    /**
+     * onDestory
+     */
+    public void onDestory() {
+
+    }
+
     public abstract View onCreateView(LayoutInflater inflater);
 
 }

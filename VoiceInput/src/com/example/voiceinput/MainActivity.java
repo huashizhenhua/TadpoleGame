@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
     private static final String LOG_TAG = "AudioRecordTest";
@@ -39,6 +40,8 @@ public class MainActivity extends Activity {
     private MediaPlayer mPlayer = null;
 
     private long mRecordStartTime = 0;
+    
+    private UserVoiceModel userVoiceModel;
 
     // 当录音按钮被click时调用此方法，开始或停止录音
     private void onRecord(boolean start) {
@@ -60,6 +63,9 @@ public class MainActivity extends Activity {
     }
 
     private void startPlaying() {
+        ArrayList<UserVoice> list = userVoiceModel.getAll();
+        System.out.println("UserVoice = " + list);
+        
         mPlayer = new MediaPlayer();
         try {
             // 设置要播放的文件
@@ -117,6 +123,7 @@ public class MainActivity extends Activity {
             mTextView.setText("录制时间过短");
         } else {
             mTextView.setText("录制成功");
+            userVoiceModel.saveVoice("hello world",  mTmpFileName);
         }
     }
 
@@ -198,6 +205,9 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        
+        userVoiceModel = new UserVoiceModel(this, null);
+        
         // 构造界面
         LinearLayout ll = new LinearLayout(this);
         

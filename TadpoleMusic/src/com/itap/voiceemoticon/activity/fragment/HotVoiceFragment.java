@@ -48,5 +48,6 @@ public class HotVoiceFragment extends BaseFragment{
         mListView.doLoad();
         return mListView;
     }
+    
 
 }

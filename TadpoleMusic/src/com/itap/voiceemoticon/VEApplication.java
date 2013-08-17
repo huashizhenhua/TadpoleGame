@@ -34,7 +34,7 @@ public class VEApplication extends Application {
     private static SharedPreferences sPrefs;
 
     public static IWeiboAPI sWeiboApi = null;
-
+    
     @Override
     public void onCreate() {
         super.onCreate();
