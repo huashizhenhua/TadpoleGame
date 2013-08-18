@@ -20,7 +20,8 @@ import android.content.Context;
  * @author Administrator
  */
 public class UserVoiceModel extends BaseModel<UserVoice> {
-
+    
+    
     /**
      * @param clazz
      * @param appUid App Uid is suggest to be a uid for compating the same as
@@ -65,6 +66,7 @@ public class UserVoiceModel extends BaseModel<UserVoice> {
         }
         userVoice.path = voiceTmpPath;
         add(userVoice);
+        
     }
     
     private String copyTmpToUser(String tmpPath) {

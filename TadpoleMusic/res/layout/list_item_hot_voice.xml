@@ -25,17 +25,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="84dp" >
+                android:layout_marginRight="84dp" 
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/text_view_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical"
                     android:paddingLeft="@dimen/tp_padding_medium"
                     android:singleLine="true"
                     android:text="zhenby is a sb"
@@ -49,10 +50,11 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/text_view_title"
                     android:paddingLeft="@dimen/tp_padding_medium"
+                    android:gravity="center_vertical"
                     android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.Small"
                     android:textColor="@color/tp_summary_text_color" />
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"

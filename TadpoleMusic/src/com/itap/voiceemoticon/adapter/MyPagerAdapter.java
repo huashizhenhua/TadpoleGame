@@ -35,6 +35,7 @@ public class MyPagerAdapter extends PagerAdapter {
         BaseFragment fragment = list.get(arg1);
         View view = fragment.getContent();
         if (null == view) {
+            fragment.onDestory();
             return;
         }
         

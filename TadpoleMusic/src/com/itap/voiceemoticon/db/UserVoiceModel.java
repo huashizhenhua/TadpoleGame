@@ -10,6 +10,11 @@ import org.tadpoleframework.common.SDCardUtil;
 import org.tadpoleframework.common.StringUtil;
 import org.tadpoleframework.model.BaseModel;
 
+import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.activity.Notification;
+import com.itap.voiceemoticon.activity.NotificationCenter;
+import com.itap.voiceemoticon.activity.NotificationID;
+
 import android.content.Context;
 
 /**
@@ -20,6 +25,15 @@ import android.content.Context;
  * @author Administrator
  */
 public class UserVoiceModel extends BaseModel<UserVoice> {
+
+    private static UserVoiceModel mDefaultUserVoiceModel = null;
+
+    public static UserVoiceModel getDefaultUserVoiceModel() {
+        if (null == mDefaultUserVoiceModel) {
+            mDefaultUserVoiceModel = new UserVoiceModel(VEApplication.sContext, null);
+        }
+        return mDefaultUserVoiceModel;
+    }
 
     /**
      * @param clazz
@@ -55,18 +69,23 @@ public class UserVoiceModel extends BaseModel<UserVoice> {
      * @param tmpPath
      */
     public void saveVoice(String title, String voiceTmpPath) {
+
         UserVoice userVoice = new UserVoice();
         userVoice.title = title;
-        
+
         String voicePath = copyTmpToUser(voiceTmpPath);
-        if(StringUtil.isBlank(voicePath)) {
+        if (StringUtil.isBlank(voicePath)) {
             System.err.println("saveVoice error voicePath = " + voicePath);
             return;
         }
         userVoice.path = voiceTmpPath;
         add(userVoice);
+
+        Notification notification = NotificationCenter
+                .obtain(NotificationID.N_USERVOICE_MODEL_SAVE);
+        NotificationCenter.getInstance().notify(notification);
     }
-    
+
     private String copyTmpToUser(String tmpPath) {
         String dstFilePath;
         dstFilePath = getVoiceSavePath();

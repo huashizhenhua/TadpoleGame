@@ -30,6 +30,7 @@ public class VoiceAdapter extends BaseListAdapter<Voice, ListView> implements On
 
     public static final int CMD_SHARE = 1;
     public static final int CMD_COLLECT = 2;
+    public static final int CMD_
     
     public VoiceAdapter(Activity context) {
         super(context);

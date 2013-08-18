@@ -1,5 +1,7 @@
 package com.itap.voiceemoticon.adapter;
 
+import org.tadpoleframework.common.StringUtil;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -57,6 +59,10 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
 
         viewHolder.textViewTitle.setText(item.title);
         viewHolder.textViewTags.setText(item.tags);
+        
+        if(StringUtil.isBlank(item.tags)) {
+            viewHolder.textViewTags.setVisibility(View.GONE);
+        }
 
         viewHolder.btnDelete.setVisibility(View.VISIBLE);
         viewHolder.btnCollect.setVisibility(View.GONE);
@@ -82,6 +88,7 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
         // click events
         viewHolder.btnShare.setTag(position);
         viewHolder.btnShare.setOnClickListener(this);
+        viewHolder.btnDelete.setOnClickListener(this);
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

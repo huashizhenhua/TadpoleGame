@@ -5,6 +5,7 @@ import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.api.VoiceEmoticonApi;
 import com.itap.voiceemoticon.api.impl.VoiceEmoticonApiImpl;
 import com.itap.voiceemoticon.db.DaoFactory;
+import com.itap.voiceemoticon.db.UserVoiceModel;
 import com.itap.voiceemoticon.db.VoiceDao;
 import com.itap.voiceemoticon.media.MusicPlayer;
 import com.itap.voiceemoticon.third.WeiboHelper;
@@ -21,6 +22,9 @@ import android.content.SharedPreferences.Editor;
 import java.util.ArrayList;
 
 public class VEApplication extends Application {
+
+    public static Context sContext = null;
+
     public static final String TAG = "VEApplication";
 
     public static VoiceEmoticonApi getVoiceEmoticonApi() {
@@ -34,7 +38,7 @@ public class VEApplication extends Application {
     private static SharedPreferences sPrefs;
 
     public static IWeiboAPI sWeiboApi = null;
-    
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,7 +47,10 @@ public class VEApplication extends Application {
         sWeiboApi = WeiboSDK.createWeiboAPI(this, WeiboHelper.APP_KEY);
         // 2 注册到新浪微博
         sWeiboApi.registerApp();
+
+        sContext = this;
     }
+    
 
     public static boolean getHideTitle() {
         return sPrefs.getBoolean(PREF_KEY_HIDE_TITLE, false);

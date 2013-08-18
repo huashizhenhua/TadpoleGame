@@ -11,6 +11,7 @@ public class NotificationID {
      */
     public static final int N_USERVOICE_MAKE = generateNotificationID();
     
+    public static final int N_USERVOICE_MODEL_SAVE = generateNotificationID();
     
 
     public static final int N_ORIENTATION_CHANGE = generateNotificationID();
@@ -57,6 +58,8 @@ public class NotificationID {
     public static final int N_ADDON_NIGNATURE_WHITE_LIST_CHANGED = generateNotificationID(); // 插件白名单改变消息
 
     public static final int N_LAUNCHER_ORIENTATION_CHANGE_ON_LARGE_SCREEN = generateNotificationID(); // 大屏幕设备上转屏时通知widget改变大小
+
+
 
     private static int mNotificationBase = 0;
 

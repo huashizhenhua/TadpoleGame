@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import org.tadpoleframework.app.AlertDialog;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +23,6 @@ import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
 import com.itap.voiceemoticon.widget.SegmentBar;
-import com.tencent.mm.sdk.openapi.ShowMessageFromWX;
 
 /**
  * <br>=
@@ -49,7 +46,7 @@ public class UserVoiceFragment extends BaseFragment implements INotify {
 
     public UserVoiceFragment(MainActivity activity) {
         mActivity = activity;
-        mUserVoiceModel = new UserVoiceModel(activity, "");
+        mUserVoiceModel = UserVoiceModel.getDefaultUserVoiceModel();
     }
 
     public void reloadData() {
@@ -59,8 +56,11 @@ public class UserVoiceFragment extends BaseFragment implements INotify {
     }
 
     public View onCreateView(LayoutInflater inflater) {
+        
+        System.out.println("UserVoiceFragment.onCreateView()");
 
         NotificationCenter.getInstance().register(this, NotificationID.N_USERVOICE_MAKE);
+        NotificationCenter.getInstance().register(this, NotificationID.N_USERVOICE_MODEL_SAVE);
 
         View view = inflater.inflate(R.layout.tab_my_collect, null);
         mListView = (ListView)view.findViewById(R.id.list_view_my_collect);
@@ -115,12 +115,15 @@ public class UserVoiceFragment extends BaseFragment implements INotify {
 
     private void loadData() {
         ArrayList<UserVoice> list = mUserVoiceModel.getAll();
+        System.out.println("loadData = " + list);
         ArrayList<Voice> voiceList = new ArrayList<Voice>();
 
-        Voice voice = new Voice();
+        Voice voice = null;
         for (UserVoice item : list) {
+            voice = new Voice();
             voice.title = item.title;
             voice.url = item.path;
+            voiceList.add(voice);
         }
 
         Collections.sort(voiceList, myCollectCommparator);
@@ -130,13 +133,21 @@ public class UserVoiceFragment extends BaseFragment implements INotify {
     @Override
     public void notify(Notification notification) {
         if (notification.id == NotificationID.N_USERVOICE_MAKE) {
-            AlertDialog alertDialog = new AlertDialog(mActivity);
-            alertDialog.show();
+            UserVoiceMakeDialog dialog = new UserVoiceMakeDialog(mActivity);
+            dialog.show();
+        }
+
+        if (notification.id == NotificationID.N_USERVOICE_MODEL_SAVE) {
+            loadData();
         }
     }
 
     @Override
     public void onDestory() {
         super.onDestory();
+        System.out.println("UserVoiceFragment.onDestory()");
+        
+        NotificationCenter.getInstance().unregister(this, NotificationID.N_USERVOICE_MAKE);
+        NotificationCenter.getInstance().unregister(this, NotificationID.N_USERVOICE_MODEL_SAVE);
     }
 }
