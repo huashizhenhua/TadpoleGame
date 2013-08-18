@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.tadpoleframework.widget.adapter.AdapterCallback;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +21,12 @@ import com.itap.voiceemoticon.activity.Notification;
 import com.itap.voiceemoticon.activity.NotificationCenter;
 import com.itap.voiceemoticon.activity.NotificationID;
 import com.itap.voiceemoticon.adapter.MyCollectAdapter;
+import com.itap.voiceemoticon.adapter.VoiceAdapter;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
 import com.itap.voiceemoticon.widget.SegmentBar;
+import com.umeng.analytics.a.o;
 
 /**
  * <br>=
@@ -32,7 +36,7 @@ import com.itap.voiceemoticon.widget.SegmentBar;
  * create：2013-1-31 <br>=
  * =========================
  */
-public class UserVoiceFragment extends BaseFragment implements INotify {
+public class UserVoiceFragment extends BaseFragment implements INotify, AdapterCallback<Voice> {
 
     private ListView mListView;
 
@@ -56,9 +60,6 @@ public class UserVoiceFragment extends BaseFragment implements INotify {
     }
 
     public View onCreateView(LayoutInflater inflater) {
-        
-        System.out.println("UserVoiceFragment.onCreateView()");
-
         NotificationCenter.getInstance().register(this, NotificationID.N_USERVOICE_MAKE);
         NotificationCenter.getInstance().register(this, NotificationID.N_USERVOICE_MODEL_SAVE);
 
@@ -76,7 +77,7 @@ public class UserVoiceFragment extends BaseFragment implements INotify {
 
         mVoiceAdapter = new MyCollectAdapter(mActivity);
         mVoiceAdapter.setListView(mListView);
-        mVoiceAdapter.setCallback(mActivity);
+        mVoiceAdapter.setCallback(this);
 
         mListView.setOnScrollListener(mVoiceAdapter);
         mListView.setAdapter(mVoiceAdapter);
@@ -146,8 +147,19 @@ public class UserVoiceFragment extends BaseFragment implements INotify {
     public void onDestory() {
         super.onDestory();
         System.out.println("UserVoiceFragment.onDestory()");
-        
+
         NotificationCenter.getInstance().unregister(this, NotificationID.N_USERVOICE_MAKE);
         NotificationCenter.getInstance().unregister(this, NotificationID.N_USERVOICE_MODEL_SAVE);
+    }
+
+    @Override
+    public void onCommand(View view, Voice obj, int command) {
+        if (command == VoiceAdapter.CMD_DELETE) {
+            UserVoice userVoice = new UserVoice();
+            userVoice.path = obj.url;
+            userVoice.title = obj.title;
+            UserVoiceModel.getDefaultUserVoiceModel().delete(userVoice);
+            return;
+        }
     }
 }

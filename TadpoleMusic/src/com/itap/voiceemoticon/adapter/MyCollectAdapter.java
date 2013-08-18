@@ -55,7 +55,7 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Voice item = (Voice) getItem(position);
+        final Voice item = (Voice) getItem(position);
 
         viewHolder.textViewTitle.setText(item.title);
         viewHolder.textViewTags.setText(item.tags);
@@ -88,10 +88,10 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
         // click events
         viewHolder.btnShare.setTag(position);
         viewHolder.btnShare.setOnClickListener(this);
-        viewHolder.btnDelete.setOnClickListener(this);
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                callback(v, item, CMD_DELETE);
                 showDeleteDialog(mList.get(position));
             }
         });
