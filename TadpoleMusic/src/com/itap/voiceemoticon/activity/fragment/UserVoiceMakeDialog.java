@@ -1,8 +1,10 @@
 
 package com.itap.voiceemoticon.activity.fragment;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.tadpoleframework.app.AlertDialog;
 import org.tadpoleframework.common.StringUtil;
@@ -23,7 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itap.voiceemoticon.R;
+import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
+import com.itap.voiceemoticon.util.FormFile;
+import com.itap.voiceemoticon.util.SocketHttpRequester;
 
 public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener {
 
@@ -169,14 +174,45 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
     }
 
     private void saveVoice() {
-        String title = mEditTextTitle.getEditableText().toString();
+        final String title = mEditTextTitle.getEditableText().toString();
         if (StringUtil.isEmpty(title)) {
             Toast.makeText(getContext(), "标题不能为空", Toast.LENGTH_SHORT).show();
         }
         if (!isRecordSuccess) {
             Toast.makeText(getContext(), "尚未录制任何语音", Toast.LENGTH_SHORT).show();
         }
-        userVoiceModel.saveVoice(title, mTmpFileName);
+        final UserVoice userVoice = userVoiceModel.saveVoice(title, mTmpFileName);
+
+        if (null == userVoice) {
+            return;
+        }
+        
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+             // 通过Map构造器传参
+                Map<String, String> params = new HashMap<String, String>();
+                File uploadFile = new File(userVoice.path);
+                params.put("uid", "unknown");
+                params.put("platform", "unknown");
+                params.put("title", title);
+                try {
+                    // 取得上传文件的名称
+                    // 文件上传JavaBean
+                    // ，通过New调用构造方法（此处是调用第二个构造函数，以输入、输出流上传），audio/mpeg为Mp3文件的内容类型
+                    // 如果不知道上传文件的内容类型，可以在IE浏览器上传一个文件测试，在后台观察源码（通过HttpWatch）
+                    FormFile formfile = new FormFile(uploadFile.getName(), uploadFile, "file", "audio/mpeg");
+                    SocketHttpRequester.post("http://vetest.sinaapp.com/user_voice_upload", params,
+                            formfile);
+                    Toast.makeText(getContext(), "dsfsdfsdf", 1).show();
+                } catch (Exception e) {
+                    // TODO: handle exception
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        
     }
 
     private void startPlaying() {

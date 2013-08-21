@@ -56,7 +56,7 @@ public class UserVoiceModel extends BaseModel<UserVoice> {
     public String getVoiceSavePath() {
         try {
             return SDCardUtil.getSDPath() + File.separator + "voiceemoticon" + File.separator
-                    + "uservoice" + File.separator + System.currentTimeMillis() + ".3gp";
+                    + "uservoice" + File.separator + System.currentTimeMillis() + ".mp3";
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -68,7 +68,7 @@ public class UserVoiceModel extends BaseModel<UserVoice> {
      * 
      * @param tmpPath
      */
-    public void saveVoice(String title, String voiceTmpPath) {
+    public UserVoice saveVoice(String title, String voiceTmpPath) {
 
         UserVoice userVoice = new UserVoice();
         userVoice.title = title;
@@ -76,24 +76,34 @@ public class UserVoiceModel extends BaseModel<UserVoice> {
         String voicePath = copyTmpToUser(voiceTmpPath);
         if (StringUtil.isBlank(voicePath)) {
             System.err.println("saveVoice error voicePath = " + voicePath);
-            return;
+            return null;
         }
-        userVoice.path = voiceTmpPath;
+        userVoice.path = voicePath;
         add(userVoice);
 
         Notification notification = NotificationCenter
                 .obtain(NotificationID.N_USERVOICE_MODEL_SAVE);
         NotificationCenter.getInstance().notify(notification);
+        
+        return userVoice;
     }
 
     private String copyTmpToUser(String tmpPath) {
         String dstFilePath;
         dstFilePath = getVoiceSavePath();
+        
         try {
-            FileUtil.createFileWithDir(dstFilePath);
-            if (FileUtil.copyFile(tmpPath, dstFilePath, true)) {
-                return dstFilePath;
+            byte[] bytes = FileUtil.readFileBytes(tmpPath);
+            if (null == bytes) {
+                return null;
             }
+            
+            FileUtil.createFileWithDir(dstFilePath);
+            if (!FileUtil.writeFile(dstFilePath, bytes, false)) {
+                return null;
+            }
+            
+            return dstFilePath;
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -26,7 +26,6 @@ import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
 import com.itap.voiceemoticon.widget.SegmentBar;
-import com.umeng.analytics.a.o;
 
 /**
  * <br>=
