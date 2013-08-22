@@ -1,21 +1,24 @@
 
 package com.itap.voiceemoticon.activity.fragment;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import com.itap.voiceemoticon.R;
+import com.itap.voiceemoticon.activity.MainActivity;
+import com.itap.voiceemoticon.db.UserVoiceModel;
+import com.itap.voiceemoticon.util.HttpManager;
+import com.pocketdigi.utils.FLameUtils;
 
 import org.tadpoleframework.app.AlertDialog;
+import org.tadpoleframework.common.FileUtil;
 import org.tadpoleframework.common.StringUtil;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -24,17 +27,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.itap.voiceemoticon.R;
-import com.itap.voiceemoticon.db.UserVoice;
-import com.itap.voiceemoticon.db.UserVoiceModel;
-import com.itap.voiceemoticon.util.FormFile;
-import com.itap.voiceemoticon.util.SocketHttpRequester;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener {
 
     private static final long TIME_SPAN_RECORD_MIN = 2000;
 
     private static String mTmpFileName = null;
+
+    private static String mTmpFileNameMp3 = null;
 
     private EditText mEditTextTitle;
 
@@ -44,7 +50,7 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
 
     private TextView mTxtViewResult;
 
-    private MediaRecorder mRecorder = null;
+    private AudioRecord mRecorder = null;
 
     private MediaPlayer mPlayer = null;
 
@@ -53,6 +59,8 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
     private UserVoiceModel userVoiceModel;
 
     private boolean isRecordSuccess = false;
+
+    private boolean isRecording = false;
 
     public UserVoiceMakeDialog(Context context) {
         super(context);
@@ -72,7 +80,10 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         mTxtViewResult = (TextView)findViewById(R.id.txt_result);
 
         mTmpFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mTmpFileName += "/audiorecordtest.3gp";
+        mTmpFileName += "/voiceemoticon/audiorecordtest.3gp";
+
+        mTmpFileNameMp3 = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mTmpFileNameMp3 += "/voiceemoticon/audiorecordtest.3gp";
 
         userVoiceModel = UserVoiceModel.getDefaultUserVoiceModel();
 
@@ -123,26 +134,79 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         }
     };
 
+    private short[] mBuffer = null;
+
     private void startRecording() {
 
         mRecordStartTime = System.currentTimeMillis();
 
-        mRecorder = new MediaRecorder();
-        // 设置音源为Micphone
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        // 设置封装格式
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mTmpFileName);
-        // 设置编码格式
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        // mRecorder = new MediaRecorder();
+        // // 设置音源为Micphone
+        // mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        // // 设置封装格式
+        // mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        // mRecorder.setOutputFile(mTmpFileName);
+        // // 设置编码格式
+        // mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
+        int bufferSize = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT);
+        mBuffer = new short[bufferSize];
+        mRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC, 16000,
+                AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+
+        mRecorder.startRecording();
+        isRecording = true;
         try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e("UserVoiceMakeDialog", "prepare() failed");
+            FileUtil.createFileWithDir(mTmpFileName);
+            startBufferedWrite(new File(mTmpFileName));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
-        mRecorder.start();
+    /**
+     * 写入到文件
+     * 
+     * @param file
+     */
+    private void startBufferedWrite(final File file) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DataOutputStream output = null;
+                try {
+                    output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(
+                            file)));
+                    while (isRecording) {
+                        int readSize = mRecorder.read(mBuffer, 0, mBuffer.length);
+                        
+                        System.out.println("startBufferedWrite");
+                        
+                        for (int i = 0; i < readSize; i++) {
+                            output.writeShort(mBuffer[i]);
+                        }
+                    }
+                } catch (IOException e) {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                } finally {
+                    if (output != null) {
+                        try {
+                            output.flush();
+                        } catch (IOException e) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        } finally {
+                            try {
+                                output.close();
+                            } catch (IOException e) {
+                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
     private void stopRecording() {
@@ -151,6 +215,9 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         }
 
         mRecorder.stop();
+
+        isRecording = false;
+
         mRecorder.release();
         mRecorder = null;
 
@@ -161,6 +228,16 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
             mTxtViewResult.setText("录制成功, 时间为" + (recordTimeSpan / 1000) + "秒");
             isRecordSuccess = true;
             mBtnPlay.setVisibility(View.VISIBLE);
+
+            FLameUtils lameUtils = new FLameUtils(1, 16000, 96);
+            try {
+                FileUtil.createFileWithDir(mTmpFileNameMp3);
+                System.out.println(lameUtils.raw2mp3(mTmpFileName, mTmpFileNameMp3));
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+           
         }
     }
 
@@ -181,30 +258,41 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         if (!isRecordSuccess) {
             Toast.makeText(getContext(), "尚未录制任何语音", Toast.LENGTH_SHORT).show();
         }
-        final UserVoice userVoice = userVoiceModel.saveVoice(title, mTmpFileName);
 
-        if (null == userVoice) {
-            return;
-        }
-        
+        // final UserVoice userVoice = userVoiceModel.saveVoice(title,
+        // mTmpFileName);
+
+        // if (null == userVoice) {
+        // return;
+        // }
+
         new Thread(new Runnable() {
-            
+
             @Override
             public void run() {
-             // 通过Map构造器传参
-                Map<String, String> params = new HashMap<String, String>();
-                File uploadFile = new File(userVoice.path);
+                // 通过Map构造器传参
+                HashMap<String, String> params = new HashMap<String, String>();
+                File uploadFile = new File(mTmpFileName);
                 params.put("uid", "unknown");
                 params.put("platform", "unknown");
                 params.put("title", title);
+
+                new FLameUtils().raw2mp3(mTmpFileName, mTmpFileNameMp3);
+
+                String fileName = System.currentTimeMillis() + ".mp3";
                 try {
                     // 取得上传文件的名称
                     // 文件上传JavaBean
                     // ，通过New调用构造方法（此处是调用第二个构造函数，以输入、输出流上传），audio/mpeg为Mp3文件的内容类型
                     // 如果不知道上传文件的内容类型，可以在IE浏览器上传一个文件测试，在后台观察源码（通过HttpWatch）
-                    FormFile formfile = new FormFile(uploadFile.getName(), uploadFile, "file", "audio/mpeg");
-                    SocketHttpRequester.post("http://vetest.sinaapp.com/user_voice_upload", params,
-                            formfile);
+                    // FormFile formfile = new FormFile(uploadFile.getName(),
+                    // uploadFile, "file", "audio/mpeg");
+                    // SocketHttpRequester.post("http://vetest.sinaapp.com/user_voice_upload",
+                    // params,
+                    // formfile);
+
+                    HttpManager.openUrl("http://vetest.sinaapp.com/user_voice_upload",
+                            HttpManager.HTTPMETHOD_POST, params, mTmpFileNameMp3, fileName);
                     Toast.makeText(getContext(), "dsfsdfsdf", 1).show();
                 } catch (Exception e) {
                     // TODO: handle exception
@@ -212,14 +300,14 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
                 }
             }
         }).start();
-        
+
     }
 
     private void startPlaying() {
         mPlayer = new MediaPlayer();
         try {
             // 设置要播放的文件
-            mPlayer.setDataSource(mTmpFileName);
+            mPlayer.setDataSource(mTmpFileNameMp3);
             mPlayer.prepare();
             // 播放之
             mPlayer.start();
