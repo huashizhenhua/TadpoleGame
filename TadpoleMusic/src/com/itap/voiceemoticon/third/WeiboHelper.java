@@ -5,12 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.itap.voiceemoticon.VEApplication;
-import com.sina.weibo.sdk.WeiboSDK;
-import com.sina.weibo.sdk.api.IWeiboAPI;
-import com.sina.weibo.sdk.api.MusicObject;
-import com.sina.weibo.sdk.api.SendMessageToWeiboRequest;
-import com.sina.weibo.sdk.api.TextObject;
-import com.sina.weibo.sdk.api.WeiboMessage;
 
 public class WeiboHelper {
 
@@ -33,17 +27,17 @@ public class WeiboHelper {
 //        musicObject.schema = "";
 //        musicObject.thumbData = new byte[]{};
         
-        TextObject textObject = new TextObject();
-        textObject.text = "sdfsdfdsfsd";
-
-        
-        WeiboMessage weiboMessage = new WeiboMessage();
-        weiboMessage.mediaObject = textObject;
-
-        SendMessageToWeiboRequest req = new SendMessageToWeiboRequest();
-        req.transaction = String.valueOf(System.currentTimeMillis());
-        req.message = weiboMessage;
-
-        VEApplication.sWeiboApi.sendRequest(activity, req);
+//        TextObject textObject = new TextObject();
+//        textObject.text = "sdfsdfdsfsd";
+//
+//        
+//        WeiboMessage weiboMessage = new WeiboMessage();
+//        weiboMessage.mediaObject = textObject;
+//
+//        SendMessageToWeiboRequest req = new SendMessageToWeiboRequest();
+//        req.transaction = String.valueOf(System.currentTimeMillis());
+//        req.message = weiboMessage;
+//
+//        VEApplication.sWeiboApi.sendRequest(activity, req);
     }
 }

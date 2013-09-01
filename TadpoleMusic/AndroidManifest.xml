@@ -54,7 +54,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name="com.itap.voiceemoticon.third.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleInstance" >
             <meta-data

@@ -49,14 +49,14 @@ import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.media.MusicData;
 import com.itap.voiceemoticon.media.MusicPlayer;
 import com.itap.voiceemoticon.third.UmengEvent;
+import com.itap.voiceemoticon.third.WXEntryActivity;
 import com.itap.voiceemoticon.util.AndroidUtil;
 import com.itap.voiceemoticon.util.MusicUtil;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
-import com.itap.voiceemoticon.wxapi.WXEntryActivity;
-import com.sina.weibo.sdk.api.BaseResponse;
-import com.sina.weibo.sdk.api.IWeiboHandler;
+//import com.sina.weibo.sdk.api.BaseResponse;
+//import com.sina.weibo.sdk.api.IWeiboHandler;
 import com.umeng.analytics.MobclickAgent;
 
 public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener,
@@ -129,11 +129,11 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
             }
         }
     };
-
-    @Override
-    public void onResponse(BaseResponse arg0) {
-        System.out.println("onResponse arg0 = " + arg0);
-    }
+//
+//    @Override
+//    public void onResponse(BaseResponse arg0) {
+//        System.out.println("onResponse arg0 = " + arg0);
+//    }
 
     /**
      * flag for preventing onTabSelected on onPageSelected cycle invoke . To
@@ -197,7 +197,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
         System.out.println("----->onNewIntent");
 
-        VEApplication.sWeiboApi.responseListener(getIntent(), this);
+//        VEApplication.sWeiboApi.responseListener(getIntent(), this);
     }
 
     private void onMusicPreparing() {

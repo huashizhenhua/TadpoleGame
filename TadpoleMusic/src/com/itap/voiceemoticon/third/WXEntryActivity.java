@@ -1,4 +1,4 @@
-package com.itap.voiceemoticon.wxapi;
+package com.itap.voiceemoticon.third;
 
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.activity.MainActivity;

@@ -68,7 +68,7 @@ public class UserVoiceModel extends BaseModel<UserVoice> {
      * 
      * @param tmpPath
      */
-    public UserVoice saveVoice(String title, String voiceTmpPath) {
+    public UserVoice saveVoice(String title, String voiceTmpPath, String url) {
 
         UserVoice userVoice = new UserVoice();
         userVoice.title = title;
@@ -79,6 +79,7 @@ public class UserVoiceModel extends BaseModel<UserVoice> {
             return null;
         }
         userVoice.path = voicePath;
+        userVoice.url = url;
         add(userVoice);
 
         Notification notification = NotificationCenter

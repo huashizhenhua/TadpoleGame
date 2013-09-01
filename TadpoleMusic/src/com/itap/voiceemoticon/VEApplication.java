@@ -37,16 +37,16 @@ public class VEApplication extends Application {
 
     private static SharedPreferences sPrefs;
 
-    public static IWeiboAPI sWeiboApi = null;
+//    public static IWeiboAPI sWeiboApi = null;
 
     @Override
     public void onCreate() {
         super.onCreate();
         sPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         // 1 初始化SDK
-        sWeiboApi = WeiboSDK.createWeiboAPI(this, WeiboHelper.APP_KEY);
-        // 2 注册到新浪微博
-        sWeiboApi.registerApp();
+//        sWeiboApi = WeiboSDK.createWeiboAPI(this, WeiboHelper.APP_KEY);
+//        // 2 注册到新浪微博
+//        sWeiboApi.registerApp();
 
         sContext = this;
     }

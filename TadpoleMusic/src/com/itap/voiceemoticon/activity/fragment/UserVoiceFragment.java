@@ -25,6 +25,7 @@ import com.itap.voiceemoticon.adapter.VoiceAdapter;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
+import com.itap.voiceemoticon.util.StringUtil;
 import com.itap.voiceemoticon.widget.SegmentBar;
 
 /**
@@ -70,6 +71,11 @@ public class UserVoiceFragment extends BaseFragment implements INotify, AdapterC
             public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
                 Log.d(VEApplication.TAG, "HotVoice Fragment onItemClick ");
                 Voice item = (Voice)mVoiceAdapter.getItem(pos);
+                // 优先使用本地播放路径
+                String playUrl = item.localPlayPath;
+                if (StringUtil.isBlank(playUrl)) {
+                    playUrl = item.url;
+                }
                 VEApplication.getMusicPlayer(mActivity).playMusic(item.url, item.title);
             }
         });
@@ -122,7 +128,8 @@ public class UserVoiceFragment extends BaseFragment implements INotify, AdapterC
         for (UserVoice item : list) {
             voice = new Voice();
             voice.title = item.title;
-            voice.url = item.path;
+            voice.url = item.url;
+            voice.localPlayPath = item.path;
             voiceList.add(voice);
         }
 
@@ -132,6 +139,9 @@ public class UserVoiceFragment extends BaseFragment implements INotify, AdapterC
 
     @Override
     public void notify(Notification notification) {
+        
+        System.out.println("notify = " + notification.id);
+        
         if (notification.id == NotificationID.N_USERVOICE_MAKE) {
             UserVoiceMakeDialog dialog = new UserVoiceMakeDialog(mActivity);
             dialog.show();
@@ -160,5 +170,7 @@ public class UserVoiceFragment extends BaseFragment implements INotify, AdapterC
             UserVoiceModel.getDefaultUserVoiceModel().delete(userVoice);
             return;
         }
+        
+        mActivity.onCommand(view, obj, command);
     }
 }

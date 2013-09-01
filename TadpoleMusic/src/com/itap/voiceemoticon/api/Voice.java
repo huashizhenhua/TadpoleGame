@@ -22,6 +22,7 @@ import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.third.WeiboHelper;
 import com.itap.voiceemoticon.third.WeixinHelper;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
+import com.tencent.qqconnect.dataprovider.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -36,6 +37,11 @@ public class Voice {
     public String tags;
 
     public int creatTime;
+
+    /**
+     * 本地播放路径。为文件路径
+     */
+    public String localPlayPath;
 
     public String getFirstLetter() {
         HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
@@ -132,7 +138,16 @@ public class Voice {
     }
 
     public String getTags(boolean isHideTitle) {
-        return isHideTitle ? "神秘" : tags;
+        if (isHideTitle) {
+            return "神秘" ;
+        }
+        
+        if (null == tags) {
+            return "个人语录";
+        }
+        
+        return tags;
+        
     }
 
     public void sendToQQ(Context context, boolean isHideTitle) {
@@ -149,8 +164,8 @@ public class Voice {
         bundle.putString("title", toTitle);
         bundle.putString("targetUrl", targetUrl);
         bundle.putString("summary", toTags);
-        // bundle.putString("site", siteUrl.getText() + "");
-        bundle.putString("appName", GlobalConst.SHARE_APP_NAME);
+         bundle.putString("site", targetUrl);
+        bundle.putString("appName", GlobalConst.SHARE_APP_NAME + "100497165");
 
         System.out.println(Tencent.createInstance("100497165", context));
 

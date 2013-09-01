@@ -3,8 +3,19 @@ package com.itap.voiceemoticon.activity;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-@SuppressWarnings({"unchecked" })
+import android.os.Handler;
+import android.os.Looper;
+
+/**
+ * 
+ * 
+ * 
+ * @author 
+ *
+ */
 public class NotificationCenter {
+
+    private static final Handler sHandler = new Handler(Looper.getMainLooper());
     
     public static final int MAX_COUNT = 100;
     
@@ -49,21 +60,30 @@ public class NotificationCenter {
 	private ArrayList<WeakReference<INotify>> mTempUseArray = new ArrayList<WeakReference<INotify>>();
 	
 	public void notify(Notification notification) {
-		INotify notify;
-		for (int i=0; i<mArray[notification.id].size(); ++i) {
-			WeakReference<INotify> weakObject = mArray[notification.id].get(i);
-			notify = weakObject.get();
-			if (notify != null) {
-				notify.notify(notification);
-			} else {
-				mTempUseArray.add(weakObject);
-			}
-		}
-		
-		for (int i=0; i<mTempUseArray.size(); ++i) {
-			mArray[notification.id].remove(mTempUseArray.get(i));
-		}
-		mTempUseArray.clear();
+	    notifyInUIThread(notification);
+	}
+	
+	private void notifyInUIThread(final Notification notification) {
+	    sHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                INotify notify;
+                for (int i=0; i<mArray[notification.id].size(); ++i) {
+                    WeakReference<INotify> weakObject = mArray[notification.id].get(i);
+                    notify = weakObject.get();
+                    if (notify != null) {
+                        notify.notify(notification);
+                    } else {
+                        mTempUseArray.add(weakObject);
+                    }
+                }
+                
+                for (int i=0; i<mTempUseArray.size(); ++i) {
+                    mArray[notification.id].remove(mTempUseArray.get(i));
+                }
+                mTempUseArray.clear();
+            }
+        });
 	}
 	
 	public static Notification obtain(int id, Object extObj) {
