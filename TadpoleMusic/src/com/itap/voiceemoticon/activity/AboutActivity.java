@@ -9,6 +9,7 @@ import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.common.GlobalConst;
 import com.itap.voiceemoticon.third.WeixinHelper;
 import com.itap.voiceemoticon.util.AndroidUtil;
+import com.itap.voiceemoticon.weibo.LoginAcountManager;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
@@ -30,7 +31,10 @@ import android.view.View;
 
 public class AboutActivity extends SherlockFragmentActivity implements View.OnClickListener,
         OnAlertSelectId {
-    @Override
+   
+	private View mView = null;
+	
+	@Override
     protected void onCreate(Bundle bundle) {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -40,7 +44,20 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
         this.findViewById(R.id.btn_share_to_friend).setOnClickListener(this);
         this.findViewById(R.id.btn_score).setOnClickListener(this);
         super.onCreate(bundle);
+        
+        
+        mView = this.findViewById(R.id.btn_logout);
+        mView.setOnClickListener(this);
+        initLogoutBtn();
     }
+	
+	private void initLogoutBtn() {
+		if (LoginAcountManager.getInstance().isLogin()) {
+        	mView.setVisibility(View.VISIBLE);
+        } else {
+        	mView.setVisibility(View.GONE);
+        }
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,6 +90,9 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
             case R.id.btn_score:
                 AndroidUtil.scoreApp(this);
                 break;
+            case R.id.btn_logout:
+            	LoginAcountManager.getInstance().logout();
+            	initLogoutBtn();
             default:
                 break;
         }

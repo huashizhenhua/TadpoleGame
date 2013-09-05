@@ -2,7 +2,7 @@
 package com.itap.voiceemoticon.util;
 
 import com.weibo.sdk.android.WeiboParameters;
-import com.weibo.sdk.android.util.Utility;
+import com.zenip.weibo.sdk.android.util.Utility;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;

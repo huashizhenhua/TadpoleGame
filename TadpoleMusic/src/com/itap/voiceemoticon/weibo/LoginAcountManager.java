@@ -1,4 +1,3 @@
-
 package com.itap.voiceemoticon.weibo;
 
 import java.util.ArrayList;
@@ -20,134 +19,160 @@ import com.weibo.sdk.android.Oauth2AccessToken;
  */
 public class LoginAcountManager {
 
-    private static final String PREFERENCES_NAME = "com_weibo_sdk_android";
+	private static final String PREFERENCES_NAME = "com_weibo_sdk_android";
 
-    public static final String KEY_LOGIN_ACOUNTS = "loginAcounts";
+	public static final String KEY_LOGIN_ACOUNTS = "loginAcounts";
 
-    private static Context sContext;
+	private static Context sContext;
 
-    private static LoginAcountManager mMgr = null;
+	private static LoginAcountManager mMgr = null;
 
-    public LoginAcountManager() {
-    }
+	public LoginAcountManager() {
+	}
 
-    public static LoginAcountManager getInstance() {
-        if (null == mMgr) {
-            mMgr = new LoginAcountManager();
-        }
-        return mMgr;
-    }
+	public static LoginAcountManager getInstance() {
+		if (null == mMgr) {
+			mMgr = new LoginAcountManager();
+		}
+		return mMgr;
+	}
 
-    public static void init(Context context) {
-        sContext = context.getApplicationContext();
-    }
+	public static void init(Context context) {
+		sContext = context.getApplicationContext();
+	}
 
-    /**
-     * 从SharedPreferences读取accessstoken
-     * 
-     * @param context
-     * @return Oauth2AccessToken
-     */
-    public Oauth2AccessToken getLastLoginAccessToken() {
-        Oauth2AccessToken token = null;
-        ArrayList<LoginAccount> list = getLoginAccountList();
-        for (LoginAccount item : list) {
-            if (item.lastLogin) {
-                token = new Oauth2AccessToken();
-                token.setExpiresTime(item.expiresTime);
-                token.setToken(item.token);
-                break;
-            }
-        }
-        return token;
+	public boolean isLogin() {
+		Oauth2AccessToken token = getLastLoginAccessToken();
+		if (token == null) {
+			return false;
+		}
+		return token.isSessionValid();
+	}
+	
+	public void logout() {
+		LoginAccount loginAccount = getLastLoginAccount();
+		if (null != loginAccount) {
+			delete(loginAccount);
+		}
+	}
 
-    }
+	/**
+	 * 从SharedPreferences读取accessstoken
+	 * 
+	 * @param context
+	 * @return Oauth2AccessToken
+	 */
+	public Oauth2AccessToken getLastLoginAccessToken() {
+		Oauth2AccessToken token = null;
+		ArrayList<LoginAccount> list = getLoginAccountList();
+		for (LoginAccount item : list) {
+			if (item.lastLogin) {
+				token = new Oauth2AccessToken();
+				token.setExpiresTime(item.expiresTime);
+				token.setToken(item.token);
+				break;
+			}
+		}
+		return token;
+	}
+	
+	public LoginAccount getLastLoginAccount() {
+		ArrayList<LoginAccount> list = getLoginAccountList();
+		for (LoginAccount item : list) {
+			if (item.lastLogin) {
+				return item;
+			}
+		}
+		return null;
+	}
 
-    public void delete(LoginAccount loginAccount) {
-        if (null == loginAccount) {
-            return;
-        }
+	public void delete(LoginAccount loginAccount) {
+		if (null == loginAccount) {
+			return;
+		}
 
-        ArrayList<LoginAccount> list = getLoginAccountList();
-        LoginAccount itemToDel = null;
-        for (LoginAccount item : list) {
-            if (null != item && item.uid == loginAccount.uid) {
-                itemToDel = item;
-                break;
-            }
-        }
+		ArrayList<LoginAccount> list = getLoginAccountList();
+		LoginAccount itemToDel = null;
+		for (LoginAccount item : list) {
+			if (null != item && item.uid == loginAccount.uid) {
+				itemToDel = item;
+				break;
+			}
+		}
 
-        if (null != itemToDel) {
-            list.remove(itemToDel);
-        }
+		if (null != itemToDel) {
+			list.remove(itemToDel);
+		}
 
-        saveLoginAccountList(list);
+		saveLoginAccountList(list);
 
-        return;
-    }
+		return;
+	}
 
-    public void addOrUpdateLoginAcount(LoginAccount loginAccount) {
-        if (null == loginAccount) {
-            return;
-        }
+	public void addOrUpdateLoginAcount(LoginAccount loginAccount) {
+		if (null == loginAccount) {
+			return;
+		}
 
-        loginAccount.lastLogin = true;
+		loginAccount.lastLogin = true;
 
-        if (0L == loginAccount.createAt) {
-            loginAccount.createAt = System.currentTimeMillis();
-        }
+		if (0L == loginAccount.createAt) {
+			loginAccount.createAt = System.currentTimeMillis();
+		}
 
-        ArrayList<LoginAccount> list = getLoginAccountList();
-        boolean isUpdated = false;
-        for (LoginAccount item : list) {
-            if (item.uid == loginAccount.uid) {
-                item.lastLogin = loginAccount.lastLogin;
-                item.expiresTime = loginAccount.expiresTime;
-                item.token = loginAccount.token;
-                isUpdated = true;
-            } else {
-                item.lastLogin = false;
-            }
-        }
+		ArrayList<LoginAccount> list = getLoginAccountList();
+		boolean isUpdated = false;
+		for (LoginAccount item : list) {
+			if (item.uid == loginAccount.uid) {
+				item.lastLogin = loginAccount.lastLogin;
+				item.expiresTime = loginAccount.expiresTime;
+				item.token = loginAccount.token;
+				item.lastLogin = loginAccount.lastLogin;
+				isUpdated = true;
+			} else {
+				item.lastLogin = false;
+			}
+		}
 
-        if (!isUpdated) {
-            list.add(loginAccount);
-        }
+		if (!isUpdated) {
+			list.add(loginAccount);
+		}
 
-        saveLoginAccountList(list);
-    }
+		saveLoginAccountList(list);
+	}
 
-    private String readString(String key) {
-        SharedPreferences pref = sContext.getSharedPreferences(PREFERENCES_NAME,
-                Context.MODE_APPEND);
-        return pref.getString(key, "");
-    }
+	private String readString(String key) {
+		SharedPreferences pref = sContext.getSharedPreferences(
+				PREFERENCES_NAME, Context.MODE_APPEND);
+		return pref.getString(key, "");
+	}
 
-    private void writeString(String key, String value) {
-        SharedPreferences pref = sContext.getSharedPreferences(PREFERENCES_NAME,
-                Context.MODE_APPEND);
-        Editor editor = pref.edit();
-        editor.putString(key, value);
-        // editor.putString("token", token.getToken());
-        // editor.putLong("expiresTime", token.getExpiresTime());
-        editor.commit();
-    }
+	private void writeString(String key, String value) {
+		SharedPreferences pref = sContext.getSharedPreferences(
+				PREFERENCES_NAME, Context.MODE_APPEND);
+		Editor editor = pref.edit();
+		editor.putString(key, value);
+		// editor.putString("token", token.getToken());
+		// editor.putLong("expiresTime", token.getExpiresTime());
+		editor.commit();
+	}
 
-    public void saveLoginAccountList(ArrayList<LoginAccount> list) {
-        JSONArray jsonArr = JSONUtil.convertToJSONArray(list, LoginAccount.class);
-        writeString(KEY_LOGIN_ACOUNTS, jsonArr.toString());
-    }
+	public void saveLoginAccountList(ArrayList<LoginAccount> list) {
+		JSONArray jsonArr = JSONUtil.convertToJSONArray(list,
+				LoginAccount.class);
+		writeString(KEY_LOGIN_ACOUNTS, jsonArr.toString());
+	}
 
-    public ArrayList<LoginAccount> getLoginAccountList() {
-        ArrayList<LoginAccount> list = new ArrayList<LoginAccount>();
-        String loginAccountsJsonStr = readString(KEY_LOGIN_ACOUNTS);
-        System.out.println("loginAccountsJsonStr = " + loginAccountsJsonStr);
+	public ArrayList<LoginAccount> getLoginAccountList() {
+		ArrayList<LoginAccount> list = new ArrayList<LoginAccount>();
+		String loginAccountsJsonStr = readString(KEY_LOGIN_ACOUNTS);
+		System.out.println("loginAccountsJsonStr = " + loginAccountsJsonStr);
 
-        if (StringUtil.isBlank(loginAccountsJsonStr)) {
-            return list;
-        }
-        list = JSONUtil.convertToList(loginAccountsJsonStr, LoginAccount.class);
-        return list;
-    }
+		if (StringUtil.isBlank(loginAccountsJsonStr)) {
+			return list;
+		}
+		list = JSONUtil.convertToList(loginAccountsJsonStr, LoginAccount.class);
+		return list;
+	}
 
 }

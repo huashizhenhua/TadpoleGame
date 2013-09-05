@@ -68,6 +68,12 @@
             android:theme="@style/Theme.Styled" >
         </activity>
         <activity
+            android:name="com.itap.voiceemoticon.activity.LoginActivity"
+            android:exported="true"
+            android:label="@string/title_activity_login"
+            android:theme="@style/Theme.Styled" >
+        </activity>
+        <activity
             android:name="com.itap.voiceemoticon.ItemListActivity"
             android:label="@string/title_item_list" >
         </activity>
@@ -94,18 +100,22 @@
             android:name="UMENG_CHANNEL"
             android:value="yingyonghui" >
         </meta-data>
+
         <activity
             android:name="net.youmi.android.AdBrowser"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
+
         <service
             android:name="net.youmi.android.AdService"
             android:exported="false" >
         </service>
+
         <receiver android:name="net.youmi.android.AdReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>

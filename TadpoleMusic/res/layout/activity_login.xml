@@ -4,11 +4,10 @@
     android:layout_height="fill_parent"
     tools:context=".LoginActivity" >
 
-    <com.xiaotingzhong.widget.WeiboLoginWebView
+    <com.itap.voiceemoticon.weibo.WeiboLoginWebView
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/simple_orange" >
-    </com.xiaotingzhong.widget.WeiboLoginWebView>
+        android:background="@color/simple_orange" />
 
 </RelativeLayout>

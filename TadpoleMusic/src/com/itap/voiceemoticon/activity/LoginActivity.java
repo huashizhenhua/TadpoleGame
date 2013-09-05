@@ -1,220 +1,199 @@
-
 package com.itap.voiceemoticon.activity;
 
-import org.tadpoleframework.app.LoadDialogAsyncTask;
-import org.tadpoleframework.app.NavSplashScreenActivity;
+import org.tadpoleframework.app.LoadDialog;
+import org.tadpoleframework.thread.ForegroundThread;
 
-import android.accounts.Account;
 import android.app.Activity;
-import android.app.LauncherActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
+import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
+import com.itap.voiceemoticon.MsgDef;
 import com.itap.voiceemoticon.R;
+import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.weibo.Account;
 import com.itap.voiceemoticon.weibo.LoginAccount;
-import com.itap.voiceemoticon.weibo.WeiboLoginListener;
+import com.itap.voiceemoticon.weibo.LoginAcountManager;
+import com.itap.voiceemoticon.weibo.User;
+import com.itap.voiceemoticon.weibo.IWeiboLoginListener;
+import com.itap.voiceemoticon.weibo.WeiboHelper;
 import com.itap.voiceemoticon.weibo.WeiboLoginWebView;
-import com.tencent.stat.common.User;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboException;
 
-public class LoginActivity extends NavSplashScreenActivity implements WeiboLoginListener {
-    private static final String TAG = "LoginActivity";
+public class LoginActivity extends FragmentActivity implements
+		IWeiboLoginListener {
 
-    private static final String KEY_AUTO_LOGIN = "auto_login";
+	private static final String TAG = "LoginActivity";
 
-    private static final String KEY_TOKEN = "token";
+	private static final String KEY_AUTO_LOGIN = "auto_login";
 
-    static final long SPLASH_TIME = 2000;
+	private static final String KEY_TOKEN = "token";
 
-    static final String UID = "uid";
+	private static final String KEY_MESSAGE = "message";
 
-    static final String USER = "user";
+	static final long SPLASH_TIME = 2000;
 
-    private WeiboLoginWebView mWebView;
+	private WeiboLoginWebView mWebView;
 
-    private Oauth2AccessToken mToken;
+	private Oauth2AccessToken mToken;
 
-    private Handler mHandler = new Handler();
+	private Message mMessage = null;
 
-    /**
-     * Use Explicit Intent start Activity
-     * 
-     * @param activity
-     * @param uid
-     */
-    public static void start(Activity activity) {
-        Intent intent = new Intent();
-        intent.setClass(activity, LoginActivity.class);
-        activity.startActivity(intent);
-    }
-    
-    public static void startWithToken(Activity activity, Oauth2AccessToken acToken) {
-        Intent intent = new Intent();
-        intent.setClass(activity, LoginActivity.class);
-        intent.putExtra(KEY_TOKEN, acToken);
-        activity.startActivity(intent);
-    }
+	private Handler mHandler = new Handler(new Handler.Callback() {
 
-    /**
-     * Use Explicit Intent start Activity
-     * 
-     * @param activity
-     * @param uid
-     */
-    public static void startWithOutAutoLogin(Activity activity) {
-        Intent intent = new Intent();
-        intent.setClass(activity, LoginActivity.class);
-        intent.putExtra(KEY_AUTO_LOGIN, false);
-        activity.startActivity(intent);
-    }
+		@Override
+		public boolean handleMessage(Message msg) {
+			if (msg.what == MsgDef.MSG_DIALOG_SHOW) {
+				showLoadDialog();
+			}
+			if (MsgDef.MSG_DIALOG_HIDE == msg.what) {
+				hideLoadDialog();
+			}
+			if (MsgDef.MSG_LOGIN_FINISH == msg.what) {
+				setResult(RESULT_OK);
+				finish();
+			}
+			return false;
+		}
+	});
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+	public void sendMessage(int what) {
+		mHandler.sendEmptyMessage(what);
+	}
 
-        getNavBar().setTitle("登录");
-        getNavBar().getBtnRight().setVisibility(View.INVISIBLE);
+	private void showLoadDialog() {
+		final LoadDialog loadDialog = mLoadDialog;
+		try {
+			loadDialog.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        Intent intent = getIntent();
-        boolean autoLogin = intent.getBooleanExtra(KEY_AUTO_LOGIN, true);
-        mToken = (Oauth2AccessToken)intent.getSerializableExtra(KEY_TOKEN);
+	private void hideLoadDialog() {
+		final LoadDialog loadDialog = mLoadDialog;
+		try {
+			loadDialog.hide();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        if (!RuntimeFlags.getInstance().hasSplashShow()) {
-            getWindow().setWindowAnimations(R.style.Tadpole_Dialog_SplashScreen);
-            showSplashScreen();
-            RuntimeFlags.getInstance().markSplashShow();
-        }
+	/**
+	 * Use Explicit Intent start Activity
+	 * 
+	 * @param activity
+	 * @param uid
+	 */
+	public static void start(Activity activity, Message message) {
+		Intent intent = new Intent();
+		intent.setClass(activity, LoginActivity.class);
+		intent.putExtra(KEY_MESSAGE, message);
+		activity.startActivity(intent);
+	}
 
-        
-        if (mToken == null) {
-            mToken = XTZApplication.getLoginAccountManager().getLastLoginAccessToken();
-        }
+	public static void startActivityForResult(Activity activity,
+			int requestCode, Message message) {
+		Intent intent = new Intent();
+		intent.setClass(activity, LoginActivity.class);
+		intent.putExtra(KEY_MESSAGE, message);
+		activity.startActivityForResult(intent, requestCode);
+	}
 
-        if (autoLogin && null != mToken && mToken.isSessionValid()) {
-            startLauncherActivity(mToken);
-        } else {
-            
-            if(null != mToken && !mToken.isSessionValid()) {
-                Toast.makeText(this, "登录失败，请重新登录", Toast.LENGTH_LONG);
-            }
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    removeSplashScreen();
-                }
-            }, SPLASH_TIME);
-        }
+	/**
+	 * Use Explicit Intent start Activity
+	 * 
+	 * @param activity
+	 * @param uid
+	 */
+	public static void startWithOutAutoLogin(Activity activity, Message message) {
+		Intent intent = new Intent();
+		intent.setClass(activity, LoginActivity.class);
+		intent.putExtra(KEY_AUTO_LOGIN, false);
+		intent.putExtra(KEY_MESSAGE, message);
+		activity.startActivity(intent);
+	}
 
-        mWebView = (WeiboLoginWebView)findViewById(R.id.webview);
-        mWebView.setLoginListener(this);
-        mWebView.login();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_login);
 
-    }
+		mLoadDialog = new LoadDialog(this);
 
-    @Override
-    public void onComplete(Oauth2AccessToken token) {
+		Intent intent = getIntent();
+		boolean autoLogin = intent.getBooleanExtra(KEY_AUTO_LOGIN, true);
+		mToken = (Oauth2AccessToken) intent.getSerializableExtra(KEY_TOKEN);
+		mMessage = (Message) intent.getParcelableExtra(KEY_MESSAGE);
 
-        System.out.println("onComplete token = " + token);
+		if (mToken == null) {
+			mToken = LoginAcountManager.getInstance().getLastLoginAccessToken();
+		}
 
-        startLauncherActivity(token);
-    }
+		if (autoLogin && null != mToken && mToken.isSessionValid()) {
+			finish();
+		} else {
+			if (null != mToken && !mToken.isSessionValid()) {
+				Toast.makeText(this, "登录失败，请重新登录", Toast.LENGTH_LONG);
+			}
+		}
 
-    @Override
-    public void onWeiboException(WeiboException e) {
+		if (WeiboHelper.getInstance().isSupportSSO(this)) {
+			WeiboHelper.getInstance().sso(this, this);
+			return;
+		}
 
-    }
+		mWebView = (WeiboLoginWebView) findViewById(R.id.webview);
+		mWebView.setLoginListener(this);
+		mWebView.login();
 
-    @Override
-    public void onWebViewError(int errorCode, String failingUrl, String description) {
+	}
 
-    }
+	private LoadDialog mLoadDialog = null;
 
-    @Override
-    public void onCancel() {
+	@Override
+	public void onComplete(final Oauth2AccessToken token) {
+		if (null == token) {
+			return;
+		}
+		sendMessage(MsgDef.MSG_DIALOG_SHOW);
+		sendMessage(MsgDef.MSG_LOGIN_FINISH);
+		
+		WeiboHelper.getInstance().weiboLoginFinish(token, mMessage);
+	}
 
-    }
+	@Override
+	public void finish() {
+		super.finish();
+		hideLoadDialog();
+	}
 
-    public void startLauncherActivity(final Oauth2AccessToken token) {
-        final long startTime = System.currentTimeMillis();
-        final Activity me = this;
-        XTZApplication.setSinaToken(token);
-        
-        
-        new LoadDialogAsyncTask<String, String, Boolean>(this) {
 
-            protected void onPreExecute() {
-                if (Account.hasCache(token) == false) {
-                    showLoadDialog();
-                }
-            };
+	@Override
+	public void onWeiboException(WeiboException e) {
 
-            @Override
-            protected Boolean doInBackground(String... params) {
-                try {
-                    User user = Account.getUserPreferCache(token);
+	}
 
-                    LoginAccount loginAccount = new LoginAccount();
-                    loginAccount.uid = user.id;
-                    loginAccount.token = token.getToken();
-                    loginAccount.expiresTime = token.getExpiresTime();
-                    XTZApplication.getLoginAccountManager().addOrUpdateLoginAcount(loginAccount);
+	public void onWebViewError(int errorCode, String failingUrl,
+			String description) {
 
-                    // 获取用户信息
-                    XTZApplication.setCurUser(user);
-                    // 获取表情 2013.6.10, 读文件IO太慢，不应该阻塞主流程，故心开辟县城
-                    Emotion.cacheEmotionsInBackground();
-                    // 获取表情end
-                    return true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return false;
-            };
+	}
 
-            protected void onPostExecute(Boolean result) {
-                super.onPostExecute(result);
-                hideLoadDialog();
+	@Override
+	public void onCancel() {
+		finish();
+	}
 
-                if (result.booleanValue() == true) {
-                    Runnable runable = new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                            LauncherActivity.start(me, XTZApplication.getCurUser());
-                        }
-                    };
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+	}
 
-                    long timeSpan = System.currentTimeMillis() - startTime;
-                    if (isSplashScreenShowing()) {
-                        mHandler.postDelayed(runable, SPLASH_TIME - timeSpan);
-                    } else {
-                        runable.run();
-                    }
-                } else {
-                    Toast.makeText(me, "获取用户信息失败", Toast.LENGTH_LONG).show();
-                    removeSplashScreen();
-                }
-            }
-        }.execute("");
-    }
-    
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    @Override
-    public void onComplete(com.weibo.sdk.android.Oauth2AccessToken token) {
-        // TODO Auto-generated method stub
-        
-    };
+	protected void onSaveInstanceState(Bundle outState) {
+	}
 
 }

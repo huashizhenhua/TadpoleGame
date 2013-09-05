@@ -21,4 +21,7 @@ public class ConstValues {
 	public static String STARTINDEX = "startIndex";
 	public static String MAXRESULT = "maxResult";
 	public static String HOTSTAT = "hotStat";
+	
+	
+	public static String INTENT_KEY_MESSAGE = "message";
 }

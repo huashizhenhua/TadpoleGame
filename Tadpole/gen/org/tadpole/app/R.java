@@ -181,7 +181,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:defaultScreen
+          @attr name org.tadpole.app:defaultScreen
         */
         public static final int FlingGalleryView_defaultScreen = 0;
         /** 			
@@ -221,7 +221,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:activeDot
+          @attr name org.tadpole.app:activeDot
         */
         public static final int PageIndicator_activeDot = 1;
         /**
@@ -235,7 +235,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:dotCount
+          @attr name org.tadpole.app:dotCount
         */
         public static final int PageIndicator_dotCount = 0;
         /**
@@ -245,7 +245,7 @@ containing a value of this type.
 
           <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
-          @attr name android:dotDrawable
+          @attr name org.tadpole.app:dotDrawable
         */
         public static final int PageIndicator_dotDrawable = 2;
         /**
@@ -261,7 +261,7 @@ in (inches), mm (millimeters).
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:dotSpacing
+          @attr name org.tadpole.app:dotSpacing
         */
         public static final int PageIndicator_dotSpacing = 3;
         /**
@@ -278,7 +278,7 @@ containing a value of this type.
 <tr><td><code>single</code></td><td>0</td><td></td></tr>
 <tr><td><code>multiple</code></td><td>1</td><td></td></tr>
 </table>
-          @attr name android:dotType
+          @attr name org.tadpole.app:dotType
         */
         public static final int PageIndicator_dotType = 5;
         /**
@@ -300,7 +300,7 @@ containing a value of this type.
 <tr><td><code>center_horizontal</code></td><td>0x01</td><td></td></tr>
 <tr><td><code>center</code></td><td>0x11</td><td></td></tr>
 </table>
-          @attr name android:gravity
+          @attr name org.tadpole.app:gravity
         */
         public static final int PageIndicator_gravity = 4;
     };
