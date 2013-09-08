@@ -1,17 +1,22 @@
 package com.itap.voiceemoticon.weibo;
 
+import java.util.WeakHashMap;
+
 import org.tadpoleframework.thread.ForegroundThread;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.util.Log;
 
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.activity.LoginActivity;
 import com.itap.voiceemoticon.activity.MainActivity;
+import com.itap.voiceemoticon.activity.Notification;
+import com.itap.voiceemoticon.activity.NotificationCenter;
+import com.itap.voiceemoticon.activity.NotificationID;
 import com.sina.weibo.sdk.WeiboSDK;
 import com.sina.weibo.sdk.api.IWeiboAPI;
 import com.weibo.sdk.android.Oauth2AccessToken;
@@ -22,6 +27,8 @@ import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.sso.SsoHandler;
 
 public class WeiboHelper {
+
+	private static final String TAG = "WeiboHelper";
 
 	public static final String APP_KEY = "1828437997";
 
@@ -51,6 +58,19 @@ public class WeiboHelper {
 		return sInstance;
 	}
 
+	public static VEAccount getVEAccount() {
+		LoginAccount loginAccount = LoginAcountManager.getInstance()
+				.getLastLoginAccount();
+		VEAccount account = new VEAccount();
+		account.uid = String.valueOf(loginAccount.uid);
+		account.platform = VEAccount.PLATFORM_WEIBO;
+		return account;
+	}
+	
+	public boolean isLogin() {
+	    return LoginAcountManager.getInstance().isLogin();
+	}
+
 	private WeiboHelper(Context context) {
 		// 1 初始化SDK
 		sWeiboApi = WeiboSDK.createWeiboAPI(context, WeiboHelper.APP_KEY);
@@ -60,6 +80,8 @@ public class WeiboHelper {
 		mWeibo = Weibo.getInstance(APP_KEY, REDIRECT_URL, null);
 
 		mListener = new WeiboLoginListener(context);
+
+		mContext = context;
 	}
 
 	public WeiboLoginListener getListener() {
@@ -96,69 +118,68 @@ public class WeiboHelper {
 
 	public boolean isSupportSSO(Activity activity) {
 		SsoHandler ssoHandler = new SsoHandler(activity, mWeibo);
-		return true;
+		return false;
 	}
 
-	public void sso(Activity activity, final IWeiboLoginListener listener) {
+	public SsoHandler createSsoHandler(Activity activity) {
 		SsoHandler ssoHandler = new SsoHandler(activity, mWeibo);
-		ssoHandler.authorize(new WeiboAuthListener() {
-
-			@Override
-			public void onWeiboException(WeiboException arg0) {
-				System.out.println("----->onWeiboException");
-			}
-
-			@Override
-			public void onError(WeiboDialogError arg0) {
-				System.out.println("----->onComplete");
-			}
-
-			@Override
-			public void onComplete(Bundle values) {
-				System.out.println("----->onComplete");
-				Oauth2AccessToken token = getToken(values);
-				listener.onComplete(token);
-			}
-
-			@Override
-			public void onCancel() {
-				System.out.println("----->onCancel");
-				listener.onCancel();
-			}
-		});
+		return ssoHandler;
 	}
+
+	private WeakHashMap<Activity, SsoHandler> mSsoMap = new WeakHashMap<Activity, SsoHandler>();
 
 	public static Oauth2AccessToken getToken(Bundle values) {
 		Oauth2AccessToken token = new Oauth2AccessToken();
 		token.setToken(values.getString(KEY_TOKEN));
 		token.setExpiresIn(values.getString(KEY_EXPIRES));
 		token.setRefreshToken(values.getString(KEY_REFRESHTOKEN));
-		
 		System.out.println("getToken = " + token);
-		
-		// if (token.isSessionValid()) {
-		// Log.d("Weibo-authorize",
-		// "Login Success! access_token=" + token.getToken()
-		// + " expires=" + token.getExpiresTime()
-		// + " refresh_token=" + token.getRefreshToken());
-		// mListener.onComplete(token);
-		// } else {
-		// Log.d("Weibo-authorize", "Failed to receive access token");
-		// mListener.onWeiboException(new WeiboException(
-		// "Failed to receive access token."));
-		// }
 		return token;
 	}
 
-	public void weiboLoginFinish(final Oauth2AccessToken token,
-			final Message msg) {
-		ForegroundThread.sHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				saveAccount(token);
-				MainActivity.start(mContext, msg);
+	public void weiboLoginFinish(final Bundle values, final Object tag) {
+		final Message msg = (Message) tag;
+
+		String error = values.getString("error");
+		String error_code = values.getString("error_code");
+		System.out.println("weiboLoginFinish error = " + error
+				+ ", error_code = " + error_code);
+
+		if (error == null && error_code == null) {
+			final Oauth2AccessToken token = new Oauth2AccessToken();
+			token.setToken(values.getString(KEY_TOKEN));
+			token.setExpiresIn(values.getString(KEY_EXPIRES));
+			token.setRefreshToken(values.getString(KEY_REFRESHTOKEN));
+			if (token.isSessionValid()) {
+				Log.d("Weibo-authorize",
+						"Login Success! access_token=" + token.getToken()
+								+ " expires=" + token.getExpiresTime()
+								+ " refresh_token=" + token.getRefreshToken());
+			} else {
+				Log.d("Weibo-authorize", "Failed to receive access token");
 			}
-		});
+
+			Log.d(TAG, "weiboLoginFinish what = " + msg);
+			ForegroundThread.sHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					saveAccount(token);
+					Notification notification = NotificationCenter.obtain(NotificationID.N_LOGIN_FINISH, null);
+					NotificationCenter.getInstance().notify(notification);
+					MainActivity.start(mContext, msg);
+				}
+			});
+		}
+
+		else if (error.equals("access_denied")) {
+			// 用户或授权服务器拒绝授予数据访问权限
+		}
+
+		else {
+			if (error_code == null) {
+			} else {
+			}
+		}
 	}
 
 	public void saveAccount(Oauth2AccessToken token) {
@@ -180,29 +201,41 @@ public class WeiboHelper {
 
 	public void login(final Activity activity, final Message msg) {
 		if (isSupportSSO(activity)) {
-			sso(activity, new IWeiboLoginListener() {
-
+			SsoHandler ssoHandler = new SsoHandler(activity, mWeibo);
+			ssoHandler.authorize(new WeiboAuthListener() {
 				@Override
-				public void onWeiboException(WeiboException e) {
+				public void onWeiboException(WeiboException exception) {
 				}
 
 				@Override
-				public void onWebViewError(int errorCode, String failingUrl,
-						String description) {
+				public void onError(WeiboDialogError error) {
 				}
 
 				@Override
-				public void onComplete(Oauth2AccessToken token) {
-					weiboLoginFinish(token, msg);
+				public void onComplete(Bundle values) {
+					weiboLoginFinish(values, msg);
 				}
 
 				@Override
 				public void onCancel() {
-
 				}
 			});
+			mSsoMap.put(activity, ssoHandler);
 		} else {
 			LoginActivity.start(activity, msg);
 		}
 	}
+
+	public void callback(Activity activity, int requestCode, int resultCode,
+			Intent data) {
+		final WeakHashMap<Activity, SsoHandler> map = mSsoMap;
+		SsoHandler handler = map.get(activity);
+
+		System.out.println("handler = " + handler);
+		if (null == handler) {
+			return;
+		}
+		handler.authorizeCallBack(requestCode, resultCode, data);
+	}
+
 }

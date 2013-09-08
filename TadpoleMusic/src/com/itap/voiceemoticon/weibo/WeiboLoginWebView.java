@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.webkit.CookieManager;
@@ -35,6 +36,8 @@ public class WeiboLoginWebView extends TadpoleWebView {
 	private IWeiboLoginListener mListener;
 
 	private Oauth2AccessToken mToken;
+	
+	private Object mTag;
 
 	public WeiboLoginWebView(Context context) {
 		super(context);
@@ -49,10 +52,6 @@ public class WeiboLoginWebView extends TadpoleWebView {
 	public WeiboLoginWebView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
-	}
-
-	public void setLoginListener(IWeiboLoginListener listener) {
-		mListener = listener;
 	}
 
 	private void init() {
@@ -115,54 +114,14 @@ public class WeiboLoginWebView extends TadpoleWebView {
 		}
 
 	}
-
-	private void handleRedirectUrl(WebView view, String url) {
-		if (null == mListener) {
-			return;
-		}
-
-		Bundle values = Utility.parseUrl(url);
-
-		String error = values.getString("error");
-		String error_code = values.getString("error_code");
-
-		System.out.println("handleRedirectUrl error = " + error
-				+ ", error_code = " + error_code);
-
-		if (error == null && error_code == null) {
-			handleNoError(values);
-		} else if (error.equals("access_denied")) {
-			// 用户或授权服务器拒绝授予数据访问权限
-			mListener.onCancel();
-		} else {
-			if (error_code == null) {
-				mListener.onWeiboException(new WeiboException(error, 0));
-			} else {
-				mListener.onWeiboException(new WeiboException(error, Integer
-						.parseInt(error_code)));
-			}
-		}
+	
+	public void setTag(Object tag) {
+		mTag = tag;
 	}
 
-	private void handleNoError(Bundle values) {
-		if (null == mToken) {
-			mToken = new Oauth2AccessToken();
-		}
-		mToken.setToken(values.getString(KEY_TOKEN));
-		mToken.setExpiresIn(values.getString(KEY_EXPIRES));
-		mToken.setRefreshToken(values.getString(KEY_REFRESHTOKEN));
-		if (mToken.isSessionValid()) {
-			Log.d("Weibo-authorize",
-					"Login Success! access_token=" + mToken.getToken()
-							+ " expires=" + mToken.getExpiresTime()
-							+ " refresh_token=" + mToken.getRefreshToken());
-			mListener.onComplete(mToken);
-		} else {
-			Log.d("Weibo-authorize", "Failed to receive access token");
-			mListener.onWeiboException(new WeiboException(
-					"Failed to receive access token."));
-		}
-
+	private void handleRedirectUrl(WebView view, String url) {
+		Bundle values = Utility.parseUrl(url);
+		WeiboHelper.getInstance().weiboLoginFinish(values, mTag);
 	}
 
 	public void login() {
@@ -173,9 +132,9 @@ public class WeiboLoginWebView extends TadpoleWebView {
 		parameters.add("redirect_uri", WeiboConfig.REDIRECT_URL);
 		parameters.add("display", "mobile");
 
-		CookieSyncManager.createInstance(getContext());
-		CookieManager cookieManager = CookieManager.getInstance();
-		cookieManager.removeAllCookie();
+//		CookieSyncManager.createInstance(getContext());
+//		CookieManager cookieManager = CookieManager.getInstance();
+//		cookieManager.removeAllCookie();
 
 		Oauth2AccessToken token = LoginAcountManager.getInstance()
 				.getLastLoginAccessToken();

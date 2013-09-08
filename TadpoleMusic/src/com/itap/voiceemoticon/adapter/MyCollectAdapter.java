@@ -91,7 +91,7 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callback(v, item, CMD_DELETE);
+                callback(v, item, CMD_DELETE, position);
                 showDeleteDialog(mList.get(position));
             }
         });

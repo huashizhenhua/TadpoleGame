@@ -67,6 +67,7 @@ import com.sina.weibo.sdk.api.IWeiboHandler;
 import com.umeng.analytics.MobclickAgent;
 //import com.sina.weibo.sdk.api.BaseResponse;
 //import com.sina.weibo.sdk.api.IWeiboHandler;
+import com.weibo.sdk.android.sso.SsoHandler;
 
 public class MainActivity extends SherlockFragmentActivity implements
 		ActionBar.TabListener, ViewPager.OnPageChangeListener,
@@ -74,6 +75,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 		INotify {
 
 	public static void start(Context context, Message msg) {
+		System.out.println("start msg = " + msg);
 		Intent intent = new Intent();
 		intent.setClass(context, MainActivity.class);
 		intent.putExtra(ConstValues.INTENT_KEY_MESSAGE, msg);
@@ -221,7 +223,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 		System.out.println("----->onNewIntent");
 
 		// VEApplication.sWeiboApi.responseListener(getIntent(), this);
-		handleIntent(getIntent());
+		handleIntent(intent);
 	}
 
 	private void onMusicPreparing() {
@@ -255,7 +257,6 @@ public class MainActivity extends SherlockFragmentActivity implements
 		Log.d(VEApplication.TAG, "---->MainActivity onCreate call");
 		super.onCreate(savedInstanceState);
 		MobclickAgent.onError(this); // umeng error handle
-
 		NotificationCenter.getInstance().register(this,
 				NotificationID.N_USERVOICE_MAKE);
 
@@ -349,7 +350,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME
 				| ActionBar.DISPLAY_SHOW_CUSTOM);
-		
+
 		handleIntent(getIntent());
 	}
 
@@ -536,7 +537,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 	}
 
 	@Override
-	public void onCommand(View view, final Voice obj, int command) {
+	public void onCommand(View view, final Voice obj, int command, int position) {
 		final MainActivity me = this;
 		switch (command) {
 		case VoiceAdapter.CMD_SHARE:
@@ -600,6 +601,10 @@ public class MainActivity extends SherlockFragmentActivity implements
 	@Override
 	public void finish() {
 		overridePendingTransition(0, 0);
+
+		if (null != mDialog) {
+			mDialog.dismiss();
+		}
 		super.finish();
 	}
 
@@ -612,20 +617,24 @@ public class MainActivity extends SherlockFragmentActivity implements
 			Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 
-		// Login Success
-		if (resultCode == Activity.RESULT_OK) {
-			Notification notification = NotificationCenter
-					.obtain(NotificationID.N_USERVOICE_MAKE);
-			NotificationCenter.getInstance().notify(notification);
-		}
+		System.out.println("onActivityResult = requestCode  = " + requestCode);
+
+		WeiboHelper.getInstance().callback(this, requestCode, resultCode,
+				intent);
 	}
+
+	private UserVoiceMakeDialog mDialog = null;
 
 	@Override
 	public void notify(Notification notification) {
 		if (notification.id == NotificationID.N_USERVOICE_MAKE) {
 			if (LoginAcountManager.getInstance().isLogin()) {
-				UserVoiceMakeDialog dialog = new UserVoiceMakeDialog(this);
-				dialog.show();
+				try {
+					mDialog = new UserVoiceMakeDialog(this);
+					mDialog.show();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			} else {
 				Message msg = Message.obtain();
 				msg.what = MsgDef.MSG_USER_MAKE_DIALOG;
@@ -635,17 +644,23 @@ public class MainActivity extends SherlockFragmentActivity implements
 	}
 
 	private void handleIntent(Intent intent) {
+		System.out.println("handleIntent = " + intent);
 		if (null == intent) {
 			return;
 		}
+
 		Message msg = intent.getParcelableExtra(ConstValues.INTENT_KEY_MESSAGE);
+		System.out.println("handleIntent = " + msg);
 		if (null == msg) {
 			return;
 		}
-		
+
+		System.out.println("handleIntent = " + msg);
+
 		if (msg.what == MsgDef.MSG_USER_MAKE_DIALOG) {
 			UserVoiceMakeDialog dialog = new UserVoiceMakeDialog(this);
 			dialog.show();
 		}
 	}
+
 }

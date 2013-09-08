@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.tadpoleframework.thread.ForegroundThread;
 import org.tadpoleframework.widget.adapter.AdapterCallback;
 
 import android.util.Log;
@@ -27,6 +28,8 @@ import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
 import com.itap.voiceemoticon.util.StringUtil;
 import com.itap.voiceemoticon.weibo.LoginAcountManager;
+import com.itap.voiceemoticon.weibo.VEAccount;
+import com.itap.voiceemoticon.weibo.WeiboHelper;
 import com.itap.voiceemoticon.widget.SegmentBar;
 
 /**
@@ -52,7 +55,6 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 
 	public UserVoiceFragment(MainActivity activity) {
 		mActivity = activity;
-		mUserVoiceModel = UserVoiceModel.getDefaultUserVoiceModel();
 	}
 
 	public void reloadData() {
@@ -62,10 +64,9 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 	}
 
 	public View onCreateView(LayoutInflater inflater) {
-		NotificationCenter.getInstance().register(this,
-				NotificationID.N_USERVOICE_MAKE);
-		NotificationCenter.getInstance().register(this,
-				NotificationID.N_USERVOICE_MODEL_SAVE);
+		NotificationCenter.getInstance().register(this, NotificationID.N_USERVOICE_MAKE);
+		NotificationCenter.getInstance().register(this, NotificationID.N_USERVOICE_MODEL_SAVE);
+		NotificationCenter.getInstance().register(this, NotificationID.N_LOGIN_FINISH);
 
 		View view = inflater.inflate(R.layout.tab_my_collect, null);
 		mListView = (ListView) view.findViewById(R.id.list_view_my_collect);
@@ -101,8 +102,11 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 						mSegmentBar.setCurrentSection(letter);
 					}
 				});
-
-		loadData();
+		
+		
+		if (WeiboHelper.getInstance().isLogin()) {
+			loadData();
+		}
 		return view;
 	}
 
@@ -127,7 +131,16 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 	};
 
 	private void loadData() {
+		VEAccount curAccount = WeiboHelper.getVEAccount();
+		String appUid = curAccount.platform + curAccount.uid;
+		mUserVoiceModel = new UserVoiceModel(mActivity, appUid);
+		
 		ArrayList<UserVoice> list = mUserVoiceModel.getAll();
+		if(null == list || list.isEmpty()) {
+			loadDataFromRemote();
+			return;
+		}
+		
 		System.out.println("loadData = " + list);
 		ArrayList<Voice> voiceList = new ArrayList<Voice>();
 
@@ -139,16 +152,58 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 			voice.localPlayPath = item.path;
 			voiceList.add(voice);
 		}
+		
+		
 
 		Collections.sort(voiceList, myCollectCommparator);
 		mVoiceAdapter.setList(voiceList);
 	}
+	
+	private void loadDataFromRemote() {
+		
+		ForegroundThread.sHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				VEAccount curAccount = WeiboHelper.getVEAccount();
+				String appUid = curAccount.platform + curAccount.uid;
+				UserVoiceModel userVoiceModel = new UserVoiceModel(mActivity, appUid);
+				
+				ArrayList<UserVoice> userVoiceList = VEApplication.getVoiceEmoticonApi().getList(curAccount.uid, curAccount.platform);
+				System.out.println("loadDataFromRemote = " + userVoiceList);
+				
+				Voice voice = null;
+				ArrayList<Voice> voiceList = new ArrayList<Voice>();
+				for (UserVoice item : userVoiceList) {
+					voice = new Voice();
+					voice.title = item.title;
+					voice.url = item.url;
+					voice.localPlayPath = item.path;
+					voiceList.add(voice);
+					Collections.sort(voiceList, myCollectCommparator);
+					userVoiceModel.add(item);
+				}
+				postSetList(voiceList);
+			}
+		});
+	}
+	
+	public void postSetList(final ArrayList<Voice> voiceList ) {
+		mActivity.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				mVoiceAdapter.setList(voiceList);
+			}
+		});
+	}
 
 	@Override
 	public void notify(Notification notification) {
-		
 		if (notification.id == NotificationID.N_USERVOICE_MODEL_SAVE) {
-			loadData();
+			loadDataFromRemote();
+		}
+		if (notification.id == NotificationID.N_LOGIN_FINISH) {
+			loadDataFromRemote();
 		}
 	}
 
@@ -164,15 +219,24 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 	}
 
 	@Override
-	public void onCommand(View view, Voice obj, int command) {
+	public void onCommand(View view, Voice obj, int command, int position) {
 		if (command == VoiceAdapter.CMD_DELETE) {
 			UserVoice userVoice = new UserVoice();
-			userVoice.path = obj.url;
 			userVoice.title = obj.title;
-			UserVoiceModel.getDefaultUserVoiceModel().delete(userVoice);
+			userVoice.url = obj.url;
+			userVoice = mUserVoiceModel.getByHashCode(userVoice.hashCode());
+			mUserVoiceModel.delete(userVoice);
+			
+			final long userVoiceId  = userVoice.id; 
+			ForegroundThread.sHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					VEApplication.getVoiceEmoticonApi().delete(new long[]{userVoiceId});
+				}
+			});
 			return;
 		}
 
-		mActivity.onCommand(view, obj, command);
+		mActivity.onCommand(view, obj, command, position);
 	}
 }

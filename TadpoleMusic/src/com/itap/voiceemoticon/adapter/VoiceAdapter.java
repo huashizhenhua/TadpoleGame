@@ -109,10 +109,10 @@ public class VoiceAdapter extends BaseListAdapter<Voice, ListView> implements On
         Voice data = getItemData(position);
         switch (v.getId()) {
             case R.id.btn_share:
-                callback(v, getItemData(position), CMD_SHARE);
+                callback(v, getItemData(position), CMD_SHARE, position);
                 break;
             case R.id.btn_collect:
-                callback(v, getItemData(position), CMD_COLLECT);
+                callback(v, getItemData(position), CMD_COLLECT, position);
                 break;
             default:
                 break;

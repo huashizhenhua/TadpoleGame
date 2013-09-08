@@ -23,9 +23,9 @@ import com.itap.voiceemoticon.weibo.WeiboHelper;
 import com.itap.voiceemoticon.weibo.WeiboLoginWebView;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboException;
+import com.weibo.sdk.android.sso.SsoHandler;
 
-public class LoginActivity extends FragmentActivity implements
-		IWeiboLoginListener {
+public class LoginActivity extends FragmentActivity {
 
 	private static final String TAG = "LoginActivity";
 
@@ -141,51 +141,19 @@ public class LoginActivity extends FragmentActivity implements
 				Toast.makeText(this, "登录失败，请重新登录", Toast.LENGTH_LONG);
 			}
 		}
-
-		if (WeiboHelper.getInstance().isSupportSSO(this)) {
-			WeiboHelper.getInstance().sso(this, this);
-			return;
-		}
-
 		mWebView = (WeiboLoginWebView) findViewById(R.id.webview);
-		mWebView.setLoginListener(this);
+		mWebView.setTag(mMessage);
 		mWebView.login();
-
 	}
+
+	private SsoHandler mSsoHandler = null;
 
 	private LoadDialog mLoadDialog = null;
-
-	@Override
-	public void onComplete(final Oauth2AccessToken token) {
-		if (null == token) {
-			return;
-		}
-		sendMessage(MsgDef.MSG_DIALOG_SHOW);
-		sendMessage(MsgDef.MSG_LOGIN_FINISH);
-		
-		WeiboHelper.getInstance().weiboLoginFinish(token, mMessage);
-	}
 
 	@Override
 	public void finish() {
 		super.finish();
 		hideLoadDialog();
-	}
-
-
-	@Override
-	public void onWeiboException(WeiboException e) {
-
-	}
-
-	public void onWebViewError(int errorCode, String failingUrl,
-			String description) {
-
-	}
-
-	@Override
-	public void onCancel() {
-		finish();
 	}
 
 	@Override

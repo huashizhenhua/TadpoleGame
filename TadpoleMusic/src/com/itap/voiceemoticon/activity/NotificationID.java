@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 public class NotificationID {
 
+	
+	public static final int N_LOGIN_FINISH = generateNotificationID();
+	
     /**
      * 制作用户语音消息
      */
