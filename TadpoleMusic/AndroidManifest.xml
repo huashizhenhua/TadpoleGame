@@ -14,7 +14,10 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
+	<!--以下两个为新增必选权限！-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    
     <application
         android:name="com.itap.voiceemoticon.VEApplication"
         android:allowBackup="true"
@@ -90,6 +93,8 @@
         <!-- Fb Activitys Start -->
         <activity android:name="com.umeng.fb.ConversationActivity" />
         <activity android:name="com.umeng.fb.ContactActivity" />
+        
+        
         <!-- Fb Activitys End -->
         <!-- Caution! Do not change this app key. It is only for demo usage. -->
         <meta-data
@@ -101,6 +106,17 @@
             android:value="yingyonghui" >
         </meta-data>
 
+        
+        <!-- 有米广告 -->
+        <activity
+                android:name="net.youmi.android.SmartBannerActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation"
+                android:theme="@style/Transparent"
+                ></activity>
+        <service
+                android:name="net.youmi.android.SmartBannerService"
+                android:exported="false"
+                ></service>
         <activity
             android:name="net.youmi.android.AdBrowser"
             android:configChanges="keyboard|keyboardHidden|orientation"

@@ -16,6 +16,8 @@ public class NotificationID {
     
     public static final int N_USERVOICE_MODEL_SAVE = generateNotificationID();
     
+    public static final int N_MY_COLLECT_CHANGE = generateNotificationID();
+    
 
     public static final int N_ORIENTATION_CHANGE = generateNotificationID();
 

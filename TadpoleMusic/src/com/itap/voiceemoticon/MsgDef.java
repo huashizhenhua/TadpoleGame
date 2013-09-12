@@ -6,6 +6,8 @@ public class MsgDef {
 	public static final int MSG_DIALOG_HIDE = generateId();
 	public static final int MSG_LOGIN_FINISH = generateId();
 	public static final int MSG_USER_MAKE_DIALOG = generateId();
+	
+	public static final int MSG_TOAST = generateId();
 
 	private static int base = 10000;
 

@@ -81,18 +81,28 @@ public class Voice {
 	}
 
 	public void sendToWeixin(final Context context, boolean isHideTitle) {
-		new WeixinHelper(context).sendMusicToWeixin(getTitle(isHideTitle),
-				getTags(isHideTitle), url,
-				"http://voiceemoticon.sinaapp.com/static/download.htm",
+		String toTitle = getTitle(isHideTitle);
+		String toTags = getTags(isHideTitle);
+		// 由于QQ无法直接播放语音，故跳转到页面播放
+		String targetUrl = getPlayHtm(toTitle, toTags, url);
+		
+		new WeixinHelper(context).sendMusicToWeixin(toTitle,
+				toTags, targetUrl,
+				targetUrl,
 				SendMessageToWX.Req.WXSceneSession);
 		sendStatisticsUrl(context);
 
 	}
 
 	public void sendToFriends(final Context context, boolean isHideTitle) {
-		new WeixinHelper(context).sendMusicToWeixin(getTitle(isHideTitle),
-				getTags(isHideTitle), url,
-				"http://voiceemoticon.sinaapp.com/static/download.htm",
+		String toTitle = getTitle(isHideTitle);
+		String toTags = getTags(isHideTitle);
+		// 由于QQ无法直接播放语音，故跳转到页面播放
+		String targetUrl = getPlayHtm(toTitle, toTags, url);	
+		
+		new WeixinHelper(context).sendMusicToWeixin(toTitle,
+				toTags, targetUrl,
+				targetUrl,
 				SendMessageToWX.Req.WXSceneTimeline);
 		sendStatisticsUrl(context);
 	}
@@ -151,16 +161,21 @@ public class Voice {
 		return tags;
 
 	}
+	
+	public String getPlayHtm(String title, String tags, String voiceUrl) {
+		String targetUrl = "http://voiceemoticon.sinaapp.com/static/play.htm?";
+		targetUrl += "title=" + URLEncoder.encode(title);
+		targetUrl += "&tags=" + URLEncoder.encode(tags);
+		targetUrl += "&voiceUrl=" + URLEncoder.encode(voiceUrl);
+		return targetUrl;
+	}
 
 	public void sendToQQ(Context context, boolean isHideTitle) {
 		String toTitle = getTitle(isHideTitle);
 		String toTags = getTags(isHideTitle);
 
 		// 由于QQ无法直接播放语音，故跳转到页面播放
-		String targetUrl = "http://voiceemoticon.sinaapp.com/static/play.htm?";
-		targetUrl += "title=" + URLEncoder.encode(toTitle);
-		targetUrl += "&tags=" + URLEncoder.encode(toTags);
-		targetUrl += "&voiceUrl=" + URLEncoder.encode(url);
+		String targetUrl = getPlayHtm(toTitle, toTags, url);
 
 		Bundle bundle = new Bundle();
 		bundle.putString("title", toTitle);

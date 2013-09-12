@@ -61,6 +61,11 @@ public class WeiboHelper {
 	public static VEAccount getVEAccount() {
 		LoginAccount loginAccount = LoginAcountManager.getInstance()
 				.getLastLoginAccount();
+		
+		if(null == loginAccount) {
+			return null;
+					
+		}
 		VEAccount account = new VEAccount();
 		account.uid = String.valueOf(loginAccount.uid);
 		account.platform = VEAccount.PLATFORM_WEIBO;

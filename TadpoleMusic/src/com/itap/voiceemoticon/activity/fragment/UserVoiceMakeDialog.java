@@ -2,9 +2,8 @@
 package com.itap.voiceemoticon.activity.fragment;
 
 import com.itap.voiceemoticon.R;
-import com.itap.voiceemoticon.activity.MainActivity;
+import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.api.VEResponse;
-import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
 import com.itap.voiceemoticon.util.HttpManager;
 import com.itap.voiceemoticon.weibo.VEAccount;
@@ -267,12 +266,20 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
                 try {
                     String result = HttpManager.openUrl("http://vetest.sinaapp.com/user_voice_upload",
                             HttpManager.HTTPMETHOD_POST, params, mTmpFileNameMp3, fileName);
+                    
+                    System.out.println("upload result = " + result);
+                    
+                    
+                    
                     VEResponse vResp =  VEResponse.buildFromJSONString(result);
                     if (vResp.isSuccess()) {
                         mUrl = vResp.data.optString("url");
                         
                         System.out.println("saveVoice url = " + mUrl);
                         userVoiceModel.saveVoice(title, mTmpFileNameMp3, mUrl);
+                    } else {
+                    	System.out.println("vResp.msg = " + vResp.msg);
+                    	VEApplication.toast(vResp.msg);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

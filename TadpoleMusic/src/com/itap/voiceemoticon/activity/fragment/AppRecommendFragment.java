@@ -33,7 +33,7 @@ public class AppRecommendFragment extends BaseFragment {
         System.out.println("AppRecommendFragment onCreateView");
         ViewGroup viewGroup = (ViewGroup)inflater.inflate(R.layout.activity_recommend, null);
 
-        // 实例化广告条
+        // 实例化广告条g
         AdView adView = new AdView(mActivity, AdSize.SIZE_320x50);
         // 获取要嵌入广告条的布局
         RelativeLayout adLayout = (RelativeLayout)viewGroup.findViewById(R.id.AdLayout);

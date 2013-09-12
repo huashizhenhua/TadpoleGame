@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import org.tadpoleframework.thread.ForegroundThread;
+import org.tadpoleframework.widget.PageListView;
 import org.tadpoleframework.widget.adapter.AdapterCallback;
 
 import android.util.Log;
@@ -13,6 +14,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.activity.INotify;
@@ -43,7 +47,7 @@ import com.itap.voiceemoticon.widget.SegmentBar;
 public class UserVoiceFragment extends BaseFragment implements INotify,
 		AdapterCallback<Voice> {
 
-	private ListView mListView;
+	private PageListView<Voice> mListView;
 
 	private SegmentBar mSegmentBar;
 
@@ -69,12 +73,14 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 		NotificationCenter.getInstance().register(this, NotificationID.N_LOGIN_FINISH);
 
 		View view = inflater.inflate(R.layout.tab_my_collect, null);
-		mListView = (ListView) view.findViewById(R.id.list_view_my_collect);
+		mListView = (PageListView) view.findViewById(R.id.list_view_my_collect);
 		mSegmentBar = (SegmentBar) view.findViewById(R.id.side_bar_my_collect);
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
 					long arg3) {
+				pos = pos - 1;
+				
 				Log.d(VEApplication.TAG, "HotVoice Fragment onItemClick ");
 				Voice item = (Voice) mVoiceAdapter.getItem(pos);
 				// 优先使用本地播放路径
@@ -88,12 +94,23 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 		});
 
 		mVoiceAdapter = new MyCollectAdapter(mActivity);
-		mVoiceAdapter.setListView(mListView);
+		mVoiceAdapter.setListView(mListView.getRefreshableView());
 		mVoiceAdapter.setCallback(this);
 
 		mListView.setOnScrollListener(mVoiceAdapter);
+		mListView.setMode(Mode.PULL_FROM_START);
 		mListView.setAdapter(mVoiceAdapter);
-		mSegmentBar.setListView(mListView);
+		mListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2() {
+			@Override
+			public void onPullDownToRefresh(PullToRefreshBase refreshView) {
+				loadDataFromRemote();
+			}
+			@Override
+			public void onPullUpToRefresh(PullToRefreshBase refreshView) {
+				
+			}
+		});
+		mSegmentBar.setListView(mListView.getRefreshableView());
 
 		mVoiceAdapter
 				.setOnSectionChangeListener(new MyCollectAdapter.OnSectionChangeListener() {
@@ -131,6 +148,10 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 	};
 
 	private void loadData() {
+		if(false == WeiboHelper.getInstance().isLogin()) {
+			return;
+		}
+		
 		VEAccount curAccount = WeiboHelper.getVEAccount();
 		String appUid = curAccount.platform + curAccount.uid;
 		mUserVoiceModel = new UserVoiceModel(mActivity, appUid);
@@ -152,14 +173,15 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 			voice.localPlayPath = item.path;
 			voiceList.add(voice);
 		}
-		
-		
 
 		Collections.sort(voiceList, myCollectCommparator);
 		mVoiceAdapter.setList(voiceList);
 	}
 	
 	private void loadDataFromRemote() {
+		if(false == WeiboHelper.getInstance().isLogin()) {
+			return;
+		}
 		
 		ForegroundThread.sHandler.post(new Runnable() {
 			@Override
@@ -183,6 +205,7 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 					userVoiceModel.add(item);
 				}
 				postSetList(voiceList);
+				
 			}
 		});
 	}
@@ -193,6 +216,10 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 			@Override
 			public void run() {
 				mVoiceAdapter.setList(voiceList);
+				if (null == mListView) {
+					return;
+				}
+				mListView.onRefreshComplete();
 			}
 		});
 	}

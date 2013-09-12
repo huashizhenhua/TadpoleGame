@@ -26,4 +26,5 @@ public class AndroidUtil {
             Toast.makeText(activity, "应用市场调用失败", Toast.LENGTH_SHORT).show();
         }
     } 
+    
 }

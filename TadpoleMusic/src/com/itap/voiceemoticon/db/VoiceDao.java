@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import com.itap.voiceemoticon.activity.NotificationCenter;
+import com.itap.voiceemoticon.activity.NotificationID;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.util.StringUtil;
 
@@ -185,6 +187,9 @@ public class VoiceDao extends VoiceDb {
         String voicePath = voice.url;
         String[] uniqueKeySelection = new String[] { voicePath };
         int count = db.delete(TABLE_NAME, UNIQUE_KEY_SELECTION, uniqueKeySelection);
+        
+        NotificationCenter.obtain(NotificationID.N_MY_COLLECT_CHANGE, null).notifyToTarget();
+        
         return count;
     }
 

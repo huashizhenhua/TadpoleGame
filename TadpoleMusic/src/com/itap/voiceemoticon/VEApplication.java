@@ -8,6 +8,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Handler;
+import android.os.Message;
+import android.widget.Toast;
 
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.api.VoiceEmoticonApi;
@@ -36,13 +39,10 @@ public class VEApplication extends Application {
 	public static final String PREF_NAME = "voiceemoticon";
 
 	public static final String PREF_KEY_HIDE_TITLE = "hidetitle";
-
+	
 	private static SharedPreferences sPrefs;
 
-
 	private static Oauth2AccessToken sSinaToken = null;
-	
-	
 
 	public static void setSinaToken(Oauth2AccessToken token) {
 		sSinaToken = token;
@@ -57,10 +57,10 @@ public class VEApplication extends Application {
 		super.onCreate();
 		sPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 		sContext = this;
-		
+
 		LoginAcountManager.init(this);
 		WeiboHelper.init(this);
-		
+
 		ForegroundThread.startRun();
 	}
 
@@ -73,7 +73,7 @@ public class VEApplication extends Application {
 		editor.putBoolean(PREF_KEY_HIDE_TITLE, flag);
 		editor.commit();
 	}
-
+	
 	private static MusicPlayer mMusicPlayer;
 
 	private static Tencent sInstance;
@@ -116,4 +116,22 @@ public class VEApplication extends Application {
 		}
 	}
 
+	private static final Handler sHandler = new Handler(new Handler.Callback() {
+
+		@Override
+		public boolean handleMessage(Message msg) {
+			if (MsgDef.MSG_TOAST == msg.what) {
+				Toast.makeText(sContext, (String) msg.obj, Toast.LENGTH_LONG)
+						.show();
+			}
+			return false;
+		}
+	});
+
+	public static void toast(String msg) {
+		if (null == sContext) {
+			return;
+		}
+		Message.obtain(sHandler, MsgDef.MSG_TOAST, msg).sendToTarget();
+	}
 }

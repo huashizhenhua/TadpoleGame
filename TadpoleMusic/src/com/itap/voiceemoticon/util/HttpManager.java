@@ -1,6 +1,7 @@
 
 package com.itap.voiceemoticon.util;
 
+import com.itap.voiceemoticon.api.util.HttpCaller;
 import com.weibo.sdk.android.WeiboParameters;
 import com.zenip.weibo.sdk.android.util.Utility;
 
@@ -174,10 +175,10 @@ public class HttpManager {
             StatusLine status = response.getStatusLine();
             int statusCode = status.getStatusCode();
 
-            if (statusCode != 200) {
-                result = readHttpResponse(response);
-            }
             result = readHttpResponse(response);
+            
+            System.out.println("result = " + result);
+            
             return result;
         } catch (IOException e) {
             throw new Exception(e);
@@ -447,22 +448,18 @@ public class HttpManager {
         InputStream inputStream;
         try {
             inputStream = entity.getContent();
-            ByteArrayOutputStream content = new ByteArrayOutputStream();
+//            ByteArrayOutputStream content = new ByteArrayOutputStream();
+//
+//            Header header = response.getFirstHeader("Content-Encoding");
+//            if (header != null && header.getValue().toLowerCase().indexOf("gzip") > -1) {
+//                inputStream = new GZIPInputStream(inputStream);
+//            }
 
-            Header header = response.getFirstHeader("Content-Encoding");
-            if (header != null && header.getValue().toLowerCase().indexOf("gzip") > -1) {
-                inputStream = new GZIPInputStream(inputStream);
-            }
-
-            int readBytes = 0;
-            byte[] sBuffer = new byte[512];
-            while ((readBytes = inputStream.read(sBuffer)) != -1) {
-                content.write(sBuffer, 0, readBytes);
-            }
-            result = new String(content.toByteArray());
-            return result;
+            return HttpCaller.convertStreamToString(inputStream);
         } catch (IllegalStateException e) {
+        	e.printStackTrace();
         } catch (IOException e) {
+        	e.printStackTrace();
         }
         return result;
     }

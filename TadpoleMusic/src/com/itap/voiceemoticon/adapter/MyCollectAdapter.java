@@ -14,6 +14,7 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.itap.voiceemoticon.R;
+import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.api.Voice;
 import com.umeng.analytics.i;
 
@@ -107,6 +108,7 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
             public void onClick(DialogInterface dialog, int which) {
                 mList.remove(voice);
                 voice.delete(mContext);
+                VEApplication.reloadVoiceCollectedCache(getContext());
                 me.notifyDataSetChanged();
             }
         });

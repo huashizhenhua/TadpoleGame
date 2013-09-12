@@ -47,7 +47,6 @@ public class VEResponse {
         JSONObject jsonObj = null;
         try {
             jsonObj = new JSONObject(jsonStr);
-
             VEResponse response = new VEResponse();
             response.status = jsonObj.optInt(KEY_STATUS, STATUS_NO_RESPONSE);
             response.msg = jsonObj.optString(KEY_MSG, "");

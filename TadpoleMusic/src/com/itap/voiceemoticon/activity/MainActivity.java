@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import net.youmi.android.AdManager;
 import net.youmi.android.diy.DiyManager;
+import net.youmi.android.smart.SmartBannerManager;
+import net.youmi.android.spot.SpotDialogLinstener;
+import net.youmi.android.spot.SpotManager;
 
 import org.tadpole.view.ViewPager;
 import org.tadpoleframework.app.AlertDialog;
@@ -11,7 +14,6 @@ import org.tadpoleframework.common.APNUtil;
 import org.tadpoleframework.widget.SwitchButton;
 import org.tadpoleframework.widget.adapter.AdapterCallback;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -54,7 +56,6 @@ import com.itap.voiceemoticon.media.MusicData;
 import com.itap.voiceemoticon.media.MusicPlayer;
 import com.itap.voiceemoticon.third.UmengEvent;
 import com.itap.voiceemoticon.third.WXEntryActivity;
-import com.itap.voiceemoticon.third.WeixinHelper;
 import com.itap.voiceemoticon.util.AndroidUtil;
 import com.itap.voiceemoticon.util.MusicUtil;
 import com.itap.voiceemoticon.weibo.LoginAcountManager;
@@ -67,7 +68,6 @@ import com.sina.weibo.sdk.api.IWeiboHandler;
 import com.umeng.analytics.MobclickAgent;
 //import com.sina.weibo.sdk.api.BaseResponse;
 //import com.sina.weibo.sdk.api.IWeiboHandler;
-import com.weibo.sdk.android.sso.SsoHandler;
 
 public class MainActivity extends SherlockFragmentActivity implements
 		ActionBar.TabListener, ViewPager.OnPageChangeListener,
@@ -256,6 +256,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(VEApplication.TAG, "---->MainActivity onCreate call");
 		super.onCreate(savedInstanceState);
+
 		MobclickAgent.onError(this); // umeng error handle
 		NotificationCenter.getInstance().register(this,
 				NotificationID.N_USERVOICE_MAKE);
@@ -325,6 +326,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 			AppRecommendFragment appRecommendFragment = new AppRecommendFragment(
 					this);
 			viewList.add(appRecommendFragment);
+			SpotManager.getInstance(this).loadSpotAds();
 		}
 
 		mViewPager.setAdapter(new MyPagerAdapter(viewList));
@@ -447,6 +449,8 @@ public class MainActivity extends SherlockFragmentActivity implements
 	// Tab
 	// ----------------------------------------------------------------
 
+	private int mCount = 8;
+
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
@@ -454,6 +458,10 @@ public class MainActivity extends SherlockFragmentActivity implements
 			mFlagPreventCycleInvoke = false;
 			return;
 		}
+		if (( (mCount++) % 10) == 0) {
+			SpotManager.getInstance(this).showSpotAds(this);
+		}
+		
 		mFlagPreventCycleInvoke = true;
 
 		if (null == mViewPager || null == tab)
@@ -605,6 +613,11 @@ public class MainActivity extends SherlockFragmentActivity implements
 		if (null != mDialog) {
 			mDialog.dismiss();
 		}
+
+		super.finish();
+	}
+
+	public void superFinish() {
 		super.finish();
 	}
 

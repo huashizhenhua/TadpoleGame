@@ -137,7 +137,7 @@ public class HttpCaller {
         return result.toString();
     }
 
-    private static String convertStreamToString(InputStream is) {
+    public static String convertStreamToString(InputStream is) {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
