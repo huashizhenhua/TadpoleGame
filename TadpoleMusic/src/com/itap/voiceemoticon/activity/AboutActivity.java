@@ -18,9 +18,6 @@ import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
-import com.umeng.newxp.common.ExchangeConstants;
-import com.umeng.newxp.controller.ExchangeDataService;
-import com.umeng.newxp.view.ExchangeViewManager;
 
 import org.json.JSONObject;
 

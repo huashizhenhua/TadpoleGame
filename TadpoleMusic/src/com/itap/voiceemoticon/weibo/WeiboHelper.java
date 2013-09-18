@@ -19,6 +19,12 @@ import com.itap.voiceemoticon.activity.NotificationCenter;
 import com.itap.voiceemoticon.activity.NotificationID;
 import com.sina.weibo.sdk.WeiboSDK;
 import com.sina.weibo.sdk.api.IWeiboAPI;
+import com.sina.weibo.sdk.api.MusicObject;
+import com.sina.weibo.sdk.api.SendMessageToWeiboRequest;
+import com.sina.weibo.sdk.api.SendMultiMessageToWeiboRequest;
+import com.sina.weibo.sdk.api.TextObject;
+import com.sina.weibo.sdk.api.WeiboMessage;
+import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.WeiboAuthListener;
@@ -93,42 +99,37 @@ public class WeiboHelper {
 		return mListener;
 	}
 
-	public void sendMusic(Activity activity, String musicUrl) {
-		// MusicObject musicObject = new MusicObject();
-		// musicObject.duration = 11;
-		// musicObject.description = musicUrl;
-		// musicObject.identify = musicUrl;
-		// musicObject.dataUrl = musicUrl;
-		// musicObject.dataHdUrl = musicUrl;
-		// musicObject.h5Url = musicUrl;
-		// musicObject.actionUrl = musicUrl;
-		// musicObject.defaultText = musicUrl;
-		// musicObject.title = musicUrl;
-		// musicObject.schema = "";
-		// musicObject.thumbData = new byte[]{};
+	public void sendMusic(Activity activity, String title, String description, String musicUrl) {
+		 MusicObject musicObject = new MusicObject();
+		 musicObject.duration = 11;
+		 musicObject.description = description;
+		 musicObject.title = title;
+		 musicObject.identify = musicUrl;
+		 musicObject.dataUrl = musicUrl;
+		 musicObject.dataHdUrl = musicUrl;
+		 musicObject.h5Url = musicUrl;
+		 musicObject.actionUrl = musicUrl;
+		 musicObject.defaultText = title;
+		 musicObject.schema = musicUrl;
+		 musicObject.thumbData = new byte[]{};
 
-		// TextObject textObject = new TextObject();
-		// textObject.text = "sdfsdfdsfsd";
-		//
-		//
-		// WeiboMessage weiboMessage = new WeiboMessage();
-		// weiboMessage.mediaObject = textObject;
-		//
-		// SendMessageToWeiboRequest req = new SendMessageToWeiboRequest();
-		// req.transaction = String.valueOf(System.currentTimeMillis());
-		// req.message = weiboMessage;
-		//
-		// VEApplication.sWeiboApi.sendRequest(activity, req);
+		 
+		 TextObject textObject = new TextObject();
+		 textObject.text = "分享语音表情：" + title + "(" + description + ")";
+		 
+	     WeiboMultiMessage weiboMessage = new WeiboMultiMessage();		 
+		 weiboMessage.mediaObject = musicObject;
+		 weiboMessage.textObject = textObject;
+		 
+		 SendMultiMessageToWeiboRequest req = new SendMultiMessageToWeiboRequest();
+		 req.transaction = String.valueOf(System.currentTimeMillis());
+		 req.multiMessage = weiboMessage;
+		 
+		 sWeiboApi.sendRequest(activity, req);
 	}
 
 	public boolean isSupportSSO(Activity activity) {
-		SsoHandler ssoHandler = new SsoHandler(activity, mWeibo);
-		return false;
-	}
-
-	public SsoHandler createSsoHandler(Activity activity) {
-		SsoHandler ssoHandler = new SsoHandler(activity, mWeibo);
-		return ssoHandler;
+		return sWeiboApi.isWeiboAppInstalled();
 	}
 
 	private WeakHashMap<Activity, SsoHandler> mSsoMap = new WeakHashMap<Activity, SsoHandler>();
@@ -210,10 +211,12 @@ public class WeiboHelper {
 			ssoHandler.authorize(new WeiboAuthListener() {
 				@Override
 				public void onWeiboException(WeiboException exception) {
+					LoginActivity.start(activity, msg);
 				}
 
 				@Override
 				public void onError(WeiboDialogError error) {
+					LoginActivity.start(activity, msg);
 				}
 
 				@Override

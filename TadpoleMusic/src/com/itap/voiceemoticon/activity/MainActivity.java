@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 import net.youmi.android.AdManager;
 import net.youmi.android.diy.DiyManager;
-import net.youmi.android.smart.SmartBannerManager;
-import net.youmi.android.spot.SpotDialogLinstener;
-import net.youmi.android.spot.SpotManager;
 
 import org.tadpole.view.ViewPager;
 import org.tadpoleframework.app.AlertDialog;
@@ -32,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -66,6 +64,9 @@ import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
 import com.sina.weibo.sdk.api.BaseResponse;
 import com.sina.weibo.sdk.api.IWeiboHandler;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
+import com.umeng.update.UmengUpdateListener;
+import com.umeng.update.UpdateResponse;
 //import com.sina.weibo.sdk.api.BaseResponse;
 //import com.sina.weibo.sdk.api.IWeiboHandler;
 
@@ -257,6 +258,31 @@ public class MainActivity extends SherlockFragmentActivity implements
 		Log.d(VEApplication.TAG, "---->MainActivity onCreate call");
 		super.onCreate(savedInstanceState);
 
+		final Context mContext = this;
+		UmengUpdateAgent.update(this);
+		UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+	        @Override
+	        public void onUpdateReturned(int updateStatus,UpdateResponse updateInfo) {
+	            switch (updateStatus) {
+	            case 0: // has update
+	                UmengUpdateAgent.showUpdateDialog(mContext, updateInfo);
+	                break;
+	            case 1: // has no update
+	                break;
+	            case 2: // none wifi
+	                Toast.makeText(mContext, "没有wifi连接， 只在wifi下更新", Toast.LENGTH_SHORT)
+	                        .show();
+	                break;
+	            case 3: // time out
+	                Toast.makeText(mContext, "超时", Toast.LENGTH_SHORT)
+	                        .show();
+	                break;
+	            }
+	        }
+		});
+		
+		
+		
 		MobclickAgent.onError(this); // umeng error handle
 		NotificationCenter.getInstance().register(this,
 				NotificationID.N_USERVOICE_MAKE);
@@ -326,7 +352,6 @@ public class MainActivity extends SherlockFragmentActivity implements
 			AppRecommendFragment appRecommendFragment = new AppRecommendFragment(
 					this);
 			viewList.add(appRecommendFragment);
-			SpotManager.getInstance(this).loadSpotAds();
 		}
 
 		mViewPager.setAdapter(new MyPagerAdapter(viewList));
@@ -449,7 +474,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 	// Tab
 	// ----------------------------------------------------------------
 
-	private int mCount = 8;
+//	private int mCount = 8;
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
@@ -458,9 +483,9 @@ public class MainActivity extends SherlockFragmentActivity implements
 			mFlagPreventCycleInvoke = false;
 			return;
 		}
-		if (( (mCount++) % 10) == 0) {
-			SpotManager.getInstance(this).showSpotAds(this);
-		}
+//		if (( (mCount++) % 10) == 0) {
+//			SpotManager.getInstance(this).showSpotAds(this);
+//		}
 		
 		mFlagPreventCycleInvoke = true;
 
@@ -600,6 +625,10 @@ public class MainActivity extends SherlockFragmentActivity implements
 		case R.id.friends:
 			MobclickAgent.onEvent(this, UmengEvent.VOICE_SHARE_TO_FRIENDS);
 			obj.sendToFriends(this, isHideTitle);
+			break;
+		case R.id.weibo:
+			MobclickAgent.onEvent(this, UmengEvent.VOICE_SHARE_TO_WEIBO);
+			obj.sendToWeibo(this, isHideTitle);
 			break;
 		default:
 			break;

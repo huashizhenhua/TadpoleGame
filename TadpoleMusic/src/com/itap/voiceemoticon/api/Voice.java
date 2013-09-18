@@ -211,8 +211,13 @@ public class Voice {
 		sendStatisticsUrl(context);
 	}
 
-	public void sendToWeibo(Activity context) {
-		WeiboHelper.getInstance().sendMusic(context, url);
+	public void sendToWeibo(Activity context, boolean isHideTitle) {
+		String toTitle = getTitle(isHideTitle);
+		String toTags = getTags(isHideTitle);
+		
+		// 由于QQ无法直接播放语音，故跳转到页面播放
+		String targetUrl = getPlayHtm(toTitle, toTags, url);
+		WeiboHelper.getInstance().sendMusic(context, toTitle, toTags, targetUrl);
 	}
 
 }

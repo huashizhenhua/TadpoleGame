@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.api.Voice;
-import com.umeng.analytics.i;
 
 /**
  * <br>==========================

@@ -68,7 +68,7 @@
                     android:layout_width="@dimen/tp_list_item_size"
                     android:layout_height="@dimen/tp_list_item_size"
                     android:padding="@dimen/tp_padding_medium"
-                    android:src="@android:drawable/ic_menu_share" />
+                    android:src="@drawable/ic_menu_share" />
 
                 <ImageButton
                     android:id="@+id/btn_collect"
@@ -85,7 +85,7 @@
                     android:layout_height="@dimen/tp_list_item_size"
                     android:background="@color/transparent"
                     android:padding="@dimen/tp_padding_medium"
-                    android:src="@android:drawable/ic_menu_delete"
+                    android:src="@drawable/ic_menu_delete"
                     android:visibility="gone" />
             </LinearLayout>
         </RelativeLayout>
