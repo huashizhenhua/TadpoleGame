@@ -36,6 +36,7 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.itap.voiceemoticon.Feature;
 import com.itap.voiceemoticon.MsgDef;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
@@ -313,11 +314,14 @@ public class MainActivity extends SherlockFragmentActivity implements
 		;
 
 		actionBar.addTab(mTabUserVoice);
+		
 		actionBar.addTab(mTabHostVoice);
 		actionBar.addTab(mTabMyCollection);
 		actionBar.addTab(mTabSearch);
 		if (APNUtil.getMProxyType(this) == APNUtil.PROXYTYPE_WIFI) {
-			actionBar.addTab(mTabAppRecommend);
+		    if(Feature.isYoumi()) {
+		        actionBar.addTab(mTabAppRecommend);
+		    }
 		}
 
 		RelativeLayout container = (RelativeLayout) this
@@ -345,13 +349,15 @@ public class MainActivity extends SherlockFragmentActivity implements
 		viewList.add(searchFragment);
 
 		if (APNUtil.getMProxyType(this) == APNUtil.PROXYTYPE_WIFI) {
-			// 初始化应用的发布ID和密钥，以及设置测试模式
-			AdManager.getInstance(this).init("f4c12ac956d1bdb6",
-					"ebaec11e527854aa", false);
-			DiyManager.initAdObjects(this);
-			AppRecommendFragment appRecommendFragment = new AppRecommendFragment(
-					this);
-			viewList.add(appRecommendFragment);
+		    if(Feature.isYoumi()) {
+    		    // 初始化应用的发布ID和密钥，以及设置测试模式
+    			AdManager.getInstance(this).init("f4c12ac956d1bdb6",
+    					"ebaec11e527854aa", false);
+    			DiyManager.initAdObjects(this);
+    			AppRecommendFragment appRecommendFragment = new AppRecommendFragment(
+    					this);
+    			viewList.add(appRecommendFragment);
+		    }
 		}
 
 		mViewPager.setAdapter(new MyPagerAdapter(viewList));
@@ -517,13 +523,20 @@ public class MainActivity extends SherlockFragmentActivity implements
 	private static final int MENU_ITEM_ID_ABOUT = 1;
 
 	private static final int MENU_ITEM_ID_MAKE_VOICE = 2;
+	
+	private static final int MENU_ITEM_ID_LOGIN = 3;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuItem menuItemMakeVoice = menu.add(0, MENU_ITEM_ID_MAKE_VOICE, 0,
-				"制作语音");
+				"录音");
 		menuItemMakeVoice.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
+		MenuItem menuLogin = menu.add(0, MENU_ITEM_ID_LOGIN, 0,
+                "登录");
+		menuLogin.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+		
 		MenuItem menuItemAbout = menu.add(0, MENU_ITEM_ID_ABOUT, 0, "更多");
 		menuItemAbout.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		return true;
@@ -542,6 +555,9 @@ public class MainActivity extends SherlockFragmentActivity implements
 					.obtain(NotificationID.N_USERVOICE_MAKE);
 			NotificationCenter.getInstance().notify(notification);
 			break;
+		case MENU_ITEM_ID_LOGIN:
+		    WeiboHelper.getInstance().login(this, Message.obtain());
+		    break;
 		default:
 			break;
 		}

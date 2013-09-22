@@ -10,6 +10,7 @@ import com.itap.voiceemoticon.common.GlobalConst;
 import com.itap.voiceemoticon.third.WeixinHelper;
 import com.itap.voiceemoticon.util.AndroidUtil;
 import com.itap.voiceemoticon.weibo.LoginAcountManager;
+import com.itap.voiceemoticon.weibo.WeiboHelper;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
@@ -18,6 +19,7 @@ import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
+import com.weibo.sdk.android.Weibo;
 
 import org.json.JSONObject;
 
@@ -140,6 +142,8 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
             case R.id.friends:
                 new WeixinHelper(this).sendWebpage(title, summary, targetUrl,
                         SendMessageToWX.Req.WXSceneTimeline);
+            case R.id.weibo:
+                WeiboHelper.getInstance().sendMusic(this, title, summary, targetUrl);
                 break;
             default:
                 break;

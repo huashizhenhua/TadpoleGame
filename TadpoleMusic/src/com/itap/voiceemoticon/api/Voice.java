@@ -87,7 +87,7 @@ public class Voice {
 		String targetUrl = getPlayHtm(toTitle, toTags, url);
 		
 		new WeixinHelper(context).sendMusicToWeixin(toTitle,
-				toTags, targetUrl,
+				toTags + "(点击进入页面播放)", url,
 				targetUrl,
 				SendMessageToWX.Req.WXSceneSession);
 		sendStatisticsUrl(context);
@@ -101,7 +101,7 @@ public class Voice {
 		String targetUrl = getPlayHtm(toTitle, toTags, url);	
 		
 		new WeixinHelper(context).sendMusicToWeixin(toTitle,
-				toTags, targetUrl,
+				toTags + "(点击进入页面播放)", url,
 				targetUrl,
 				SendMessageToWX.Req.WXSceneTimeline);
 		sendStatisticsUrl(context);
@@ -180,7 +180,7 @@ public class Voice {
 		Bundle bundle = new Bundle();
 		bundle.putString("title", toTitle);
 		bundle.putString("targetUrl", targetUrl);
-		bundle.putString("summary", toTags);
+		bundle.putString("summary", toTags  + ", 点击进入页面播放");
 		bundle.putString("site", targetUrl);
 		bundle.putString("appName", GlobalConst.SHARE_APP_NAME + "100497165");
 

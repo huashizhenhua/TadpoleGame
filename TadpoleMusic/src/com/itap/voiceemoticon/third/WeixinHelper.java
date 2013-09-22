@@ -2,7 +2,9 @@
 package com.itap.voiceemoticon.third;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 
+import com.itap.voiceemoticon.R;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -10,6 +12,8 @@ import com.tencent.mm.sdk.openapi.WXAppExtendObject;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXMusicObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
+
+import org.tadpoleframework.widget.image.BitmapHelper;
 
 public class WeixinHelper {
     public final static String APP_ID = "wx21df18dbb520d624";
@@ -63,6 +67,7 @@ public class WeixinHelper {
         msg.mediaObject = musicObj;
         msg.description = description;
         msg.title = title;
+        msg.thumbData = BitmapHelper.bmpToByteArray(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.icon), true);
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.scene = scene;

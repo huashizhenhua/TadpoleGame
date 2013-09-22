@@ -1,8 +1,6 @@
 
 package com.itap.voiceemoticon.activity.fragment;
 
-import net.youmi.android.banner.AdSize;
-import net.youmi.android.banner.AdView;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 
+import com.google.ads.AdRequest;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.activity.INotify;
@@ -31,6 +30,8 @@ public class HotVoiceFragment extends BaseFragment implements INotify{
     private VoiceAdapter mVoiceAdapter;
 
     private MainActivity mActivity;
+    
+    private String GOOGLE_AD_ID = "a1520506c5f2244";
 
     public HotVoiceFragment(MainActivity activity) {
         mActivity = activity;
@@ -45,12 +46,16 @@ public class HotVoiceFragment extends BaseFragment implements INotify{
     	LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     	lp.gravity = Gravity.CENTER_HORIZONTAL;
     	
-    	// 实例化广告条g
-        AdView adView = new AdView(mActivity, AdSize.SIZE_320x50);
+    	/*
+        net.youmi.android.banner.AdView adView = new net.youmi.android.banner.AdView(mActivity, net.youmi.android.banner.AdSize.SIZE_320x50);
         adView.setLayoutParams(lp);
         layout.addView(adView);
+        */
         
-    	
+        com.google.ads.AdView goodAdv = new com.google.ads.AdView(mActivity, com.google.ads.AdSize.BANNER, GOOGLE_AD_ID);
+        layout.addView(goodAdv);
+        goodAdv.loadAd(new AdRequest());
+        
         mListView = new PageListView<Voice>(mActivity) {
             @Override
             public PageList<Voice> onLoadPageList(int startIndex, int maxResult) {
