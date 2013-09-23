@@ -1,5 +1,5 @@
 package com.itap.voiceemoticon.weibo;
-public class LoginAccount {
+public class WeiboLoginAccount {
     public long uid;
 
     public String token;

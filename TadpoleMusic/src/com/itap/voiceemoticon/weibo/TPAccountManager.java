@@ -20,10 +20,8 @@ import com.itap.voiceemoticon.activity.NotificationID;
 import com.sina.weibo.sdk.WeiboSDK;
 import com.sina.weibo.sdk.api.IWeiboAPI;
 import com.sina.weibo.sdk.api.MusicObject;
-import com.sina.weibo.sdk.api.SendMessageToWeiboRequest;
 import com.sina.weibo.sdk.api.SendMultiMessageToWeiboRequest;
 import com.sina.weibo.sdk.api.TextObject;
-import com.sina.weibo.sdk.api.WeiboMessage;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
@@ -32,7 +30,7 @@ import com.weibo.sdk.android.WeiboDialogError;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.sso.SsoHandler;
 
-public class WeiboHelper {
+public class TPAccountManager {
 
 	private static final String TAG = "WeiboHelper";
 
@@ -54,37 +52,37 @@ public class WeiboHelper {
 
 	private Context mContext;
 
-	private static WeiboHelper sInstance = null;
+	private static TPAccountManager sInstance = null;
 
 	public static void init(Context context) {
-		sInstance = new WeiboHelper(context);
+		sInstance = new TPAccountManager(context);
 	}
 
-	public static WeiboHelper getInstance() {
+	public static TPAccountManager getInstance() {
 		return sInstance;
 	}
 
-	public static VEAccount getVEAccount() {
-		LoginAccount loginAccount = LoginAcountManager.getInstance()
+	public static TPAccount getVEAccount() {
+		WeiboLoginAccount loginAccount = WeiboLoginAcountManager.getInstance()
 				.getLastLoginAccount();
 		
 		if(null == loginAccount) {
 			return null;
 					
 		}
-		VEAccount account = new VEAccount();
+		TPAccount account = new TPAccount();
 		account.uid = String.valueOf(loginAccount.uid);
-		account.platform = VEAccount.PLATFORM_WEIBO;
+		account.platform = TPAccount.PLATFORM_WEIBO;
 		return account;
 	}
 	
 	public boolean isLogin() {
-	    return LoginAcountManager.getInstance().isLogin();
+	    return WeiboLoginAcountManager.getInstance().isLogin();
 	}
 
-	private WeiboHelper(Context context) {
+	private TPAccountManager(Context context) {
 		// 1 初始化SDK
-		sWeiboApi = WeiboSDK.createWeiboAPI(context, WeiboHelper.APP_KEY);
+		sWeiboApi = WeiboSDK.createWeiboAPI(context, TPAccountManager.APP_KEY);
 		// 2 注册到新浪微博
 		sWeiboApi.registerApp();
 
@@ -142,6 +140,35 @@ public class WeiboHelper {
 		System.out.println("getToken = " + token);
 		return token;
 	}
+	
+	public void login(final Activity activity, final Message msg) {
+		if (isSupportSSO(activity)) {
+			SsoHandler ssoHandler = new SsoHandler(activity, mWeibo);
+			ssoHandler.authorize(new WeiboAuthListener() {
+				@Override
+				public void onWeiboException(WeiboException exception) {
+					LoginActivity.start(activity, msg);
+				}
+
+				@Override
+				public void onError(WeiboDialogError error) {
+					LoginActivity.start(activity, msg);
+				}
+
+				@Override
+				public void onComplete(Bundle values) {
+					weiboLoginFinish(values, msg);
+				}
+
+				@Override
+				public void onCancel() {
+				}
+			});
+			mSsoMap.put(activity, ssoHandler);
+		} else {
+			LoginActivity.start(activity, msg);
+		}
+	}
 
 	public void weiboLoginFinish(final Bundle values, final Object tag) {
 		final Message msg = (Message) tag;
@@ -187,17 +214,22 @@ public class WeiboHelper {
 			}
 		}
 	}
+	
+	public void logout() {
+		WeiboLoginAcountManager.getInstance().logout();
+		NotificationCenter.obtain(NotificationID.N_LOGOUT);
+	}
 
-	public void saveAccount(Oauth2AccessToken token) {
+	private void saveAccount(Oauth2AccessToken token) {
 		VEApplication.setSinaToken(token);
 		User user;
 		try {
 			user = Account.getUserPreferCache(token);
-			LoginAccount loginAccount = new LoginAccount();
+			WeiboLoginAccount loginAccount = new WeiboLoginAccount();
 			loginAccount.uid = user.id;
 			loginAccount.token = token.getToken();
 			loginAccount.expiresTime = token.getExpiresTime();
-			LoginAcountManager.getInstance().addOrUpdateLoginAcount(
+			WeiboLoginAcountManager.getInstance().addOrUpdateLoginAcount(
 					loginAccount);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -205,40 +237,10 @@ public class WeiboHelper {
 
 	}
 
-	public void login(final Activity activity, final Message msg) {
-		if (isSupportSSO(activity)) {
-			SsoHandler ssoHandler = new SsoHandler(activity, mWeibo);
-			ssoHandler.authorize(new WeiboAuthListener() {
-				@Override
-				public void onWeiboException(WeiboException exception) {
-					LoginActivity.start(activity, msg);
-				}
-
-				@Override
-				public void onError(WeiboDialogError error) {
-					LoginActivity.start(activity, msg);
-				}
-
-				@Override
-				public void onComplete(Bundle values) {
-					weiboLoginFinish(values, msg);
-				}
-
-				@Override
-				public void onCancel() {
-				}
-			});
-			mSsoMap.put(activity, ssoHandler);
-		} else {
-			LoginActivity.start(activity, msg);
-		}
-	}
-
 	public void callback(Activity activity, int requestCode, int resultCode,
 			Intent data) {
 		final WeakHashMap<Activity, SsoHandler> map = mSsoMap;
 		SsoHandler handler = map.get(activity);
-
 		System.out.println("handler = " + handler);
 		if (null == handler) {
 			return;

@@ -6,8 +6,8 @@ import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.api.VEResponse;
 import com.itap.voiceemoticon.db.UserVoiceModel;
 import com.itap.voiceemoticon.util.HttpManager;
-import com.itap.voiceemoticon.weibo.VEAccount;
-import com.itap.voiceemoticon.weibo.WeiboHelper;
+import com.itap.voiceemoticon.weibo.TPAccount;
+import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.pocketdigi.utils.FLameUtils;
 
 import org.tadpoleframework.app.AlertDialog;
@@ -255,7 +255,7 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         new Thread(new Runnable() {
             @Override
             public void run() {
-            	VEAccount veAccount = WeiboHelper.getInstance().getVEAccount();
+            	TPAccount veAccount = TPAccountManager.getInstance().getVEAccount();
             	
                 // 通过Map构造器传参
                 HashMap<String, String> params = new HashMap<String, String>();

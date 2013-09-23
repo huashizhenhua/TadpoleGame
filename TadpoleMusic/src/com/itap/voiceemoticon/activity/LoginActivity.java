@@ -15,11 +15,11 @@ import com.itap.voiceemoticon.MsgDef;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.weibo.Account;
-import com.itap.voiceemoticon.weibo.LoginAccount;
-import com.itap.voiceemoticon.weibo.LoginAcountManager;
+import com.itap.voiceemoticon.weibo.WeiboLoginAccount;
+import com.itap.voiceemoticon.weibo.WeiboLoginAcountManager;
 import com.itap.voiceemoticon.weibo.User;
 import com.itap.voiceemoticon.weibo.IWeiboLoginListener;
-import com.itap.voiceemoticon.weibo.WeiboHelper;
+import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.itap.voiceemoticon.weibo.WeiboLoginWebView;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.WeiboException;
@@ -131,7 +131,7 @@ public class LoginActivity extends FragmentActivity {
 		mMessage = (Message) intent.getParcelableExtra(KEY_MESSAGE);
 
 		if (mToken == null) {
-			mToken = LoginAcountManager.getInstance().getLastLoginAccessToken();
+			mToken = WeiboLoginAcountManager.getInstance().getLastLoginAccessToken();
 		}
 
 		if (autoLogin && null != mToken && mToken.isSessionValid()) {

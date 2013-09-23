@@ -17,7 +17,7 @@ import com.weibo.sdk.android.Oauth2AccessToken;
  * 
  * @author xiaowei6@staff.sina.com.cn
  */
-public class LoginAcountManager {
+public class WeiboLoginAcountManager {
 
 	private static final String PREFERENCES_NAME = "com_weibo_sdk_android";
 
@@ -25,14 +25,14 @@ public class LoginAcountManager {
 
 	private static Context sContext;
 
-	private static LoginAcountManager mMgr = null;
+	private static WeiboLoginAcountManager mMgr = null;
 
-	public LoginAcountManager() {
+	public WeiboLoginAcountManager() {
 	}
 
-	public static LoginAcountManager getInstance() {
+	public static WeiboLoginAcountManager getInstance() {
 		if (null == mMgr) {
-			mMgr = new LoginAcountManager();
+			mMgr = new WeiboLoginAcountManager();
 		}
 		return mMgr;
 	}
@@ -50,7 +50,7 @@ public class LoginAcountManager {
 	}
 	
 	public void logout() {
-		LoginAccount loginAccount = getLastLoginAccount();
+		WeiboLoginAccount loginAccount = getLastLoginAccount();
 		if (null != loginAccount) {
 			delete(loginAccount);
 		}
@@ -64,8 +64,8 @@ public class LoginAcountManager {
 	 */
 	public Oauth2AccessToken getLastLoginAccessToken() {
 		Oauth2AccessToken token = null;
-		ArrayList<LoginAccount> list = getLoginAccountList();
-		for (LoginAccount item : list) {
+		ArrayList<WeiboLoginAccount> list = getLoginAccountList();
+		for (WeiboLoginAccount item : list) {
 			if (item.lastLogin) {
 				token = new Oauth2AccessToken();
 				token.setExpiresTime(item.expiresTime);
@@ -76,9 +76,9 @@ public class LoginAcountManager {
 		return token;
 	}
 	
-	public LoginAccount getLastLoginAccount() {
-		ArrayList<LoginAccount> list = getLoginAccountList();
-		for (LoginAccount item : list) {
+	public WeiboLoginAccount getLastLoginAccount() {
+		ArrayList<WeiboLoginAccount> list = getLoginAccountList();
+		for (WeiboLoginAccount item : list) {
 			if (item.lastLogin) {
 				return item;
 			}
@@ -86,14 +86,14 @@ public class LoginAcountManager {
 		return null;
 	}
 
-	public void delete(LoginAccount loginAccount) {
+	public void delete(WeiboLoginAccount loginAccount) {
 		if (null == loginAccount) {
 			return;
 		}
 
-		ArrayList<LoginAccount> list = getLoginAccountList();
-		LoginAccount itemToDel = null;
-		for (LoginAccount item : list) {
+		ArrayList<WeiboLoginAccount> list = getLoginAccountList();
+		WeiboLoginAccount itemToDel = null;
+		for (WeiboLoginAccount item : list) {
 			if (null != item && item.uid == loginAccount.uid) {
 				itemToDel = item;
 				break;
@@ -109,7 +109,7 @@ public class LoginAcountManager {
 		return;
 	}
 
-	public void addOrUpdateLoginAcount(LoginAccount loginAccount) {
+	public void addOrUpdateLoginAcount(WeiboLoginAccount loginAccount) {
 		if (null == loginAccount) {
 			return;
 		}
@@ -120,9 +120,9 @@ public class LoginAcountManager {
 			loginAccount.createAt = System.currentTimeMillis();
 		}
 
-		ArrayList<LoginAccount> list = getLoginAccountList();
+		ArrayList<WeiboLoginAccount> list = getLoginAccountList();
 		boolean isUpdated = false;
-		for (LoginAccount item : list) {
+		for (WeiboLoginAccount item : list) {
 			if (item.uid == loginAccount.uid) {
 				item.lastLogin = loginAccount.lastLogin;
 				item.expiresTime = loginAccount.expiresTime;
@@ -157,21 +157,21 @@ public class LoginAcountManager {
 		editor.commit();
 	}
 
-	public void saveLoginAccountList(ArrayList<LoginAccount> list) {
+	public void saveLoginAccountList(ArrayList<WeiboLoginAccount> list) {
 		JSONArray jsonArr = JSONUtil.convertToJSONArray(list,
-				LoginAccount.class);
+				WeiboLoginAccount.class);
 		writeString(KEY_LOGIN_ACOUNTS, jsonArr.toString());
 	}
 
-	public ArrayList<LoginAccount> getLoginAccountList() {
-		ArrayList<LoginAccount> list = new ArrayList<LoginAccount>();
+	public ArrayList<WeiboLoginAccount> getLoginAccountList() {
+		ArrayList<WeiboLoginAccount> list = new ArrayList<WeiboLoginAccount>();
 		String loginAccountsJsonStr = readString(KEY_LOGIN_ACOUNTS);
 		System.out.println("loginAccountsJsonStr = " + loginAccountsJsonStr);
 
 		if (StringUtil.isBlank(loginAccountsJsonStr)) {
 			return list;
 		}
-		list = JSONUtil.convertToList(loginAccountsJsonStr, LoginAccount.class);
+		list = JSONUtil.convertToList(loginAccountsJsonStr, WeiboLoginAccount.class);
 		return list;
 	}
 

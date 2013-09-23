@@ -19,7 +19,7 @@ import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.common.GlobalConst;
 import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.third.WeixinHelper;
-import com.itap.voiceemoticon.weibo.WeiboHelper;
+import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -217,7 +217,7 @@ public class Voice {
 		
 		// 由于QQ无法直接播放语音，故跳转到页面播放
 		String targetUrl = getPlayHtm(toTitle, toTags, url);
-		WeiboHelper.getInstance().sendMusic(context, toTitle, toTags, targetUrl);
+		TPAccountManager.getInstance().sendMusic(context, toTitle, toTags, targetUrl);
 	}
 
 }

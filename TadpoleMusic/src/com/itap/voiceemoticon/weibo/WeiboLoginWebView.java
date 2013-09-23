@@ -121,7 +121,7 @@ public class WeiboLoginWebView extends TadpoleWebView {
 
 	private void handleRedirectUrl(WebView view, String url) {
 		Bundle values = Utility.parseUrl(url);
-		WeiboHelper.getInstance().weiboLoginFinish(values, mTag);
+		TPAccountManager.getInstance().weiboLoginFinish(values, mTag);
 	}
 
 	public void login() {
@@ -136,7 +136,7 @@ public class WeiboLoginWebView extends TadpoleWebView {
 		CookieManager cookieManager = CookieManager.getInstance();
 		cookieManager.removeAllCookie();
 
-		Oauth2AccessToken token = LoginAcountManager.getInstance()
+		Oauth2AccessToken token = WeiboLoginAcountManager.getInstance()
 				.getLastLoginAccessToken();
 
 		System.out.println("accessToken = " + token);
