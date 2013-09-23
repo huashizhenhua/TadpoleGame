@@ -132,9 +132,9 @@ public class WeiboLoginWebView extends TadpoleWebView {
 		parameters.add("redirect_uri", WeiboConfig.REDIRECT_URL);
 		parameters.add("display", "mobile");
 
-//		CookieSyncManager.createInstance(getContext());
-//		CookieManager cookieManager = CookieManager.getInstance();
-//		cookieManager.removeAllCookie();
+		CookieSyncManager.createInstance(getContext());
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.removeAllCookie();
 
 		Oauth2AccessToken token = LoginAcountManager.getInstance()
 				.getLastLoginAccessToken();
