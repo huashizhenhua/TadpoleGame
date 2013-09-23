@@ -19,8 +19,8 @@ import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.db.VoiceDao;
 import com.itap.voiceemoticon.media.MusicPlayer;
 import com.itap.voiceemoticon.third.WeixinHelper;
-import com.itap.voiceemoticon.weibo.LoginAcountManager;
-import com.itap.voiceemoticon.weibo.WeiboHelper;
+import com.itap.voiceemoticon.weibo.WeiboLoginAcountManager;
+import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.itap.voiceemoticon.weibo.WeiboLoginListener;
 import com.tencent.tauth.Tencent;
 import com.weibo.sdk.android.Oauth2AccessToken;
@@ -58,8 +58,8 @@ public class VEApplication extends Application {
 		sPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 		sContext = this;
 
-		LoginAcountManager.init(this);
-		WeiboHelper.init(this);
+		WeiboLoginAcountManager.init(this);
+		TPAccountManager.init(this);
 
 		ForegroundThread.startRun();
 	}

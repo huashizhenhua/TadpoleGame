@@ -9,8 +9,8 @@ import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.common.GlobalConst;
 import com.itap.voiceemoticon.third.WeixinHelper;
 import com.itap.voiceemoticon.util.AndroidUtil;
-import com.itap.voiceemoticon.weibo.LoginAcountManager;
-import com.itap.voiceemoticon.weibo.WeiboHelper;
+import com.itap.voiceemoticon.weibo.WeiboLoginAcountManager;
+import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
@@ -51,7 +51,7 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
     }
 	
 	private void initLogoutBtn() {
-		if (LoginAcountManager.getInstance().isLogin()) {
+		if (WeiboLoginAcountManager.getInstance().isLogin()) {
         	mView.setVisibility(View.VISIBLE);
         } else {
         	mView.setVisibility(View.GONE);
@@ -90,7 +90,7 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
                 AndroidUtil.scoreApp(this);
                 break;
             case R.id.btn_logout:
-            	LoginAcountManager.getInstance().logout();
+            	TPAccountManager.getInstance().logout();
             	initLogoutBtn();
             default:
                 break;
@@ -143,7 +143,7 @@ public class AboutActivity extends SherlockFragmentActivity implements View.OnCl
                 new WeixinHelper(this).sendWebpage(title, summary, targetUrl,
                         SendMessageToWX.Req.WXSceneTimeline);
             case R.id.weibo:
-                WeiboHelper.getInstance().sendMusic(this, title, summary, targetUrl);
+                TPAccountManager.getInstance().sendMusic(this, title, summary, targetUrl);
                 break;
             default:
                 break;

@@ -57,8 +57,8 @@ import com.itap.voiceemoticon.third.UmengEvent;
 import com.itap.voiceemoticon.third.WXEntryActivity;
 import com.itap.voiceemoticon.util.AndroidUtil;
 import com.itap.voiceemoticon.util.MusicUtil;
-import com.itap.voiceemoticon.weibo.LoginAcountManager;
-import com.itap.voiceemoticon.weibo.WeiboHelper;
+import com.itap.voiceemoticon.weibo.WeiboLoginAcountManager;
+import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
@@ -532,9 +532,9 @@ public class MainActivity extends SherlockFragmentActivity implements
 				"录音");
 		menuItemMakeVoice.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-		MenuItem menuLogin = menu.add(0, MENU_ITEM_ID_LOGIN, 0,
-                "登录");
-		menuLogin.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//		MenuItem menuLogin = menu.add(0, MENU_ITEM_ID_LOGIN, 0,
+//                "登录");
+//		menuLogin.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		
 		MenuItem menuItemAbout = menu.add(0, MENU_ITEM_ID_ABOUT, 0, "更多");
@@ -556,7 +556,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 			NotificationCenter.getInstance().notify(notification);
 			break;
 		case MENU_ITEM_ID_LOGIN:
-		    WeiboHelper.getInstance().login(this, Message.obtain());
+		    TPAccountManager.getInstance().login(this, Message.obtain());
 		    break;
 		default:
 			break;
@@ -677,7 +677,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 
 		System.out.println("onActivityResult = requestCode  = " + requestCode);
 
-		WeiboHelper.getInstance().callback(this, requestCode, resultCode,
+		TPAccountManager.getInstance().callback(this, requestCode, resultCode,
 				intent);
 	}
 
@@ -686,7 +686,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 	@Override
 	public void notify(Notification notification) {
 		if (notification.id == NotificationID.N_USERVOICE_MAKE) {
-			if (LoginAcountManager.getInstance().isLogin()) {
+			if (WeiboLoginAcountManager.getInstance().isLogin()) {
 				try {
 					mDialog = new UserVoiceMakeDialog(this);
 					mDialog.show();
@@ -696,7 +696,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 			} else {
 				Message msg = Message.obtain();
 				msg.what = MsgDef.MSG_USER_MAKE_DIALOG;
-				WeiboHelper.getInstance().login(this, msg);
+				TPAccountManager.getInstance().login(this, msg);
 			}
 		}
 	}

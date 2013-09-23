@@ -24,8 +24,8 @@ import com.itap.voiceemoticon.api.VoiceEmoticonApi;
 import com.itap.voiceemoticon.common.ConstValues;
 import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.util.HttpManager;
-import com.itap.voiceemoticon.weibo.VEAccount;
-import com.itap.voiceemoticon.weibo.WeiboHelper;
+import com.itap.voiceemoticon.weibo.TPAccount;
+import com.itap.voiceemoticon.weibo.TPAccountManager;
 
 public class VoiceEmoticonApiImpl implements VoiceEmoticonApi {
 

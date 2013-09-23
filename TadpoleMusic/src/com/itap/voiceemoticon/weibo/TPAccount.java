@@ -7,7 +7,7 @@ package com.itap.voiceemoticon.weibo;
  * @author chenzh
  *
  */
-public class VEAccount {
+public class TPAccount {
 	
 	public static final String PLATFORM_WEIBO = "weibo";
 	

@@ -8,10 +8,15 @@ import org.tadpoleframework.thread.ForegroundThread;
 import org.tadpoleframework.widget.PageListView;
 import org.tadpoleframework.widget.adapter.AdapterCallback;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -31,9 +36,9 @@ import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
 import com.itap.voiceemoticon.util.StringUtil;
-import com.itap.voiceemoticon.weibo.LoginAcountManager;
-import com.itap.voiceemoticon.weibo.VEAccount;
-import com.itap.voiceemoticon.weibo.WeiboHelper;
+import com.itap.voiceemoticon.weibo.WeiboLoginAcountManager;
+import com.itap.voiceemoticon.weibo.TPAccount;
+import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.itap.voiceemoticon.widget.SegmentBar;
 
 /**
@@ -45,9 +50,13 @@ import com.itap.voiceemoticon.widget.SegmentBar;
  * =========================
  */
 public class UserVoiceFragment extends BaseFragment implements INotify,
-		AdapterCallback<Voice> {
+		AdapterCallback<Voice>, OnClickListener {
 
 	private PageListView<Voice> mListView;
+	
+	
+	private View mViewLogin;
+	private Button mBtnLogin;
 
 	private SegmentBar mSegmentBar;
 
@@ -92,6 +101,9 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 						item.title);
 			}
 		});
+		
+		mViewLogin = view.findViewById(R.id.login);
+		mBtnLogin = (Button) view.findViewById(R.id.btn_login);
 
 		mVoiceAdapter = new MyCollectAdapter(mActivity);
 		mVoiceAdapter.setListView(mListView.getRefreshableView());
@@ -121,11 +133,21 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 				});
 		
 		
-		if (WeiboHelper.getInstance().isLogin()) {
-			loadData();
+		// state login
+		if (TPAccountManager.getInstance().isLogin()) {
+			mViewLogin.setVisibility(View.GONE);
+			mListView.firePullDownToRefresh();
+		} 
+		
+		// state unlogin
+		else {
+			mViewLogin.setVisibility(View.VISIBLE);
+			mBtnLogin.setOnClickListener(this);
 		}
 		return view;
 	}
+	
+	
 
 	/**
 	 * comparator that use the first letter ofr Chinese pinyin
@@ -148,11 +170,11 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 	};
 
 	private void loadData() {
-		if(false == WeiboHelper.getInstance().isLogin()) {
+		if(false == TPAccountManager.getInstance().isLogin()) {
 			return;
 		}
 		
-		VEAccount curAccount = WeiboHelper.getVEAccount();
+		TPAccount curAccount = TPAccountManager.getVEAccount();
 		String appUid = curAccount.platform + curAccount.uid;
 		mUserVoiceModel = new UserVoiceModel(mActivity, appUid);
 		
@@ -179,14 +201,14 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 	}
 	
 	private void loadDataFromRemote() {
-		if(false == WeiboHelper.getInstance().isLogin()) {
+		if(false == TPAccountManager.getInstance().isLogin()) {
 			return;
 		}
 		
 		ForegroundThread.sHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				VEAccount curAccount = WeiboHelper.getVEAccount();
+				TPAccount curAccount = TPAccountManager.getVEAccount();
 				String appUid = curAccount.platform + curAccount.uid;
 				UserVoiceModel userVoiceModel = new UserVoiceModel(mActivity, appUid);
 				
@@ -227,10 +249,11 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 	@Override
 	public void notify(Notification notification) {
 		if (notification.id == NotificationID.N_USERVOICE_MODEL_SAVE) {
-			loadDataFromRemote();
+			mListView.firePullDownToRefresh();
 		}
 		if (notification.id == NotificationID.N_LOGIN_FINISH) {
-			loadDataFromRemote();
+			mViewLogin.setVisibility(View.GONE);
+			mListView.firePullDownToRefresh();
 		}
 	}
 
@@ -265,5 +288,12 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 		}
 
 		mActivity.onCommand(view, obj, command, position);
+	}
+
+	@Override
+	public void onClick(View v) {
+		if (v.getId() == R.id.btn_login) {
+			TPAccountManager.getInstance().login(mActivity, Message.obtain());
+		}
 	}
 }
