@@ -255,6 +255,9 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         new Thread(new Runnable() {
             @Override
             public void run() {
+                
+                VEApplication.toast("您录制的语音正在上传至服务器");
+                
             	TPAccount veAccount = TPAccountManager.getInstance().getVEAccount();
             	
                 // 通过Map构造器传参
@@ -274,9 +277,9 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
                     VEResponse vResp =  VEResponse.buildFromJSONString(result);
                     if (vResp.isSuccess()) {
                         mUrl = vResp.data.optString("url");
-                        
                         System.out.println("saveVoice url = " + mUrl);
                         userVoiceModel.saveVoice(title, mTmpFileNameMp3, mUrl);
+                        VEApplication.toast("语音上传成功");
                     } else {
                     	System.out.println("vResp.msg = " + vResp.msg);
                     	VEApplication.toast(vResp.msg);

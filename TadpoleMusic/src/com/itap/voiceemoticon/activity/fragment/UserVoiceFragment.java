@@ -54,6 +54,7 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 
 	private PageListView<Voice> mListView;
 	
+	private boolean mFirstLoad = true;
 	
 	private View mViewLogin;
 	private Button mBtnLogin;
@@ -115,7 +116,7 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 		mListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2() {
 			@Override
 			public void onPullDownToRefresh(PullToRefreshBase refreshView) {
-				loadDataFromRemote();
+		        loadDataFromRemote();
 			}
 			@Override
 			public void onPullUpToRefresh(PullToRefreshBase refreshView) {
@@ -212,22 +213,35 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 				String appUid = curAccount.platform + curAccount.uid;
 				UserVoiceModel userVoiceModel = new UserVoiceModel(mActivity, appUid);
 				
-				ArrayList<UserVoice> userVoiceList = VEApplication.getVoiceEmoticonApi().getList(curAccount.uid, curAccount.platform);
-				System.out.println("loadDataFromRemote = " + userVoiceList);
-				
-				Voice voice = null;
-				ArrayList<Voice> voiceList = new ArrayList<Voice>();
-				for (UserVoice item : userVoiceList) {
-					voice = new Voice();
-					voice.title = item.title;
-					voice.url = item.url;
-					voice.localPlayPath = item.path;
-					voiceList.add(voice);
-					Collections.sort(voiceList, myCollectCommparator);
-					userVoiceModel.add(item);
+				boolean needLoadFromRemote = true;
+				ArrayList<UserVoice> userVoiceList = null;
+				// 第一次加载, 尝试使用磁盘缓存
+				if (mFirstLoad) {
+				    mFirstLoad = false;
+				    userVoiceList = userVoiceModel.getAll();
+	                if (userVoiceList != null && userVoiceList.size() != 0) {
+	                    userVoiceList = new ArrayList<UserVoice>(userVoiceList);
+	                    needLoadFromRemote = false;
+	                }
 				}
-				postSetList(voiceList);
 				
+				if (needLoadFromRemote) {
+				    userVoiceList = VEApplication.getVoiceEmoticonApi().getList(curAccount.uid, curAccount.platform);
+//				    System.out.println("loadDataFromRemote = " + userVoiceList);
+				}
+	                   
+                Voice voice = null;
+                ArrayList<Voice> voiceList = new ArrayList<Voice>();
+                for (UserVoice item : userVoiceList) {
+                    voice = new Voice();
+                    voice.title = item.title;
+                    voice.url = item.url;
+                    voice.localPlayPath = item.path;
+                    voiceList.add(voice);
+                    Collections.sort(voiceList, myCollectCommparator);
+                    userVoiceModel.add(item);
+                }
+                postSetList(voiceList);
 			}
 		});
 	}

@@ -1,7 +1,6 @@
 
 package com.itap.voiceemoticon.activity.fragment;
 
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -9,10 +8,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.RelativeLayout;
 
 import com.google.ads.AdRequest;
-import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
 import com.itap.voiceemoticon.activity.INotify;
 import com.itap.voiceemoticon.activity.MainActivity;

@@ -94,7 +94,7 @@ public class WeiboLoginWebView extends TadpoleWebView {
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			Log.d(TAG, "onPageStarted URL: " + url);
-			if (url.startsWith(WeiboConfig.REDIRECT_URL)) {
+			if (url.startsWith(TPAccountManager.REDIRECT_URL)) {
 				handleRedirectUrl(view, url);
 				view.stopLoading();
 				return;
@@ -127,9 +127,9 @@ public class WeiboLoginWebView extends TadpoleWebView {
 	public void login() {
 		Context context = getContext();
 		WeiboParameters parameters = new WeiboParameters();
-		parameters.add("client_id", WeiboConfig.CONSUMER_KEY);
+		parameters.add("client_id", TPAccountManager.APP_KEY);
 		parameters.add("response_type", "token");
-		parameters.add("redirect_uri", WeiboConfig.REDIRECT_URL);
+		parameters.add("redirect_uri", TPAccountManager.REDIRECT_URL);
 		parameters.add("display", "mobile");
 
 		CookieSyncManager.createInstance(getContext());

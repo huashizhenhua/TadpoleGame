@@ -180,7 +180,7 @@ public class Voice {
 		Bundle bundle = new Bundle();
 		bundle.putString("title", toTitle);
 		bundle.putString("targetUrl", targetUrl);
-		bundle.putString("summary", toTags  + ", 点击进入页面播放");
+		bundle.putString("summary", toTags  + "(点击进入页面播放)");
 		bundle.putString("site", targetUrl);
 		bundle.putString("appName", GlobalConst.SHARE_APP_NAME + "100497165");
 
