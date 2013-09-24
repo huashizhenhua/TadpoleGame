@@ -128,9 +128,12 @@ public class WeiboLoginWebView extends TadpoleWebView {
 		Context context = getContext();
 		WeiboParameters parameters = new WeiboParameters();
 		parameters.add("client_id", TPAccountManager.APP_KEY);
-		parameters.add("response_type", "token");
+		parameters.add("response_type", "code");
 		parameters.add("redirect_uri", TPAccountManager.REDIRECT_URL);
 		parameters.add("display", "mobile");
+		parameters.add("scope", "");
+		parameters.add("packagename", context.getPackageName());
+		parameters.add("key_hash", com.weibo.sdk.android.util.Utility.getSign(context, context.getPackageName()));
 
 		CookieSyncManager.createInstance(getContext());
 		CookieManager cookieManager = CookieManager.getInstance();

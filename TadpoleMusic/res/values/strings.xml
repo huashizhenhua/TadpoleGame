@@ -31,7 +31,7 @@
     <string name="about_share_to_friend">推荐给好友</string>
     <string name="about_for_score">为语音表情打分</string>
     <string name="about_logout">退出当前帐号</string>
-	<string name="about_version">语音表情v1.0.2</string>
+	<string name="about_version">语音表情v1.1.0</string>
 	<string name="about_app_download">更多应用</string>
 
 </resources>
