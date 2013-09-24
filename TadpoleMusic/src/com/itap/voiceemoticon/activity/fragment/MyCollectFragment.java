@@ -14,7 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -30,6 +32,7 @@ import com.itap.voiceemoticon.adapter.MyCollectAdapter;
 import com.itap.voiceemoticon.api.PageList;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.db.DaoFactory;
+import com.itap.voiceemoticon.profit.GoogleAdmob;
 import com.itap.voiceemoticon.widget.SegmentBar;
 
 /**
@@ -59,6 +62,8 @@ public class MyCollectFragment extends BaseFragment implements INotify{
 
     public View onCreateView(LayoutInflater inflater) {
     	NotificationCenter.getInstance().register(this, NotificationID.N_MY_COLLECT_CHANGE);
+    	
+    	LinearLayout layout = GoogleAdmob.createLayoutWithAd(mActivity);
     	
         View view = inflater.inflate(R.layout.tab_my_collect, null);
         mListView = (PageListView) view.findViewById(R.id.list_view_my_collect);
@@ -93,7 +98,10 @@ public class MyCollectFragment extends BaseFragment implements INotify{
         });
 
         loadData();
-        return view;
+        
+        view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        layout.addView(view);
+        return layout;
     }
 
     /**

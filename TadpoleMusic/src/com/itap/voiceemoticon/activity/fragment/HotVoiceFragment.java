@@ -22,6 +22,7 @@ import com.itap.voiceemoticon.activity.NotificationID;
 import com.itap.voiceemoticon.adapter.VoiceAdapter;
 import com.itap.voiceemoticon.api.PageList;
 import com.itap.voiceemoticon.api.Voice;
+import com.itap.voiceemoticon.profit.GoogleAdmob;
 import com.itap.voiceemoticon.widget.PageListView;
 
 public class HotVoiceFragment extends BaseFragment implements INotify{
@@ -31,7 +32,6 @@ public class HotVoiceFragment extends BaseFragment implements INotify{
 
     private MainActivity mActivity;
     
-    private String GOOGLE_AD_ID = "a1520506c5f2244";
 
     public HotVoiceFragment(MainActivity activity) {
         mActivity = activity;
@@ -40,21 +40,13 @@ public class HotVoiceFragment extends BaseFragment implements INotify{
     public View onCreateView(LayoutInflater inflater) {
     	NotificationCenter.getInstance().register(this, NotificationID.N_MY_COLLECT_CHANGE);
     	
-    	LinearLayout layout = new LinearLayout(mActivity);
-    	layout.setOrientation(LinearLayout.VERTICAL);
-    	
-    	LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    	lp.gravity = Gravity.CENTER_HORIZONTAL;
+    	LinearLayout layout = GoogleAdmob.createLayoutWithAd(mActivity);
     	
     	/*
         net.youmi.android.banner.AdView adView = new net.youmi.android.banner.AdView(mActivity, net.youmi.android.banner.AdSize.SIZE_320x50);
         adView.setLayoutParams(lp);
         layout.addView(adView);
         */
-        
-        com.google.ads.AdView goodAdv = new com.google.ads.AdView(mActivity, com.google.ads.AdSize.BANNER, GOOGLE_AD_ID);
-        layout.addView(goodAdv);
-        goodAdv.loadAd(new AdRequest());
         
         mListView = new PageListView<Voice>(mActivity) {
             @Override
@@ -77,6 +69,8 @@ public class HotVoiceFragment extends BaseFragment implements INotify{
         mListView.setAdapter(mVoiceAdapter);
 
         mListView.doLoad();
+        
+        mListView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         layout.addView(mListView);
         
         

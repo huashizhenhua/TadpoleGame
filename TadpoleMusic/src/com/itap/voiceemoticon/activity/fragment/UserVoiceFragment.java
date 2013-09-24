@@ -17,7 +17,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -35,6 +37,7 @@ import com.itap.voiceemoticon.adapter.VoiceAdapter;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.db.UserVoice;
 import com.itap.voiceemoticon.db.UserVoiceModel;
+import com.itap.voiceemoticon.profit.GoogleAdmob;
 import com.itap.voiceemoticon.util.StringUtil;
 import com.itap.voiceemoticon.weibo.WeiboLoginAcountManager;
 import com.itap.voiceemoticon.weibo.TPAccount;
@@ -81,6 +84,9 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 		NotificationCenter.getInstance().register(this, NotificationID.N_USERVOICE_MODEL_SAVE);
 		NotificationCenter.getInstance().register(this, NotificationID.N_LOGIN_FINISH);
 
+		
+		LinearLayout layout = GoogleAdmob.createLayoutWithAd(mActivity);
+		
 		View view = inflater.inflate(R.layout.tab_my_collect, null);
 		mListView = (PageListView) view.findViewById(R.id.list_view_my_collect);
 		mSegmentBar = (SegmentBar) view.findViewById(R.id.side_bar_my_collect);
@@ -144,7 +150,11 @@ public class UserVoiceFragment extends BaseFragment implements INotify,
 			mViewLogin.setVisibility(View.VISIBLE);
 			mBtnLogin.setOnClickListener(this);
 		}
-		return view;
+		
+	
+		view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		layout.addView(view);
+		return layout;
 	}
 	
 	

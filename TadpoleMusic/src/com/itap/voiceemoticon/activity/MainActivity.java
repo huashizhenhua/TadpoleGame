@@ -573,6 +573,8 @@ public class MainActivity extends SherlockFragmentActivity implements
 	protected void onDestroy() {
 		VEApplication.getMusicPlayer(this).destory();
 		this.unregisterReceiver(mMusicPlayerReceiver);
+		NotificationCenter.getInstance().unregister(this, NotificationID.N_USERVOICE_MAKE);
+		
 		super.onDestroy();
 		Log.d(VEApplication.TAG, "---->onDestroy call");
 
@@ -694,6 +696,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 					e.printStackTrace();
 				}
 			} else {
+			    VEApplication.toast("进行新浪微博登录");
 				Message msg = Message.obtain();
 				msg.what = MsgDef.MSG_USER_MAKE_DIALOG;
 				TPAccountManager.getInstance().login(this, msg);

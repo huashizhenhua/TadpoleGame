@@ -1,31 +1,23 @@
 package com.itap.voiceemoticon.activity;
 
 import org.tadpoleframework.app.LoadDialog;
-import org.tadpoleframework.thread.ForegroundThread;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.itap.voiceemoticon.MsgDef;
 import com.itap.voiceemoticon.R;
-import com.itap.voiceemoticon.VEApplication;
-import com.itap.voiceemoticon.weibo.Account;
-import com.itap.voiceemoticon.weibo.WeiboLoginAccount;
 import com.itap.voiceemoticon.weibo.WeiboLoginAcountManager;
-import com.itap.voiceemoticon.weibo.User;
-import com.itap.voiceemoticon.weibo.IWeiboLoginListener;
-import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.itap.voiceemoticon.weibo.WeiboLoginWebView;
 import com.weibo.sdk.android.Oauth2AccessToken;
-import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.sso.SsoHandler;
 
-public class LoginActivity extends FragmentActivity {
+public class LoginActivity extends SherlockFragmentActivity{
 
 	private static final String TAG = "LoginActivity";
 

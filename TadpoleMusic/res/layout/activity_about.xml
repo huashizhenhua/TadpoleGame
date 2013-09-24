@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +38,31 @@
         android:background="@drawable/selector_setting_group_bg"
         android:orientation="vertical"
         android:padding="@dimen/tp_stroke_size" >
-
+        
+	    <LinearLayout
+	         android:id="@+id/btn_logout"
+	         android:layout_width="match_parent"
+	         android:layout_height="wrap_content"
+	         android:background="@drawable/selector_setting_item_bg_bottom"
+	         android:clickable="true"
+	         android:padding="@dimen/tp_padding_large" >
+	
+	         <TextView
+	             android:layout_width="match_parent"
+	             android:layout_height="match_parent"
+	             android:layout_gravity="center_vertical"
+	             android:layout_marginLeft="@dimen/about_us_text_margin_left"
+	             android:gravity="left"
+	             android:text="@string/about_logout"
+	             android:textAppearance="@style/TextAppearance.Medium"
+	             android:textColor="@color/tp_title_text_color" />
+	    </LinearLayout>
+	    
+	    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tp_divider_height"
+            android:background="@drawable/divider" />
+	    
         <LinearLayout
             android:id="@+id/btn_user_feedback"
             android:layout_width="match_parent"
@@ -80,25 +106,6 @@
                 android:textColor="@color/tp_title_text_color" />
         </LinearLayout>
         
-        <LinearLayout
-            android:id="@+id/btn_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/selector_setting_item_bg_bottom"
-            android:clickable="true"
-            android:padding="@dimen/tp_padding_large" >
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/about_us_text_margin_left"
-                android:gravity="left"
-                android:text="@string/about_logout"
-                android:textAppearance="@style/TextAppearance.Medium"
-                android:textColor="@color/tp_title_text_color" />
-        </LinearLayout>
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="@dimen/tp_divider_height"
