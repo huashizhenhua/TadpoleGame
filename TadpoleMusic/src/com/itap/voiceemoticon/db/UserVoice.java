@@ -47,8 +47,8 @@ public class UserVoice {
 
 
 
-	@Override
+    @Override
     public String toString() {
-        return "UserVoice [path=" + path + ", title=" + title + "]";
+        return "UserVoice [id=" + id + ", path=" + path + ", title=" + title + ", url=" + url + "]";
     }
 }

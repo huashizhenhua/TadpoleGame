@@ -93,37 +93,58 @@ public class SegmentBar extends View {
             e.printStackTrace();
         }
     }
+    
+    private WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+            WindowManager.LayoutParams.TYPE_APPLICATION,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
 
     private void init() {
         mbitmap = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_search);
         mWindowManager = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
+        
+        // Window LayoutParams
+        int size = getResources().getDimensionPixelSize(R.dimen.tp_section_indexer_tip_size);
+        lp.width = size;
+        lp.height = size;
+        
+        // Dialog Text
         createDialogText();
+    }
+    
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        System.out.println("onAttachedToWindow");
+        mWindowManager.addView(mDialogText, lp);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (mDialogText.getParent() != null) {
-            mWindowManager.removeView(mDialogText);
-        }
+        System.out.println("onDetachedFromWindow");
+        removeDialogText();
     }
 
     private void createDialogText() {
+        if (null != mDialogText ) {
+            return;
+        }
         mDialogText = new TextView(getContext());
         mDialogText.setTextColor(Color.WHITE);
         mDialogText.setGravity(Gravity.CENTER);
         mDialogText.setVisibility(View.INVISIBLE);
         int textSize = getResources().getDimensionPixelSize(
                 R.dimen.tp_section_indexer_tip_text_size);
-        int size = getResources().getDimensionPixelSize(R.dimen.tp_section_indexer_tip_size);
-
         mDialogText.setTextSize(textSize);
         mDialogText.setBackgroundResource(R.drawable.chatfrom_bg_voiceforward_pressed);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(size, size,
-                WindowManager.LayoutParams.TYPE_APPLICATION,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
-        mWindowManager.addView(mDialogText, lp);
+        
+    }
+    
+    private void removeDialogText() {
+        if (mDialogText.getParent() != null) {
+            mWindowManager.removeView(mDialogText);
+        }
     }
 
     public void setTextView(TextView mDialogText) {
@@ -214,4 +235,5 @@ public class SegmentBar extends View {
         }
         super.onDraw(canvas);
     }
+    
 }

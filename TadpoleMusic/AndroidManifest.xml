@@ -105,7 +105,7 @@
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="hiapk" >
+            android:value="360" >
         </meta-data>
         <service
 		    android:name="com.umeng.common.net.DownloadingService"

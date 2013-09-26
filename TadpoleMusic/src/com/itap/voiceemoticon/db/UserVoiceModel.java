@@ -111,4 +111,10 @@ public class UserVoiceModel extends BaseModel<UserVoice> {
         return null;
     }
 
+    
+    @Override
+    public void delete(UserVoice obj) {
+        super.delete(obj);
+        NotificationCenter.obtain(NotificationID.N_USERVOICE_MODEL_DELETE, obj).notifyToTarget();
+    }
 }

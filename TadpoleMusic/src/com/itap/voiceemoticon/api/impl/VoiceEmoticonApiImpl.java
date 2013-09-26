@@ -85,12 +85,14 @@ public class VoiceEmoticonApiImpl implements VoiceEmoticonApi {
 		return;
 	}
 
-	private static final String USER_VOICE_UPLOAD_URL = "http://vetest.sinaapp.com/user_voice_get";
+	private static final String USER_VOICE_GET_URL = "http://voiceemoticon.sinaapp.com/user_voice_get";
+	private static final String USER_VOICE_DELETE_URL = "http://voiceemoticon.sinaapp.com/user_voice_delete";
+	private static final String USER_VOICE_UPLOAD_URL = "http://voiceemoticon.sinaapp.com/user_voice_upload";
 
 	@Override
 	public ArrayList<UserVoice> getList(String uid, String platform) {
 		// 通过Map构造器传参
-		String url = USER_VOICE_UPLOAD_URL + "?uid=" + uid + "&platform="
+		String url = USER_VOICE_GET_URL + "?uid=" + uid + "&platform="
 				+ platform;
 		VEResponse veResponse = VEHttpCaller.doGet(url);
 		if (veResponse.isSuccess()) {
@@ -103,12 +105,25 @@ public class VoiceEmoticonApiImpl implements VoiceEmoticonApi {
 		return new ArrayList<UserVoice>();
 	}
 
-	private static final String USER_VOICE_DELETE_URL = "http://vetest.sinaapp.com/user_voice_delete";
-
+	
 	@Override
 	public void delete(long[] idArr) {
 		String url = USER_VOICE_DELETE_URL;
 		String body = "{\"ids\":" + ArrayUtil.join(idArr) + "}";
 		VEResponse response = VEHttpCaller.doPost(url, body);
 	}
+
+    @Override
+    public VEResponse uploadVoice(HashMap<String, String> params, String mp3FilePath, String fileName) {
+        String result = null;;
+        try {
+            result = HttpManager.openUrl(USER_VOICE_UPLOAD_URL,  HttpManager.HTTPMETHOD_POST, params, mp3FilePath, fileName);
+            System.out.println("uploadVoice = " + result);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        VEResponse vResp =  VEResponse.buildFromJSONString(result);
+        return  vResp;
+    }
 }

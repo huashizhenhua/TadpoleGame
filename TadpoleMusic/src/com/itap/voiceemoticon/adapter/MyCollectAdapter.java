@@ -88,31 +88,15 @@ public class MyCollectAdapter extends VoiceAdapter implements SectionIndexer, On
         // click events
         viewHolder.btnShare.setTag(position);
         viewHolder.btnShare.setOnClickListener(this);
+        viewHolder.btnDelete.setTag(position);
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callback(v, item, CMD_DELETE, position);
-                showDeleteDialog(mList.get(position));
+                
             }
         });
         return view;
-    }
-
-    public void showDeleteDialog(final Voice voice) {
-        final MyCollectAdapter me = this;
-        AlertDialog.Builder ab = new AlertDialog.Builder(this.getContext());
-        ab.setTitle("确定要删除?");
-        ab.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mList.remove(voice);
-                voice.delete(mContext);
-                VEApplication.reloadVoiceCollectedCache(getContext());
-                me.notifyDataSetChanged();
-            }
-        });
-        ab.setNegativeButton("取消", null);
-        ab.show();
     }
 
     /**

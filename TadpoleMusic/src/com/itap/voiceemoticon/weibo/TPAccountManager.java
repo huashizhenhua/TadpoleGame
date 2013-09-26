@@ -272,7 +272,7 @@ public class TPAccountManager {
 
     public void logout() {
         WeiboLoginAcountManager.getInstance().logout();
-        NotificationCenter.obtain(NotificationID.N_LOGOUT);
+        NotificationCenter.obtain(NotificationID.N_LOGOUT).notifyToTarget();
     }
 
     private void saveAccount(Oauth2AccessToken token) {

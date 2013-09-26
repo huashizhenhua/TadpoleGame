@@ -12,10 +12,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Context;
 import android.os.Bundle;
 
 import com.itap.voiceemoticon.VEApplication;
+import com.itap.voiceemoticon.activity.NotificationCenter;
+import com.itap.voiceemoticon.activity.NotificationID;
 import com.itap.voiceemoticon.common.GlobalConst;
 import com.itap.voiceemoticon.db.DaoFactory;
 import com.itap.voiceemoticon.third.WeixinHelper;
@@ -140,6 +143,7 @@ public class Voice {
 	public void delete(Context context) {
 		try {
 			DaoFactory.getInstance(context).getVoiceDao().delete(this);
+			NotificationCenter.obtain(NotificationID.N_VOICE_DELETE, this).notifyToTarget();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -257,7 +257,6 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
             public void run() {
                 
                 VEApplication.toast("您录制的语音正在上传至服务器");
-                
             	TPAccount veAccount = TPAccountManager.getInstance().getVEAccount();
             	
                 // 通过Map构造器传参
@@ -267,14 +266,7 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
                 params.put("title", title);
                 String fileName = System.currentTimeMillis() + ".mp3";
                 try {
-                    String result = HttpManager.openUrl("http://vetest.sinaapp.com/user_voice_upload",
-                            HttpManager.HTTPMETHOD_POST, params, mTmpFileNameMp3, fileName);
-                    
-                    System.out.println("upload result = " + result);
-                    
-                    
-                    
-                    VEResponse vResp =  VEResponse.buildFromJSONString(result);
+                    VEResponse vResp = VEApplication.getVoiceEmoticonApi().uploadVoice(params, mTmpFileNameMp3, fileName);
                     if (vResp.isSuccess()) {
                         mUrl = vResp.data.optString("url");
                         System.out.println("saveVoice url = " + mUrl);

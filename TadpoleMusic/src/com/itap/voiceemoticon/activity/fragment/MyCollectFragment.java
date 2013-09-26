@@ -5,8 +5,11 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import org.tadpoleframework.widget.PageListView;
+import org.tadpoleframework.widget.adapter.AdapterCallback;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -29,6 +33,7 @@ import com.itap.voiceemoticon.activity.NotificationCenter;
 import com.itap.voiceemoticon.activity.NotificationID;
 import com.itap.voiceemoticon.adapter.ArrayListAdapter;
 import com.itap.voiceemoticon.adapter.MyCollectAdapter;
+import com.itap.voiceemoticon.adapter.VoiceAdapter;
 import com.itap.voiceemoticon.api.PageList;
 import com.itap.voiceemoticon.api.Voice;
 import com.itap.voiceemoticon.db.DaoFactory;
@@ -42,7 +47,7 @@ import com.itap.voiceemoticon.widget.SegmentBar;
  * <br> create：2013-1-31
  * <br>==========================
  */
-public class MyCollectFragment extends BaseFragment implements INotify{
+public class MyCollectFragment extends BaseFragment implements INotify, AdapterCallback<Voice>{
     private static final int HANDLER_FILL_LIST = 1;
 
     private PageListView<Voice> mListView;
@@ -51,6 +56,7 @@ public class MyCollectFragment extends BaseFragment implements INotify{
     private MainActivity mActivity;
 
     public MyCollectFragment(MainActivity activity) {
+        
         mActivity = activity;
     }
 
@@ -62,6 +68,7 @@ public class MyCollectFragment extends BaseFragment implements INotify{
 
     public View onCreateView(LayoutInflater inflater) {
     	NotificationCenter.getInstance().register(this, NotificationID.N_MY_COLLECT_CHANGE);
+    	NotificationCenter.getInstance().register(this, NotificationID.N_VOICE_DELETE);
     	
     	LinearLayout layout = GoogleAdmob.createLayoutWithAd(mActivity);
     	
@@ -82,7 +89,6 @@ public class MyCollectFragment extends BaseFragment implements INotify{
 
         mVoiceAdapter = new MyCollectAdapter(mActivity);
         mVoiceAdapter.setListView(mListView.getRefreshableView());
-        mVoiceAdapter.setCallback(mActivity);
 
         mListView.setOnScrollListener(mVoiceAdapter);
         mListView.setAdapter(mVoiceAdapter);
@@ -96,6 +102,7 @@ public class MyCollectFragment extends BaseFragment implements INotify{
                 mSegmentBar.setCurrentSection(letter);
             }
         });
+        mVoiceAdapter.setCallback(this);
 
         loadData();
         
@@ -143,6 +150,8 @@ public class MyCollectFragment extends BaseFragment implements INotify{
             return false;
         }
     });
+    
+    
 
     private void loadData() {
         new Thread(new Runnable() {
@@ -169,5 +178,36 @@ public class MyCollectFragment extends BaseFragment implements INotify{
 				mVoiceAdapter.notifyDataSetChanged();
 			}
 		}
+		
+		if (NotificationID.N_VOICE_DELETE == notification.id) {
+		    if (null !=  mVoiceAdapter) {
+		        Voice voice = (Voice)notification.extObj;
+		        mVoiceAdapter.removeItem(voice);
+		        mVoiceAdapter.notifyDataSetChanged();
+		    }
+		}
 	}
+
+    @Override
+    public void onCommand(View view, Voice obj, int command, int position) {
+        if (VoiceAdapter.CMD_DELETE == command) {
+            showDeleteDialog(obj);
+            return;
+        }
+        mActivity.onCommand(view, obj, command, position);
+    }
+    
+    public void showDeleteDialog(final Voice voice) {
+        AlertDialog.Builder ab = new AlertDialog.Builder(mActivity);
+        ab.setTitle("确定要删除?");
+        ab.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                voice.delete(mActivity);
+                VEApplication.reloadVoiceCollectedCache(mActivity);
+            }
+        });
+        ab.setNegativeButton("取消", null);
+        ab.show();
+    }   
 }
