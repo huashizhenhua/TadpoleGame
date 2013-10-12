@@ -3,8 +3,8 @@ package com.itap.voiceemoticon.activity;
 
 import java.util.ArrayList;
 
-import net.youmi.android.AdManager;
-import net.youmi.android.diy.DiyManager;
+//import net.youmi.android.AdManager;
+//import net.youmi.android.diy.DiyManager;
 
 import org.tadpole.view.ViewPager;
 import org.tadpoleframework.app.AlertDialog;
@@ -41,7 +41,6 @@ import com.itap.voiceemoticon.Feature;
 import com.itap.voiceemoticon.MsgDef;
 import com.itap.voiceemoticon.R;
 import com.itap.voiceemoticon.VEApplication;
-import com.itap.voiceemoticon.activity.fragment.AppRecommendFragment;
 import com.itap.voiceemoticon.activity.fragment.BaseFragment;
 import com.itap.voiceemoticon.activity.fragment.HotVoiceFragment;
 import com.itap.voiceemoticon.activity.fragment.MyCollectFragment;
@@ -339,16 +338,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
         SearchFragment searchFragment = new SearchFragment(this);
         viewList.add(searchFragment);
-
-        if (APNUtil.getMProxyType(this) == APNUtil.PROXYTYPE_WIFI) {
-            if (Feature.isYoumi()) {
-                // 初始化应用的发布ID和密钥，以及设置测试模式
-                AdManager.getInstance(this).init("f4c12ac956d1bdb6", "ebaec11e527854aa", false);
-                DiyManager.initAdObjects(this);
-                AppRecommendFragment appRecommendFragment = new AppRecommendFragment(this);
-                viewList.add(appRecommendFragment);
-            }
-        }
 
         mViewPager.setAdapter(new MyPagerAdapter(viewList));
         mViewPager.setOnPageChangeListener(this);
