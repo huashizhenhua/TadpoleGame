@@ -60,6 +60,7 @@ import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sina.weibo.sdk.api.BaseResponse;
 import com.sina.weibo.sdk.api.IWeiboHandler;
@@ -354,10 +355,9 @@ public class MainActivity extends SlidingFragmentActivity implements ActionBar.T
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_CUSTOM);
 
         
-        
-        
         setBehindContentView(R.layout.activity_about);
-        
+        getSlidingMenu().setBehindOffsetRes(R.dimen.menu_left_margin_right);
+        getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         
         handleIntent(getIntent());
     }
