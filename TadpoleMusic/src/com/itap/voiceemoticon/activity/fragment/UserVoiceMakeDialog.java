@@ -11,6 +11,8 @@ import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.pocketdigi.utils.FLameUtils;
 
 import org.tadpoleframework.app.AlertDialog;
+import org.tadpoleframework.app.DialogOnClickListener;
+import org.tadpoleframework.app.GenericDialog;
 import org.tadpoleframework.common.FileUtil;
 import org.tadpoleframework.common.StringUtil;
 
@@ -37,7 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener {
+public class UserVoiceMakeDialog extends AlertDialog implements DialogOnClickListener {
 
     private static final long TIME_SPAN_RECORD_MIN = 2000;
 
@@ -69,7 +71,7 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         super(context);
         setTitle("制作语音");
 
-        Button btnYes = (Button)this.findViewById(R.id.btn_yes);
+        Button btnYes = (Button)this.findViewById(ID_BUTTON_YES);
         btnYes.setText("保存");
 
         setContent(R.layout.uservoice_make);
@@ -92,7 +94,7 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
 
         mBtnVoice.setOnTouchListener(mBtnRecordTouchlistener);
 
-        setButtonListener(this);
+        setOnClickListener(this);
 
         mBtnPlay.setOnClickListener(new View.OnClickListener() {
 
@@ -234,22 +236,16 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         }
     }
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-
-        if (which == R.id.btn_yes) {
-            saveVoice();
-        }
-
-    }
-
     private void saveVoice() {
         final String title = mEditTextTitle.getEditableText().toString();
+        
         if (StringUtil.isEmpty(title)) {
             Toast.makeText(getContext(), "标题不能为空", Toast.LENGTH_SHORT).show();
+            return;
         }
         if (!isRecordSuccess) {
             Toast.makeText(getContext(), "尚未录制任何语音", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         new Thread(new Runnable() {
@@ -306,5 +302,12 @@ public class UserVoiceMakeDialog extends AlertDialog implements OnClickListener 
         }
         mPlayer.release();
         mPlayer = null;
+    }
+
+    @Override
+    public void onDialogClick(GenericDialog dialog, int viewId, Object extra) {
+        if (viewId == ID_BUTTON_YES) {
+            saveVoice();
+        }
     }
 }

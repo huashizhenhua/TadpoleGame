@@ -10,9 +10,10 @@ import com.google.ads.AdRequest;
 
 public class GoogleAdmob {
     
-    private static String GOOGLE_AD_ID = "a1520506c5f2244";
+    private static String GOOGLE_AD_ID = "";
 
     public static void addAdView(Activity activity, ViewGroup container) {
+//        "a1520506c5f2244"
       
     }
     public static LinearLayout createLayoutWithAd(Activity activity) {

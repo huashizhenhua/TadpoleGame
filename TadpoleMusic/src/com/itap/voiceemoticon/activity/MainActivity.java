@@ -3,8 +3,6 @@ package com.itap.voiceemoticon.activity;
 
 import java.util.ArrayList;
 
-//import net.youmi.android.AdManager;
-//import net.youmi.android.diy.DiyManager;
 
 import org.tadpole.view.ViewPager;
 import org.tadpoleframework.app.AlertDialog;
@@ -62,16 +60,15 @@ import com.itap.voiceemoticon.weibo.TPAccountManager;
 import com.itap.voiceemoticon.widget.MarqueeTextView;
 import com.itap.voiceemoticon.widget.WeixinAlert;
 import com.itap.voiceemoticon.widget.WeixinAlert.OnAlertSelectId;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sina.weibo.sdk.api.BaseResponse;
 import com.sina.weibo.sdk.api.IWeiboHandler;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
-//import com.sina.weibo.sdk.api.BaseResponse;
-//import com.sina.weibo.sdk.api.IWeiboHandler;
 
-public class MainActivity extends SherlockFragmentActivity implements ActionBar.TabListener,
+public class MainActivity extends SlidingFragmentActivity implements ActionBar.TabListener,
         ViewPager.OnPageChangeListener, AdapterCallback<Voice>, IWeiboHandler.Response,
         OnAlertSelectId, INotify {
 
@@ -151,12 +148,6 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
             }
         }
     };
-
-    //
-    // @Override
-    // public void onResponse(BaseResponse arg0) {
-    // System.out.println("onResponse arg0 = " + arg0);
-    // }
 
     /**
      * flag for preventing onTabSelected on onPageSelected cycle invoke . To
@@ -251,7 +242,7 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         Log.d(VEApplication.TAG, "---->MainActivity onCreate call");
         super.onCreate(savedInstanceState);
 
@@ -362,6 +353,12 @@ public class MainActivity extends SherlockFragmentActivity implements ActionBar.
 
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_CUSTOM);
 
+        
+        
+        
+        setBehindContentView(R.layout.activity_about);
+        
+        
         handleIntent(getIntent());
     }
 

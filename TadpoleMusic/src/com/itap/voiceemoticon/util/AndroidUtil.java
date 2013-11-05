@@ -23,7 +23,7 @@ public class AndroidUtil {
         try{
             activity.startActivity(intent);
         }catch(ActivityNotFoundException e){
-            Toast.makeText(activity, "应用市场调用失败", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     } 
     
