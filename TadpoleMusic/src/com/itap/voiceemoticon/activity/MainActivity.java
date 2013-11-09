@@ -295,7 +295,6 @@ public class MainActivity extends SlidingFragmentActivity implements ActionBar.T
         mTabSearch = actionBar.newTab().setText(R.string.title_section_search).setTabListener(this);
         mTabAppRecommend = actionBar.newTab().setText(R.string.title_section_app_recommend)
                 .setTabListener(this);
-        ;
 
         actionBar.addTab(mTabUserVoice);
 
@@ -674,14 +673,13 @@ public class MainActivity extends SlidingFragmentActivity implements ActionBar.T
         if (null == intent) {
             return;
         }
+        
+        
 
         Message msg = intent.getParcelableExtra(ConstValues.INTENT_KEY_MESSAGE);
-        System.out.println("handleIntent = " + msg);
         if (null == msg) {
             return;
         }
-
-        System.out.println("handleIntent = " + msg);
 
         if (msg.what == MsgDef.MSG_USER_MAKE_DIALOG) {
             UserVoiceMakeDialog dialog = new UserVoiceMakeDialog(this);

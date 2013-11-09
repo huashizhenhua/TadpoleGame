@@ -9,6 +9,6 @@
     <dimen name="ve_list_item_height">55dp</dimen>
     
     <!-- Left Menu Margin Right -->
-    <dimen name="menu_left_margin_right">200dp</dimen>
+    <dimen name="menu_left_margin_right">180dp</dimen>
 
 </resources>
